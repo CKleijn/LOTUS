@@ -70,28 +70,24 @@ exports.createUser = (req, res) => {
             if (err.errors.firstName) {
                 errors.firstNameErr = err.errors.firstName.properties.message;
             } else {
-                errors.firstNameErr = "";
                 errors.oldValues.firstName = req.body.firstName;
             }
 
             if (err.errors.lastName) {
                 errors.lastNameErr = err.errors.lastName.properties.message;
             } else {
-                errors.lastNameErr = "";
                 errors.oldValues.lastName = req.body.lastName;
             }
 
             if (err.errors.emailAddress) {
                 errors.emailAddressErr = err.errors.emailAddress.properties.message;
             } else {
-                errors.emailAddressErr = "";
                 errors.oldValues.emailAddress = req.body.emailAddress;
             }
 
             if (err.errors.password) {
                 errors.passwordErr = err.errors.password.properties.message;
             } else {
-                errors.passwordErr = "";
                 errors.oldValues.password = req.body.password;
             }
 
