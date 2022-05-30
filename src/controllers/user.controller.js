@@ -72,8 +72,8 @@ exports.createUser = (req, res) => {
             // Show the errors on the register page
             res.render("register", { pageName: "Registreren", ...errors });
         } else {
-            // Login the user
-            res.render("login", { pageName: "Login", emailAddress: emailAddress, password: password });
+            // Redirect to the login page so the new user can login
+            res.redirect("/login")
         }
     });
 };
@@ -150,15 +150,16 @@ exports.login = (req, res) => {
     User.find(function (err, users) {
         if (err) throw err;
 
-        mongoose.connection.close();
+        
 
         users.forEach((user) => {
             if (emailAddress == user.emailAddress && bcrypt.compareSync(password, user.password)) {
-                session = req.session;
+                var session = req.session;
                 session.userid = user._id;
                 session.roles = user.roles[0];
+                session.firstname = user.firstName
 
-                res.send(`Ingelogd als: ${user.roles[0]}`);
+                return res.redirect("/dashboard")
             }
         });
     });
