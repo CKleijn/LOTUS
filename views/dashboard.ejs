@@ -10,6 +10,11 @@
                                 <div class="col-md-10 col-lg-6 col-xl-5 order-2 order-lg-1">
                                     <p class="text-center h1 fw-bold mb-5 mx-1 mx-md-6 mt-4">Dashboard</p>
                                     <p class="text-center h1 fw-bold mb-5 mx-1 mx-md-6 mt-4">Welkom <% if (roles == "coordinator") {%>coördinator<%} else if (roles == "client") {%>opdrachtgever<%} else if (roles == "member") {%>lid<%} %> <%=firstName%> %></p>
+                                    <form action="/logout" method="GET">
+                                        <div>
+                                            <button type="logout" class="btn btn-danger">Uitloggen</button>
+                                        </div>
+                                    </form>
                                 </div>
                             </div>
                         </div>

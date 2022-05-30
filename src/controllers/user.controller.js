@@ -117,7 +117,7 @@ exports.login = (req, res) => {
     User.find(function (err, users) {
         if (err) throw err;
 
-        mongoose.connection.close();
+        
 
         users.forEach((user) => {
             if (emailAddress == user.emailAddress && bcrypt.compareSync(password, user.password)) {
