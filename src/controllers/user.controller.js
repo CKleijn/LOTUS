@@ -126,7 +126,7 @@ exports.login = (req, res) => {
                 session.roles = user.roles[0];
                 session.firstname = user.firstName
 
-                res.render("dashboard", { pageName: "Dashboard", roles: user.roles[0], firstName: user.firstName })
+                return res.redirect("/dashboard")
             }
         });
     });
