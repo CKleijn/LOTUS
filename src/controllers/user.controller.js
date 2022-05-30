@@ -1,7 +1,7 @@
-const mongoose = require("mongoose");
+const session = require("express-session");
 const bcrypt = require("bcrypt");
-// Connect to MongoDB
-mongoose.connect("mongodb://127.0.0.1:27017/LOTUS_DB");
+const mongoose = require("./../../database/dbconnection");
+
 // Create userSchema with all fields
 const userSchema = new mongoose.Schema({
     firstName: {
@@ -149,11 +149,13 @@ exports.login = (req, res) => {
 
         mongoose.connection.close();
 
-        users.forEach(user => {
+        users.forEach((user) => {
             if (emailAddress == user.emailAddress && bcrypt.compareSync(password, user.password)) {
-                session = req.session
-                session.userid = emailAddress
-                res.send(`Hi new user!`)
+                session = req.session;
+                session.userid = user._id;
+                session.roles = user.roles[0];
+
+                res.send(`Ingelogd als: ${user.roles[0]}`);
             }
         });
     });
