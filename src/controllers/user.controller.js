@@ -50,7 +50,7 @@ exports.createUser = (req, res) => {
     const { firstName, lastName, emailAddress, password, roles } = req.body;
     // Hash password if password isn't empty
     let hashedPassword;
-    if(password !== "") {
+    if (password !== "") {
         hashedPassword = bcrypt.hashSync(password, bcrypt.genSaltSync());
     }
     // Create new user object
@@ -68,40 +68,40 @@ exports.createUser = (req, res) => {
             let oldValues = {};
             errors.oldValues = oldValues;
 
-            if(err.keyValue != undefined) {
-                if(err.keyValue.emailAddress == emailAddress) {
+            if (err.keyValue != undefined) {
+                if (err.keyValue.emailAddress == emailAddress) {
                     errors.emailAddressErr = "E-mailadres bestaat al!";
                 }
             } else {
-                if(err.errors.firstName) {
+                if (err.errors.firstName) {
                     errors.firstNameErr = err.errors.firstName.properties.message;
                 } else {
                     oldValues.firstName = firstName;
                 }
-    
-                if(err.errors.lastName) {
+
+                if (err.errors.lastName) {
                     errors.lastNameErr = err.errors.lastName.properties.message;
                 } else {
                     oldValues.lastName = lastName;
                 }
-    
-                if(err.errors.emailAddress) {
+
+                if (err.errors.emailAddress) {
                     errors.emailAddressErr = err.errors.emailAddress.properties.message;
                 } else {
                     oldValues.emailAddress = emailAddress;
                 }
-    
-                if(err.errors.password) {
+
+                if (err.errors.password) {
                     errors.passwordErr = err.errors.password.properties.message;
                 } else {
                     oldValues.password = password;
                 }
             }
             // Show the errors on the register page
-            res.render("register", {pageName: "Registreren", ...errors});
+            res.render("register", { pageName: "Registreren", ...errors });
         } else {
             // Login the user
-            res.render("login", {pageName: "Login", emailAddress: emailAddress, password: password})
+            res.render("login", { pageName: "Login", emailAddress: emailAddress, password: password })
         }
     });
 };
@@ -151,7 +151,7 @@ exports.login = (req, res) => {
 
         users.forEach((user) => {
             if (emailAddress == user.emailAddress && bcrypt.compareSync(password, user.password)) {
-                session = req.session;
+                var session = req.session;
                 session.userid = user._id;
                 session.roles = user.roles[0];
 
