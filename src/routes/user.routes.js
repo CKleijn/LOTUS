@@ -46,4 +46,5 @@ router.get("/user_overview", (req, res) => {
     res.render("user_overview", { pageName: "Gebruikers" });
 });
 
-module.exports = router;
+router.post("/invite_member", userController.inviteMember);
+
