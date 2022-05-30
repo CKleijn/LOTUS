@@ -3,7 +3,7 @@ const nodemailer = require("nodemailer");
 exports.sendMemberInviteMail = async (email, subject, text) => {
     try {
         const transporter = nodemailer.createTransport({
-            host: "smtp-mail.outlook.com",
+            host: process.env.MAILING_HOST,
             secureConnection: false,
             port: 587,
             tls: {
