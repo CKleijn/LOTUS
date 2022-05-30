@@ -1,6 +1,5 @@
-const mongoose = require("mongoose");
-// Connect to MongoDB
-mongoose.connect("mongodb://127.0.0.1:27017/LOTUS_DB");
+const mongoose = require("./../../database/dbconnection");
+
 // Create userSchema with all fields
 const userSchema = new mongoose.Schema({
     firstName: {
@@ -39,6 +38,7 @@ const userSchema = new mongoose.Schema({
 });
 // Create a User model
 const User = mongoose.model("User", userSchema);
+
 // Functionality for getting all the users
 exports.getAllUsers = (req, res) => {
     User.find(function (err, users) {
@@ -51,7 +51,7 @@ exports.getAllUsers = (req, res) => {
 };
 // Functionality for creating an user
 exports.createUser = (req, res) => {
-    const { firstName, lastName, emailAddress, password, roles } = req.body;
+    const { firstName, lastName, emailAddress, password } = req.body;
 
     const user = new User({
         firstName: firstName,
@@ -67,25 +67,25 @@ exports.createUser = (req, res) => {
             const oldValues = {};
             errors.oldValues = oldValues;
 
-            if (err.errors.firstName) {
+            if (typeof err.errors.firstName !== "undefined") {
                 errors.firstNameErr = err.errors.firstName.properties.message;
             } else {
                 errors.oldValues.firstName = req.body.firstName;
             }
 
-            if (err.errors.lastName) {
+            if (typeof err.errors.lastName !== "undefined") {
                 errors.lastNameErr = err.errors.lastName.properties.message;
             } else {
                 errors.oldValues.lastName = req.body.lastName;
             }
 
-            if (err.errors.emailAddress) {
+            if (typeof err.errors.emailAddress !== "undefined") {
                 errors.emailAddressErr = err.errors.emailAddress.properties.message;
             } else {
                 errors.oldValues.emailAddress = req.body.emailAddress;
             }
 
-            if (err.errors.password) {
+            if (typeof err.errors.password !== "undefined") {
                 errors.passwordErr = err.errors.password.properties.message;
             } else {
                 errors.oldValues.password = req.body.password;
@@ -141,7 +141,7 @@ exports.login = (req, res) => {
 
         mongoose.connection.close();
 
-        users.forEach(user => {
+        users.forEach((user) => {
             if (user.emailAddress == emailAddress && user.password == password) {
                 session = req.session
                 session.userid = emailAddress
