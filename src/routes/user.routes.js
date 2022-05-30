@@ -18,7 +18,7 @@ router.post("/register", userController.createUser);
 //login client
 router.get("/login", (req, res) => {
     var session = req.session;
-    
+
     if (session.userid) {
         res.send("Welcome User!");
     } else {
