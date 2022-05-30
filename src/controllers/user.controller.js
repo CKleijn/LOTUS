@@ -1,4 +1,5 @@
 const session = require("express-session");
+const bcrypt = require("bcrypt");
 const mongoose = require("./../../database/dbconnection");
 
 // Create userSchema with all fields
@@ -13,125 +14,131 @@ const userSchema = new mongoose.Schema({
     },
     emailAddress: {
         type: String,
-        unique: true,
         validate: {
             validator: function (v) {
                 return /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(v);
             },
-            message: (props) => `${props.value} is is geen geldig E-mailadres!`,
+            message: (props) => `${props.value} is geen geldig e-mailadres!`,
         },
         required: [true, "E-mailadres is verplicht!"],
     },
     password: {
         type: String,
-        validate: {
-            validator: function (v) {
-                return /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z\d]{8,}$/.test(v);
-            },
-            message: (props) => `${props.value} is geen geldig wachtwoord!`,
-        },
         required: [true, "Wachtwoord is verplicht!"],
     },
     roles: {
         type: [String],
         enum: ["coordinator", "client", "member"],
+        required: [true, "Minstens één rol verplicht!"]
     },
 });
 // Create a User model
 const User = mongoose.model("User", userSchema);
+// // Functionality for getting all the users
+// exports.getAllUsers = (req, res) => {
+//     User.find(function (err, users) {
+//         if (err) throw err;
 
-// Functionality for getting all the users
-exports.getAllUsers = (req, res) => {
-    User.find(function (err, users) {
-        if (err) throw err;
+//         mongoose.connection.close();
 
-        mongoose.connection.close();
-
-        res.render("", { users });
-    });
-};
+//         res.render("", { users });
+//     });
+// };
 // Functionality for creating an user
 exports.createUser = (req, res) => {
-    const { firstName, lastName, emailAddress, password } = req.body;
-
+    // Declare all variables out of req.body
+    const { firstName, lastName, emailAddress, password, roles } = req.body;
+    // Hash password if password isn't empty
+    let hashedPassword;
+    if(password !== "") {
+        hashedPassword = bcrypt.hashSync(password, bcrypt.genSaltSync());
+    }
+    // Create new user object
     const user = new User({
         firstName: firstName,
         lastName: lastName,
         emailAddress: emailAddress,
-        password: password,
+        password: hashedPassword,
         roles: "client",
     });
-
+    // Save user object in database and show errors if they exists
     user.save((err) => {
         if (err) {
-            const errors = {};
-            const oldValues = {};
+            let errors = {};
+            let oldValues = {};
             errors.oldValues = oldValues;
 
-            if (typeof err.errors.firstName !== "undefined") {
-                errors.firstNameErr = err.errors.firstName.properties.message;
+            if(err.keyValue != undefined) {
+                if(err.keyValue.emailAddress == emailAddress) {
+                    errors.emailAddressErr = "E-mailadres bestaat al!";
+                }
             } else {
-                errors.oldValues.firstName = req.body.firstName;
+                if(err.errors.firstName) {
+                    errors.firstNameErr = err.errors.firstName.properties.message;
+                } else {
+                    oldValues.firstName = firstName;
+                }
+    
+                if(err.errors.lastName) {
+                    errors.lastNameErr = err.errors.lastName.properties.message;
+                } else {
+                    oldValues.lastName = lastName;
+                }
+    
+                if(err.errors.emailAddress) {
+                    errors.emailAddressErr = err.errors.emailAddress.properties.message;
+                } else {
+                    oldValues.emailAddress = emailAddress;
+                }
+    
+                if(err.errors.password) {
+                    errors.passwordErr = err.errors.password.properties.message;
+                } else {
+                    oldValues.password = password;
+                }
             }
-
-            if (typeof err.errors.lastName !== "undefined") {
-                errors.lastNameErr = err.errors.lastName.properties.message;
-            } else {
-                errors.oldValues.lastName = req.body.lastName;
-            }
-
-            if (typeof err.errors.emailAddress !== "undefined") {
-                errors.emailAddressErr = err.errors.emailAddress.properties.message;
-            } else {
-                errors.oldValues.emailAddress = req.body.emailAddress;
-            }
-
-            if (typeof err.errors.password !== "undefined") {
-                errors.passwordErr = err.errors.password.properties.message;
-            } else {
-                errors.oldValues.password = req.body.password;
-            }
-
-            res.render("register", { pageName: "Registreren", errors });
+            // Show the errors on the register page
+            res.render("register", {...errors});
         } else {
-            res.render("overviewClient", { pageName: "Gebruikers" });
+            // Login the user
+            res.render("login", {emailAddress: emailAddress, password: password})
         }
     });
 };
 // Functionality for getting user by id
-exports.getUserById = (req, res) => {
-    User.find({ _id: req.body._id }, function (err, users) {
-        if (err) throw err;
+// exports.getUserById = (req, res) => {
+//     User.find({ _id: req.body._id }, function (err, users) {
+//         if (err) throw err;
 
-        mongoose.connection.close();
+//         mongoose.connection.close();
 
-        if (users.length > 0) {
-            res.render("", { users });
-        } else {
-            console.log(`User with an ID of ${req.body._id} doesn't exist!`);
-        }
-    });
-};
-// Functionality for updating an user
-exports.updateUserById = (req, res) => {
-    User.findByIdAndUpdate(req.body._id, { ...req.body }, function (err) {
-        if (err) throw err;
+//         if (users.length > 0) {
+//             res.render("", { users });
+//         } else {
+//             console.log(`User with an ID of ${req.body._id} doesn't exist!`);
+//         }
+//     });
+// };
+// // Functionality for updating an user
+// exports.updateUserById = (req, res) => {
+//     User.findByIdAndUpdate(req.body._id, { ...req.body }, function (err) {
+//         if (err) throw err;
 
-        mongoose.connection.close();
+//         mongoose.connection.close();
 
-        console.log(`User with an ID of ${req.body._id} has been updated successfully!`);
-    });
-};
-// Functionality for deleting an user
-exports.deleteUserById = (req, res) => {
-    User.findByIdAndDelete(req.body._id, function (err) {
-        if (err) throw err;
+//         console.log(`User with an ID of ${req.body._id} has been updated successfully!`);
+//     });
+// };
+// // Functionality for deleting an user
+// exports.deleteUserById = (req, res) => {
+//     User.findByIdAndDelete(req.body._id, function (err) {
+//         if (err) throw err;
 
-        mongoose.connection.close();
+//         mongoose.connection.close();
 
-        console.log(`User with an ID of ${req.body._id} has been deleted successfully!`);
-    });
-};
+//         console.log(`User with an ID of ${req.body._id} has been deleted successfully!`);
+//     });
+// };
 
 //Functionality for login
 exports.login = (req, res) => {
@@ -143,7 +150,7 @@ exports.login = (req, res) => {
         mongoose.connection.close();
 
         users.forEach((user) => {
-            if (user.emailAddress == emailAddress && user.password == password) {
+            if (emailAddress == user.emailAddress && bcrypt.compareSync(password, user.password)) {
                 session = req.session;
                 session.userid = user._id;
                 session.roles = user.roles[0];
