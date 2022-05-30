@@ -91,9 +91,9 @@ exports.createUser = (req, res) => {
                 errors.oldValues.password = req.body.password;
             }
 
-            res.render("register", errors);
+            res.render("register", { pageName: "Registreren", errors });
         } else {
-            res.render("index");
+            res.render("index", { pageName: "Home" });
         }
     });
 };
