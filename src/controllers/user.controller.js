@@ -98,10 +98,10 @@ exports.createUser = (req, res) => {
                 }
             }
             // Show the errors on the register page
-            res.render("register", {...errors});
+            res.render("register", {pageName: "Registreren", ...errors});
         } else {
             // Login the user
-            res.render("login", {emailAddress: emailAddress, password: password})
+            res.render("login", {pageName: "Login", emailAddress: emailAddress, password: password})
         }
     });
 };
