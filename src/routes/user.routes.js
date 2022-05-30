@@ -17,13 +17,9 @@ router.post("/register", userController.createUser);
 //login client
 router.get("/login", (req, res) => {
     var session = req.session;
-  
-    if (session.userRoles == "coordinator") {
-        res.render("overviewCoordinator")
-    } else if (session.userRoles == "client") {
-        res.render("overviewClient")
-    } else if (session.userRoles == "member") {
-        res.render("overviewMember")
+
+    if (session.userid && session.roles && session.firstname) {
+        res.render("dashboard", { pageName: "Dashboard", roles: session.roles, firstName: session.firstname })
     } else {
         res.render("login", { pageName: "Inloggen" });
     }

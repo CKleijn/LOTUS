@@ -71,7 +71,7 @@ exports.createUser = (req, res) => {
             res.render("register", { pageName: "Registreren", ...errors });
         } else {
             // Login the user
-            res.render("login", { pageName: "Login", emailAddress: emailAddress, password: password });
+            res.render("login", { pageName: "Inloggen", emailAddress: emailAddress, password: password })
         }
     });
 };
@@ -121,11 +121,12 @@ exports.login = (req, res) => {
 
         users.forEach((user) => {
             if (emailAddress == user.emailAddress && bcrypt.compareSync(password, user.password)) {
-                session = req.session;
+                var session = req.session;
                 session.userid = user._id;
                 session.roles = user.roles[0];
+                session.firstname = user.firstName
 
-                res.send(`Ingelogd als: ${user.roles[0]}`);
+                res.render("dashboard", { pageName: "Dashboard", roles: user.roles[0], firstName: user.firstName })
             }
         });
     });
