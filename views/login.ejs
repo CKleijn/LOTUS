@@ -15,7 +15,7 @@
                                         <i class="fas fa-envelope fa-lg me-3 fa-fw"></i>
                                         <div class="form-outline flex-fill mb-0">
                                             <label class="form-label" for="form3Example3c">E-mailadres:</label>
-                                            <input type="email" id="form3Example3c" name="emailAddress" class="form-control" value="<% if(typeof oldValues !== "undefined"){%><%=oldValues.emailAdress%><%}%>"/>
+                                            <input type="email" id="form3Example3c" name="emailAddress" class="form-control" value="<% if(typeof oldValues !== "undefined"){%><%=oldValues.emailAdress%><%} else if(typeof emailAddress !== "undefined"){%><%=emailAddress%><%}%>"/>
                                             <label class="form-label" style="color: red; padding: 10px 0px;"><% if(typeof emailAddressErr !== "undefined"){%><%=emailAddressErr%><%}%></label>
                                         </div>
                                     </div>
@@ -24,7 +24,7 @@
                                         <i class="fas fa-lock fa-lg me-3 fa-fw"></i>
                                         <div class="form-outline flex-fill mb-0">
                                             <label class="form-label" for="form3Example4c">Wachtwoord:</label>
-                                            <input type="password" id="form3Example4c" name="password" class="form-control" value="<% if(typeof oldValues !== "undefined"){%><%=oldValues.password%><%}%>"/>
+                                            <input type="password" id="form3Example4c" name="password" class="form-control" value="<% if(typeof oldValues !== "undefined"){%><%=oldValues.password%><%} else if(typeof password !== "undefined"){%><%=password%><%}%>"/>
                                             <label class="form-label" style="color: red; padding: 10px 0px;"><% if(typeof passwordErr !== "undefined"){%><%=passwordErr%><%}%></label>
                                         </div>
                                     </div>
