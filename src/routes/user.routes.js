@@ -19,8 +19,12 @@ router.post("/register", userController.createUser);
 router.get("/login", (req, res) => {
     var session = req.session;
 
-    if (session.userid) {
-        res.send("Welcome User!");
+    if (session.userRoles == "coordinator") {
+        res.render("overviewCoordinator")
+    } else if (session.userRoles == "client") {
+        res.render("overviewClient")
+    } else if (session.userRoles == "member") {
+        res.render("overviewMember")
     } else {
         res.render("login", { pageName: "Inloggen" });
     }
