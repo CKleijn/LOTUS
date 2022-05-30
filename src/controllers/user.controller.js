@@ -131,3 +131,22 @@ exports.deleteUserById = (req, res) => {
         console.log(`User with an ID of ${req.body._id} has been deleted successfully!`);
     });
 };
+
+//Functionality for login
+exports.login = (req, res) => {
+    const { emailAddress, password } = req.body;
+
+    User.find(function (err, users) {
+        if (err) throw err;
+
+        mongoose.connection.close();
+
+        users.forEach(user => {
+            if (user.emailAddress == emailAddress && user.password == password) {
+                session = req.session
+                session.userid = emailAddress
+                res.send(`Hi new user!`)
+            }
+        });
+    });
+};
