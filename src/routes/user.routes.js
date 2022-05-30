@@ -9,7 +9,6 @@ const router = express.Router();
 
 //register client
 router.get("/register", (req, res) => {
-    // res.render("register", { firstNameErr: "", lastNameErr: "", emailAddressErr: "", passwordErr: "" });
     res.render("register", { pageName: "Registreren" });
 });
 
@@ -24,6 +23,10 @@ router.get("/login", (req, res) => {
     } else {
         res.render("login", { pageName: "Inloggen" });
     }
+});
+
+router.get("/user_overview", (req, res) => {
+    res.render("user_overview", { pageName: "Gebruikers" });
 });
 
 router.post("/login", userController.login);

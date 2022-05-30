@@ -1,3 +1,4 @@
+const session = require("express-session");
 const mongoose = require("./../../database/dbconnection");
 
 // Create userSchema with all fields
@@ -93,7 +94,7 @@ exports.createUser = (req, res) => {
 
             res.render("register", { pageName: "Registreren", errors });
         } else {
-            res.render("overviewClient", {pageName: "Gebruikers"});
+            res.render("overviewClient", { pageName: "Gebruikers" });
         }
     });
 };
@@ -143,16 +144,11 @@ exports.login = (req, res) => {
 
         users.forEach((user) => {
             if (user.emailAddress == emailAddress && user.password == password) {
-                session = req.session
-                session.userid = emailAddress
+                session = req.session;
+                session.userid = emailAddress;
+                session.roles = user.roles[0];
 
-                if (user.roles[0] === "coordinator") {
-                    res.render("overviewCoordinator")
-                } else if (user.roles[0] == "client") {
-                    res.render("overviewClient")
-                } else if (user.roles[0] == "member") {
-                    res.render("overviewMember")
-                }
+                res.send(`Ingelogd als: ${user.roles[0]}`);
             }
         });
     });
