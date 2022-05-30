@@ -70,8 +70,8 @@ exports.createUser = (req, res) => {
             // Show the errors on the register page
             res.render("register", { pageName: "Registreren", ...errors });
         } else {
-            // Login the user
-            res.render("login", { pageName: "Inloggen", emailAddress: emailAddress, password: password })
+            // Redirect to the login page so the new user can login
+            res.redirect("/login")
         }
     });
 };
