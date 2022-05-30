@@ -15,7 +15,7 @@ const userSchema = new mongoose.Schema({
         type: String,
         unique: true,
         validate: {
-            validator: function(v) {
+            validator: function (v) {
                 return /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(v);
             },
             message: (props) => `${props.value} is is geen geldig E-mailadres!`,
@@ -25,7 +25,7 @@ const userSchema = new mongoose.Schema({
     password: {
         type: String,
         validate: {
-            validator: function(v) {
+            validator: function (v) {
                 return /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z\d]{8,}$/.test(v);
             },
             message: (props) => `${props.value} is geen geldig wachtwoord!`,
@@ -42,7 +42,7 @@ const User = mongoose.model("User", userSchema);
 
 // Functionality for getting all the users
 exports.getAllUsers = (req, res) => {
-    User.find(function(err, users) {
+    User.find(function (err, users) {
         if (err) throw err;
 
         mongoose.connection.close();
@@ -100,7 +100,7 @@ exports.createUser = (req, res) => {
 };
 // Functionality for getting user by id
 exports.getUserById = (req, res) => {
-    User.find({ _id: req.body._id }, function(err, users) {
+    User.find({ _id: req.body._id }, function (err, users) {
         if (err) throw err;
 
         mongoose.connection.close();
@@ -114,7 +114,7 @@ exports.getUserById = (req, res) => {
 };
 // Functionality for updating an user
 exports.updateUserById = (req, res) => {
-    User.findByIdAndUpdate(req.body._id, {...req.body }, function(err) {
+    User.findByIdAndUpdate(req.body._id, { ...req.body }, function (err) {
         if (err) throw err;
 
         mongoose.connection.close();
@@ -124,7 +124,7 @@ exports.updateUserById = (req, res) => {
 };
 // Functionality for deleting an user
 exports.deleteUserById = (req, res) => {
-    User.findByIdAndDelete(req.body._id, function(err) {
+    User.findByIdAndDelete(req.body._id, function (err) {
         if (err) throw err;
 
         mongoose.connection.close();
@@ -137,20 +137,18 @@ exports.deleteUserById = (req, res) => {
 exports.login = (req, res) => {
     const { emailAddress, password } = req.body;
 
-    User.find(function(err, users) {
+    User.find(function (err, users) {
         if (err) throw err;
 
         mongoose.connection.close();
 
         users.forEach((user) => {
             if (user.emailAddress == emailAddress && user.password == password) {
-
                 session = req.session;
                 session.userid = user._id;
                 session.roles = user.roles[0];
 
                 res.send(`Ingelogd als: ${user.roles[0]}`);
-
             }
         });
     });
