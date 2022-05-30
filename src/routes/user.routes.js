@@ -17,13 +17,13 @@ router.post("/register", userController.createUser);
 //login client
 router.get("/login", (req, res) => {
     var session = req.session;
-  
+
     if (session.userRoles == "coordinator") {
-        res.render("overviewCoordinator")
+        res.render("overviewCoordinator");
     } else if (session.userRoles == "client") {
-        res.render("overviewClient")
+        res.render("overviewClient");
     } else if (session.userRoles == "member") {
-        res.render("overviewMember")
+        res.render("overviewMember");
     } else {
         res.render("login", { pageName: "Inloggen" });
     }
@@ -32,6 +32,8 @@ router.get("/login", (req, res) => {
 router.get("/user_overview", (req, res) => {
     res.render("user_overview", { pageName: "Gebruikers" });
 });
+
+router.post("/invite_member", userController.inviteMember);
 
 router.post("/login", userController.login);
 
