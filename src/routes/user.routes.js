@@ -10,7 +10,7 @@ const router = express.Router();
 //register client
 router.get("/register", (req, res) => {
     // res.render("register", { firstNameErr: "", lastNameErr: "", emailAddressErr: "", passwordErr: "" });
-    res.render("register");
+    res.render("register", { pageName: "Registreren" });
 });
 
 router.post("/register", userController.createUser);
@@ -22,10 +22,10 @@ router.get("/login", (req, res) => {
     if (session.userid) {
         res.send("Welcome User!");
     } else {
-        res.render("login");
+        res.render("login", { pageName: "Inloggen" });
     }
-})
+});
 
-router.post("/login", userController.login)
+router.post("/login", userController.login);
 
 module.exports = router;
