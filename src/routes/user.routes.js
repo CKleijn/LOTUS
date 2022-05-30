@@ -14,21 +14,36 @@ router.get("/register", (req, res) => {
 
 router.post("/register", userController.createUser);
 
+router.get("/logout", (req, res) => {
+    req.session.destroy()
+    return res.redirect("/login")
+})
+
 //login client
 router.get("/login", (req, res) => {
-    var session = req.session;
+    var session = req.session
 
     if (session.userid && session.roles && session.firstname) {
-        res.render("dashboard", { pageName: "Dashboard", roles: session.roles, firstName: session.firstname })
+        return res.redirect("/dashboard")
     } else {
         res.render("login", { pageName: "Inloggen" });
     }
 });
 
+router.post("/login", userController.login);
+
+router.get("/dashboard", (req, res) => {
+    var session = req.session
+
+    if (session.userid && session.roles && session.firstname) {
+        res.render("dashboard", { pageName: "Dashboard", roles: session.roles, firstName: session.firstname })
+    } else {
+        res.redirect("/login")
+    }
+})
+
 router.get("/user_overview", (req, res) => {
     res.render("user_overview", { pageName: "Gebruikers" });
 });
-
-router.post("/login", userController.login);
 
 module.exports = router;
