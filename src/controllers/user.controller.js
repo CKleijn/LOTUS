@@ -144,9 +144,9 @@ exports.login = (req, res) => {
         users.forEach((user) => {
             if (user.emailAddress == emailAddress && user.password == password) {
                 session = req.session
-                session.userid = emailAddress
+                session.userRoles = user.roles[0]
 
-                if (user.roles[0] === "coordinator") {
+                if (user.roles[0] == "coordinator") {
                     res.render("overviewCoordinator")
                 } else if (user.roles[0] == "client") {
                     res.render("overviewClient")
