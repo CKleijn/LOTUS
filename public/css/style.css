@@ -1,3 +1,9 @@
+:root {
+    --mainColor: #197278;
+    --secondaryColor: #edddd4;
+    --hoverTextColor: #23a0a9;
+}
+
 * {
     margin: 0;
     padding: 0;
@@ -17,7 +23,7 @@
     z-index: 10;
 }
 
-#active:checked~.wrapper {
+#active:checked ~ .wrapper {
     right: 0;
 }
 
@@ -64,16 +70,16 @@
     transition: background 0.6s;
 }
 
-#active:checked+.menu-btn span {
+#active:checked + .menu-btn span {
     transform: scaleX(0);
 }
 
-#active:checked+.menu-btn:before {
+#active:checked + .menu-btn:before {
     transform: rotate(45deg);
     border-color: #fff;
 }
 
-#active:checked+.menu-btn:after {
+#active:checked + .menu-btn:after {
     transform: rotate(-45deg);
     border-color: #fff;
 }
@@ -142,7 +148,7 @@ input[type="checkbox"] {
     font-weight: 600;
 }
 
-#active:checked~.wrapper ul li a {
+#active:checked ~ .wrapper ul li a {
     opacity: 1;
 }
 
@@ -151,7 +157,7 @@ input[type="checkbox"] {
     transform: translateX(100px);
 }
 
-#active:checked~.wrapper ul li a {
+#active:checked ~ .wrapper ul li a {
     transform: none;
     transition-timing-function: ease, cubic-bezier(0.1, 1.3, 0.3, 1);
     transition-delay: 0.6s;
@@ -160,16 +166,19 @@ input[type="checkbox"] {
 
 .form-error {
     color: red;
+    margin-top: 15px;
+    margin-bottom: 0;
+    height: 25px;
 }
 
 /* START - REGISTER */
 .form-bg {
-    background: linear-gradient(to right, #197278 50%, #EDDDD4 50%);
+    background: linear-gradient(to right, var(--mainColor) 50%, var(--secondaryColor) 50%);
 }
 
 .form-horizontal {
     background-color: #fff;
-    font-family: 'Arimo', sans-serif;
+    font-family: "Arimo", sans-serif;
     text-align: center;
     padding: 50px 30px 50px;
     box-shadow: 12px 12px 0 0 rgba(0, 0, 0, 0.3);
@@ -204,7 +213,7 @@ input[type="checkbox"] {
     margin: 0;
 }
 
-.form-horizontal .form-group>i {
+.form-horizontal .form-group > i {
     color: #999;
     transform: translateY(-50%);
     position: absolute;
@@ -222,7 +231,7 @@ input[type="checkbox"] {
     padding: 5px 10px 2px 25px;
     box-shadow: 0 0 0 0 transparent;
     border: none;
-    border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+    border-bottom: 1px solid rgba(0, 0, 0, 0.2);
     border-radius: 0;
     display: inline-block;
 }
@@ -233,13 +242,13 @@ input[type="checkbox"] {
 }
 
 .form-horizontal .form-control:focus {
-    border-bottom: 1px solid #F4F3EE;
+    border-bottom: 1px solid #f4f3ee;
     box-shadow: none;
 }
 
 .form-horizontal .btn {
-    color: #197278;
-    background-color: #F4F3EE;
+    color: var(--mainColor);
+    background-color: #f4f3ee;
     font-size: 18px;
     font-weight: 700;
     letter-spacing: 1px;
@@ -257,13 +266,13 @@ input[type="checkbox"] {
 .form-horizontal .btn:focus,
 .form-horizontal .btn:hover {
     color: #fff;
-    background-color: #197278;
+    background-color: var(--mainColor);
 }
 
 .form-horizontal .btn:before,
 .form-horizontal .btn:after {
-    content: '';
-    background-color: #197278;
+    content: "";
+    background-color: var(--mainColor);
     height: 50%;
     width: 2px;
     position: absolute;
@@ -288,14 +297,14 @@ input[type="checkbox"] {
 }
 
 .form-horizontal .create_account {
-    color: #197278;
+    color: var(--mainColor);
     font-size: 16px;
     font-weight: 600;
     display: inline-block;
 }
 
 .form-horizontal .create_account:hover {
-    color: #EDDDD4;
+    color: var(--hoverTextColor);
     text-decoration: none;
 }
 /* END - REGISTER */
