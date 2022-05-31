@@ -1,10 +1,10 @@
-const session = require("express-session");
 const User = require("./../models/user.model");
 const bcrypt = require("bcrypt");
 
 exports.isLoggedIn = (req, res, next) => {
-    var session = req.session;
+    const session = req.session;
 
+    console.log(session);
     if (session.userid && session.roles && session.firstname) {
         next();
     } else {
@@ -25,6 +25,8 @@ exports.login = (req, res) => {
                 session.userid = user._id;
                 session.roles = user.roles[0];
                 session.firstname = user.firstName;
+
+                console.log(user);
 
                 return res.redirect("/");
             }
