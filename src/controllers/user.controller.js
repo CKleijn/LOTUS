@@ -24,6 +24,7 @@ exports.createUser = (req, res) => {
         emailAddress: emailAddress,
         password: password,
         roles: "client",
+        lastLoginDate: Date.now(),
     });
 
     // Save user object in database and show errors if they exists

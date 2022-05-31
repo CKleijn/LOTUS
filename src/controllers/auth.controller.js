@@ -3,8 +3,6 @@ const bcrypt = require("bcrypt");
 
 exports.isLoggedIn = (req, res, next) => {
     const session = req.session;
-
-    console.log(session);
     if (session.userid && session.roles && session.firstname) {
         next();
     } else {
@@ -16,22 +14,43 @@ exports.isLoggedIn = (req, res, next) => {
 exports.login = (req, res) => {
     const { emailAddress, password } = req.body;
 
-    User.find(function (err, users) {
-        if (err) throw err;
+    const emailRegex = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
 
-        users.forEach((user) => {
-            if (emailAddress == user.emailAddress && bcrypt.compareSync(password, user.password)) {
-                var session = req.session;
-                session.userid = user._id;
-                session.roles = user.roles[0];
-                session.firstname = user.firstName;
+    if (emailRegex.test(emailAddress)) {
+        User.findOne({ emailAddress: emailAddress }, (err, user) => {
+            if (err) throw err;
 
-                console.log(user);
+            if (user != null) {
+                if (bcrypt.compareSync(password, user.password)) {
+                    let firstLogin = false;
 
-                return res.redirect("/");
+                    if (typeof user.lastLoginDate == "undefined") {
+                        firstLogin = true;
+                    }
+
+                    User.findOneAndUpdate({ _id: user._id }, { lastLoginDate: Date.now() }, { new: true }, (err, updatedUser) => {
+                        if (err) throw err;
+
+                        if (firstLogin === true) {
+                            return res.redirect("/member_setup");
+                        } else {
+                            let session = req.session;
+                            session.userid = updatedUser._id;
+                            session.roles = updatedUser.roles[0];
+                            session.firstname = updatedUser.firstName;
+                            return res.redirect("/");
+                        }
+                    });
+                } else {
+                    res.render("login", { pageName: "Inloggen", err: "Ingevulde wachtwoord is onjuist!", oldMailValue: emailAddress });
+                }
+            } else {
+                res.render("login", { pageName: "Inloggen", err: "Er bestaat geen gebruiker met deze e-mailadres!", oldMailValue: emailAddress });
             }
         });
-    });
+    } else {
+        res.render("login", { pageName: "Inloggen", err: "Ingevulde e-mailadres is niet geldig!", oldMailValue: emailAddress });
+    }
 };
 
 exports.logout = (req, res) => {
@@ -45,4 +64,8 @@ exports.getRegisterPage = (req, res) => {
 
 exports.getLoginPage = (req, res) => {
     res.render("login", { pageName: "Inloggen" });
+};
+
+exports.getSetupPage = (req, res) => {
+    res.render("member_setup", { pageName: "Accountgegevens instellen" });
 };
