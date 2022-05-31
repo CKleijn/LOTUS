@@ -1,6 +1,6 @@
 <%- include("./header/header") %>
 
-    <section class="vh-100" style="background-color: #eee">
+    <section id="dashboard" class="vh-100" style="background-color: #eee">
         <div class="container h-100">
             <div class="row d-flex justify-content-center align-items-center h-100">
                 <div class="col-lg-12 col-xl-11">
@@ -11,10 +11,15 @@
                                     <p class="text-center h1 fw-bold mb-5 mx-1 mx-md-6 mt-4">Dashboard</p>
                                     <p class="text-center h1 fw-bold mb-5 mx-1 mx-md-6 mt-4">Welkom <% if (roles == "coordinator") {%>coördinator<%} else if (roles == "client") {%>opdrachtgever<%} else if (roles == "member") {%>lid<%} %> <%=firstName%> %></p>
                                     <form action="/logout" method="GET">
-                                        <div>
+                                        <div> 
                                             <button type="logout" class="btn btn-danger">Uitloggen</button>
                                         </div>
                                     </form>
+                                    <div vertical-align>
+                                        <div class="card">
+                                            <i class="fa-solid fa-user fa-10x"></i>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                         </div>

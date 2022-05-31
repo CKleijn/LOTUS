@@ -158,6 +158,12 @@ input[type="checkbox"] {
     transform: translateX(-100px);
 }
 
+#dashboard .card {
+    display:flex;
+    justify-content: center;
+    align-items: center;
+}
+
 .form-error {
     color: red;
 }
