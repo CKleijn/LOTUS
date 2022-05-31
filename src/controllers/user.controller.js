@@ -2,7 +2,6 @@ const session = require("express-session");
 const bcrypt = require("bcrypt");
 const mongoose = require("./../../database/dbconnection");
 const { sendMemberInviteMail } = require("./../controllers/mail.controller");
-
 const User = require("./../models/user.model");
 
 // // Functionality for getting all the users
@@ -19,17 +18,12 @@ const User = require("./../models/user.model");
 exports.createUser = (req, res) => {
     // Declare all variables out of req.body
     const { firstName, lastName, emailAddress, password, roles } = req.body;
-    // Hash password if password isn't empty
-    let hashedPassword;
-    if (password !== "") {
-        hashedPassword = bcrypt.hashSync(password, bcrypt.genSaltSync());
-    }
     // Create new user object
     const user = new User({
         firstName: firstName,
         lastName: lastName,
         emailAddress: emailAddress,
-        password: hashedPassword,
+        password: password,
         roles: "client",
     });
 
@@ -42,7 +36,7 @@ exports.createUser = (req, res) => {
 
             if (err.keyValue != undefined) {
                 if (err.keyValue.emailAddress == emailAddress) {
-                    errors.emailAddressErr = "E-mailadres bestaat al!";
+                    errors.emailAddressErr = "E-mailadres is al in gebruik!";
                 }
             } else {
                 if (err.errors.firstName) {
