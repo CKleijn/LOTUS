@@ -1,6 +1,6 @@
-// Create userSchema with all fields
 const mongoose = require("./../../database/dbconnection");
-
+const bcrypt = require("bcrypt");
+// Create userSchema with all fields
 const userSchema = new mongoose.Schema({
     firstName: {
         type: String,
@@ -12,6 +12,7 @@ const userSchema = new mongoose.Schema({
     },
     emailAddress: {
         type: String,
+        unique: true,
         validate: {
             validator: function (v) {
                 return /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(v);
@@ -22,6 +23,12 @@ const userSchema = new mongoose.Schema({
     },
     password: {
         type: String,
+        validate: {
+            validator: function (v) {
+                return /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z\d]{8,}$/.test(v);
+            },
+            message: (props) => `${props.value} is geen geldig wachtwoord!`,
+        },
         required: [true, "Wachtwoord is verplicht!"],
     },
     roles: {
@@ -29,6 +36,12 @@ const userSchema = new mongoose.Schema({
         enum: ["coordinator", "client", "member"],
         required: [true, "Minstens één rol verplicht!"],
     },
+});
+// Hash password before saving user
+userSchema.pre('save', function () {
+    let user = this;
+    // Hash password if password isn't empty
+    user.password = bcrypt.hashSync(user.password, bcrypt.genSaltSync());
 });
 // Create a User model
 module.exports = mongoose.model("User", userSchema);
