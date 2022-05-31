@@ -164,11 +164,27 @@ input[type="checkbox"] {
     transform: translateX(-100px);
 }
 
-#dashboard .card {
-    display:flex;
-    justify-content: center;
-    align-items: center;
+/* START - DASHBOARD */
+
+#dashboard .logout_button {
+    padding: 25px;
 }
+
+#dashboard .menu_item {
+    padding: 10px;
+}
+
+#dashboard .menu_item_image {
+    text-decoration: none;
+    color: black;
+}
+
+#dashboard .menu_item_image:hover {
+    text-decoration: none;
+    color: grey;
+}
+
+/* END - DASHBOARD */
 
 .form-error {
     color: red;
@@ -313,6 +329,7 @@ input[type="checkbox"] {
     color: var(--hoverTextColor);
     text-decoration: none;
 }
+
 /* END - REGISTER */
 
 @media screen and (max-width: 600px) {
