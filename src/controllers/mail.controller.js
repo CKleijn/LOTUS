@@ -1,6 +1,6 @@
 const nodemailer = require("nodemailer");
 
-exports.sendMemberInviteMail = async (email, subject, text) => {
+exports.sendMemberInviteMail = async (email, password) => {
     try {
         const transporter = nodemailer.createTransport({
             host: process.env.MAILING_HOST,
@@ -18,8 +18,14 @@ exports.sendMemberInviteMail = async (email, subject, text) => {
         let options = {
             from: process.env.MAILING_EMAIL,
             to: email,
-            subject: subject,
-            text: text,
+            subject: "LOTUS-Kring Here We Go logingegevens",
+            html: `Goedendag,
+            'U kunt inloggen met devolgende gegevens:'
+            'E-mailadres: ${email}'
+            'Wachtwoord: ${password}'
+    
+            'Met vriendelijke groet,'
+            'Lotus-Kring Here We Go Team.'`,
         };
 
         await transporter.sendMail(options, (err, data) => {

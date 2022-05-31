@@ -2,6 +2,7 @@ const bcrypt = require("bcrypt");
 const mongoose = require("./../../database/dbconnection");
 const { sendMemberInviteMail } = require("./../controllers/mail.controller");
 const User = require("./../models/user.model");
+const passGenerator = require("generate-password");
 
 // // Functionality for getting all the users
 // exports.getAllUsers = (req, res) => {
@@ -13,10 +14,11 @@ const User = require("./../models/user.model");
 //         res.render("", { users });
 //     });
 // };
+
 // Functionality for creating an user
 exports.createUser = (req, res) => {
     // Declare all variables out of req.body
-    const { firstName, lastName, emailAddress, password, roles } = req.body;
+    const { firstName, lastName, emailAddress, password } = req.body;
     // Create new user object
     const user = new User({
         firstName: firstName,
@@ -91,7 +93,9 @@ exports.createMember = (req, res) => {
             const result = await this.getUserByEmailAddress(req, res);
 
             if (result.length === 0) {
-                // await sendMemberInviteMail(emailAddress, "LOTUS-Kring Here We Go Accountgegevens", "Klik hier om je aan te melden!");
+                const password = await insertMember(emailAddress);
+                await sendMemberInviteMail(emailAddress, password);
+
                 res.redirect("/user_overview");
             } else {
                 res.render("user_overview", { pageName: "Gebruikers", emailAddressErr: "Dit e-mailadres is al in gebruik!" });
@@ -100,6 +104,22 @@ exports.createMember = (req, res) => {
     } else {
         res.render("user_overview", { pageName: "Gebruikers", emailAddressErr: "Het ingevulde e-mailadres is ongeldig!" });
     }
+};
+
+const insertMember = async (emailAddress) => {
+    const password = passGenerator.generate({ length: 10, numbers: true, uppercase: true, lowercase: true });
+
+    const user = new User({
+        firstName: "",
+        lastName: "",
+        emailAddress: emailAddress,
+        password: password,
+        roles: "member",
+    });
+
+    user.save({ validateBeforeSave: false });
+
+    return password;
 };
 
 // // Functionality for updating an user
