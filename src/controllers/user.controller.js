@@ -1,6 +1,7 @@
 const session = require("express-session");
 const bcrypt = require("bcrypt");
 const mongoose = require("./../../database/dbconnection");
+const { sendMemberInviteMail } = require("./../controllers/mail.controller");
 const User = require("./../models/user.model");
 
 // // Functionality for getting all the users
@@ -25,6 +26,7 @@ exports.createUser = (req, res) => {
         password: password,
         roles: "client",
     });
+
     // Save user object in database and show errors if they exists
     user.save((err) => {
         if (err) {
@@ -64,11 +66,42 @@ exports.createUser = (req, res) => {
             // Show the errors on the register page
             res.render("register", { pageName: "Registreren", ...errors });
         } else {
-            // Login the user
-            res.render("login", { pageName: "Inloggen", emailAddress: emailAddress, password: password })
+            // Redirect to the login page so the new user can login
+            res.redirect("/login")
         }
     });
 };
+
+// Functionality for getting user by email
+exports.getUserByEmailAddress = async (req, res) => {
+    try {
+        return await User.find({ emailAddress: req.body.emailAddress }).exec();
+    } catch (err) {
+        throw err;
+    }
+};
+
+// Functionality for getting user by id
+exports.inviteMember = (req, res) => {
+    const emailAddress = req.body.emailAddress;
+    const emailRegex = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
+
+    if (emailRegex.test(emailAddress)) {
+        (async () => {
+            const result = await this.getUserByEmailAddress(req, res);
+
+            if (result.length === 0) {
+                await sendMemberInviteMail(emailAddress, "Aanmeldlink Lotus Here We Go", "Klik hier om je aan te melden!");
+                res.redirect("/user_overview");
+            } else {
+                res.render("user_overview", { pageName: "Gebruikers", emailAddressErr: "Dit e-mailadres is al in gebruik!" });
+            }
+        })();
+    } else {
+        res.render("user_overview", { pageName: "Gebruikers", emailAddressErr: "Het ingevulde e-mailadres is ongeldig!" });
+    }
+};
+
 // Functionality for getting user by id
 // exports.getUserById = (req, res) => {
 //     User.find({ _id: req.body._id }, function (err, users) {
@@ -111,7 +144,7 @@ exports.login = (req, res) => {
     User.find(function (err, users) {
         if (err) throw err;
 
-        mongoose.connection.close();
+        
 
         users.forEach((user) => {
             if (emailAddress == user.emailAddress && bcrypt.compareSync(password, user.password)) {
@@ -120,7 +153,7 @@ exports.login = (req, res) => {
                 session.roles = user.roles[0];
                 session.firstname = user.firstName
 
-                res.render("dashboard", { pageName: "Dashboard", roles: user.roles[0], firstName: user.firstName })
+                return res.redirect("/dashboard")
             }
         });
     });

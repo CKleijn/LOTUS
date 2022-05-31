@@ -1,8 +1,7 @@
 const express = require("express");
 const cookieParser = require("cookie-parser");
 
-const dotenv = require("dotenv");
-dotenv.config();
+require("dotenv").config();
 
 const sessions = require("express-session");
 const homeRoutes = require(__dirname + "/src/routes/home.routes");
