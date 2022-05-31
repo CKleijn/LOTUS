@@ -1,3 +1,5 @@
 exports.getHomepage = (req, res) => {
-    res.render("index", { pageName: "Home" });
+    const session = req.session;
+
+    res.render("dashboard", { pageName: "Dashboard", roles: session.roles, firstName: session.firstname });
 };

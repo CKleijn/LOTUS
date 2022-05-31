@@ -36,9 +36,16 @@ const userSchema = new mongoose.Schema({
         enum: ["coordinator", "client", "member"],
         required: [true, "Minstens één rol verplicht!"],
     },
+    createdDate: {
+        type: Date,
+        default: Date.now,
+    },
+    lastLoginDate: {
+        type: Date,
+    },
 });
 // Hash password before saving user
-userSchema.pre('save', function () {
+userSchema.pre("save", function () {
     let user = this;
     // Hash password if password isn't empty
     user.password = bcrypt.hashSync(user.password, bcrypt.genSaltSync());
