@@ -67,7 +67,7 @@ exports.createUser = (req, res) => {
             res.render("register", { pageName: "Registreren", ...errors });
         } else {
             // Redirect to the login page so the new user can login
-            res.redirect("/login")
+            res.redirect("login");
         }
     });
 };
