@@ -158,6 +158,12 @@ input[type="checkbox"] {
     transform: translateX(-100px);
 }
 
+#dashboard .card {
+    display:flex;
+    justify-content: center;
+    align-items: center;
+}
+
 @media screen and (max-width: 600px) {
     .wrapper ul li a {
         font-size: 30px;

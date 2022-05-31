@@ -117,8 +117,6 @@ exports.login = (req, res) => {
     User.find(function (err, users) {
         if (err) throw err;
 
-        
-
         users.forEach((user) => {
             if (emailAddress == user.emailAddress && bcrypt.compareSync(password, user.password)) {
                 var session = req.session;
