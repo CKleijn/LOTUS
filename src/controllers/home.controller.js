@@ -1,3 +1,5 @@
+const session = require("express-session");
+
 exports.getHomepage = (req, res) => {
-    res.render("index", { pageName: "Home" });
+    res.render("dashboard", { pageName: "Dashboard", roles: session.roles, firstName: session.firstname });
 };

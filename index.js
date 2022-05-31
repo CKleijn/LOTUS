@@ -6,6 +6,7 @@ require("dotenv").config();
 const sessions = require("express-session");
 const homeRoutes = require(__dirname + "/src/routes/home.routes");
 const userRoutes = require(__dirname + "/src/routes/user.routes");
+const authRoutes = require(__dirname + "/src/routes/auth.routes");
 
 const app = express();
 
@@ -25,6 +26,8 @@ app.use(cookieParser());
 app.use(express.urlencoded({ extended: true }));
 app.set("view engine", "ejs");
 app.use(express.static("public"));
+
+app.use(authRoutes);
 
 app.use(homeRoutes);
 

@@ -1,4 +1,3 @@
-const session = require("express-session");
 const bcrypt = require("bcrypt");
 const mongoose = require("./../../database/dbconnection");
 const { sendMemberInviteMail } = require("./../controllers/mail.controller");
@@ -67,7 +66,7 @@ exports.createUser = (req, res) => {
             res.render("register", { pageName: "Registreren", ...errors });
         } else {
             // Redirect to the login page so the new user can login
-            res.redirect("/login")
+            res.redirect("/login");
         }
     });
 };
@@ -82,7 +81,7 @@ exports.getUserByEmailAddress = async (req, res) => {
 };
 
 // Functionality for getting user by id
-exports.inviteMember = (req, res) => {
+exports.createMember = (req, res) => {
     const emailAddress = req.body.emailAddress;
     const emailRegex = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
 
@@ -91,7 +90,7 @@ exports.inviteMember = (req, res) => {
             const result = await this.getUserByEmailAddress(req, res);
 
             if (result.length === 0) {
-                await sendMemberInviteMail(emailAddress, "Aanmeldlink Lotus Here We Go", "Klik hier om je aan te melden!");
+                // await sendMemberInviteMail(emailAddress, "LOTUS-Kring Here We Go Accountgegevens", "Klik hier om je aan te melden!");
                 res.redirect("/user_overview");
             } else {
                 res.render("user_overview", { pageName: "Gebruikers", emailAddressErr: "Dit e-mailadres is al in gebruik!" });
@@ -102,20 +101,6 @@ exports.inviteMember = (req, res) => {
     }
 };
 
-// Functionality for getting user by id
-// exports.getUserById = (req, res) => {
-//     User.find({ _id: req.body._id }, function (err, users) {
-//         if (err) throw err;
-
-//         mongoose.connection.close();
-
-//         if (users.length > 0) {
-//             res.render("", { users });
-//         } else {
-//             console.log(`User with an ID of ${req.body._id} doesn't exist!`);
-//         }
-//     });
-// };
 // // Functionality for updating an user
 // exports.updateUserById = (req, res) => {
 //     User.findByIdAndUpdate(req.body._id, { ...req.body }, function (err) {
@@ -136,25 +121,3 @@ exports.inviteMember = (req, res) => {
 //         console.log(`User with an ID of ${req.body._id} has been deleted successfully!`);
 //     });
 // };
-
-//Functionality for login
-exports.login = (req, res) => {
-    const { emailAddress, password } = req.body;
-
-    User.find(function (err, users) {
-        if (err) throw err;
-
-        
-
-        users.forEach((user) => {
-            if (emailAddress == user.emailAddress && bcrypt.compareSync(password, user.password)) {
-                var session = req.session;
-                session.userid = user._id;
-                session.roles = user.roles[0];
-                session.firstname = user.firstName
-
-                return res.redirect("/dashboard")
-            }
-        });
-    });
-};
