@@ -3,3 +3,7 @@ exports.getHomepage = (req, res) => {
 
     res.render("dashboard", { pageName: "Dashboard", roles: session.roles, firstName: session.firstname });
 };
+
+exports.sendMessage = (req, res) => {
+    res.send("Clicked on " + req.originalUrl.replace("/", "") + ".")
+}
