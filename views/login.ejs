@@ -8,17 +8,15 @@
                 <form action="/login" method="POST" class="form-horizontal">
                     <div class="heading">Inloggen</div>
                     <div class="form-group">
-                        <input type="text" name="emailAddress" class="form-control" placeholder="E-mailadres" value="<% if(typeof oldValues !== "undefined"){%><%=oldValues.emailAdress%><%}%>"/>
-                        <label class="form-label form-error"><% if(typeof emailAddressErr != "undefined"){%><%=emailAddressErr%><%}%></label>
+                        <input type="text" name="emailAddress" class="form-control" placeholder="E-mailadres" value="<% if(typeof oldMailValue !== "undefined"){%><%=oldMailValue%><%}%>"/>
                     </div>
                     <div class="form-group">
-                        <input type="password" name="password" class="form-control" placeholder="Wachtwoord" value="<% if(typeof oldValues !== "undefined"){%><%=oldValues.password%><%}%>"/>
-                        <label class="form-label form-error"><% if(typeof passwordErr != "undefined"){%><%=passwordErr%><%}%></label>
+                        <input type="password" name="password" class="form-control" placeholder="Wachtwoord"/>
+                        <label class="form-label form-error"><% if(typeof err != "undefined"){%><%=err%><%}%></label>
                     </div>
                     <div class="form-group">
                         <button type="submit" class="btn btn-default"><i class="fa fa-arrow-right"></i></button>
                         <span>Nog geen account als opdrachtgever? <a href="/register" class="create_account">Registreer hier</a></span>
-
                     </div>
                 </form>
             </div>

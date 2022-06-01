@@ -28,19 +28,18 @@ exports.login = (req, res) => {
                         firstLogin = true;
                     }
 
-                    User.findOneAndUpdate({ _id: user._id }, { lastLoginDate: Date.now() }, { new: true }, (err, updatedUser) => {
-                        if (err) throw err;
-
-                        if (firstLogin === true) {
-                            return res.redirect("/member_setup");
-                        } else {
+                    if (firstLogin === true) {
+                        return res.redirect("/member_setup");
+                    } else {
+                        User.findOneAndUpdate({ _id: user._id }, { lastLoginDate: Date.now() }, { new: true }, (err, updatedUser) => {
+                            if (err) throw err;
                             let session = req.session;
                             session.userid = updatedUser._id;
                             session.roles = updatedUser.roles[0];
                             session.firstname = updatedUser.firstName;
                             return res.redirect("/");
-                        }
-                    });
+                        });
+                    }
                 } else {
                     res.render("login", { pageName: "Inloggen", err: "Ingevulde wachtwoord is onjuist!", oldMailValue: emailAddress });
                 }
