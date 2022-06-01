@@ -17,7 +17,7 @@ const userSchema = new mongoose.Schema({
             validator: function(v) {
                 return /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(v);
             },
-            message: (props) => `${props.value} is is geen geldig E-mailadres!`,
+            message: (props) => `${props.value} is geen geldig E-mailadres!`,
         },
         required: [true, "E-mailadres is verplicht!"],
     },
