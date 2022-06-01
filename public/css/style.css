@@ -158,6 +158,17 @@ input[type="checkbox"] {
     transform: translateX(-100px);
 }
 
+.form-heading {
+    color: #555;
+    font-size: 22px;
+    font-weight: 200;
+}
+
+.form-assignment-horizontal {
+    width: 100%;
+    margin: 5%;
+}
+
 /* START - DASHBOARD */
 
 #dashboard .menu_item {
