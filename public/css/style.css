@@ -18,7 +18,7 @@
     right: -100%;
     height: 100%;
     width: 100%;
-    background: #000;
+    background: var(--mainColor);
     transition: all 0.6s ease-in-out;
     z-index: 10;
 }
@@ -117,12 +117,6 @@
     transform: scaleY(1);
 }
 
-.nav-logo {
-    width: auto;
-    margin: 20px;
-    height: 80px;
-}
-
 input[type="checkbox"] {
     display: none;
 }
@@ -166,22 +160,46 @@ input[type="checkbox"] {
 
 /* START - DASHBOARD */
 
-#dashboard .logout_button {
-    padding: 25px;
-}
-
 #dashboard .menu_item {
     padding: 10px;
 }
 
 #dashboard .menu_item_image {
     text-decoration: none;
-    color: black;
+    color: var(--mainColor);
 }
 
 #dashboard .menu_item_image:hover {
     text-decoration: none;
-    color: grey;
+    color: var(--hoverTextColor);
+}
+
+#dashboard .dashboard_title {
+    color: #555;
+    font-size: 30px;
+    font-weight: 600;
+    letter-spacing: 1px;
+    text-transform: capitalize;
+    margin: 0 0 20px 0;
+}
+
+#dashboard .dashboard_subtitle {
+    color: #555;
+    font-size: 18px;
+    font-weight: 200;
+}
+
+.dashboard {
+    background: linear-gradient(to right, var(--mainColor) 50%, var(--secondaryColor) 50%);
+}
+
+.dashboard_content {
+    background-color: #fff;
+    font-family: "Arimo", sans-serif;
+    text-align: center;
+    padding: 50px 30px 50px;
+    box-shadow: 12px 12px 0 0 rgba(0, 0, 0, 0.3);
+    justify-content: center;
 }
 
 /* END - DASHBOARD */
@@ -194,10 +212,11 @@ input[type="checkbox"] {
 }
 
 /* START - REGISTER */
+
 .form-bg {
     background: linear-gradient(to right, var(--mainColor) 50%, var(--secondaryColor) 50%);
 }
-
+ 
 .form-horizontal {
     background-color: #fff;
     font-family: "Arimo", sans-serif;
