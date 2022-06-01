@@ -16,26 +16,20 @@ exports.sendMemberInviteMail = async (email, password) => {
         });
 
         let options = {
-            from: process.env.MAILING_EMAIL,
+            from: process.env.MAILING_EMAIL_FROM,
             to: email,
-            subject: "LOTUS-Kring Here We Go logingegevens",
-            html: `Goedendag,
-            'U kunt inloggen met devolgende gegevens:'
-            'E-mailadres: ${email}'
-            'Wachtwoord: ${password}'
-    
-            'Met vriendelijke groet,'
-            'Lotus-Kring Here We Go Team.'`,
+            subject: "Accountgegevens",
+            html: "<!DOCTYPE html>" + "<html><head><title>Accoutgegevens</title>" + "</head><body><div>" + "<p>Hierbij jouw inloggegevens:</p>" + `<p>E-mailadres: ${email}<br>Wachtwoord: ${password}</p>` + "<p>Klik <a href='https://lotusherewego.herokuapp.com/login'>hier</a> om in te loggen</p>" + "<p>Met vriendelijke groet,<br>LOTUS-Kring Here We Go Team</p>" + "</div></body></html>",
         };
 
         await transporter.sendMail(options, (err, data) => {
             if (err) {
                 throw err;
             } else {
-                console.log("Sent: ", data.response);
+                console.log("Email has been send!");
             }
         });
     } catch (error) {
-        console.log(error, "Email not sent");
+        console.log(error, "Email did not send");
     }
 };
