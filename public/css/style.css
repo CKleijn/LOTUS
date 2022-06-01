@@ -209,6 +209,7 @@ input[type="checkbox"] {
     text-align: center;
     padding: 50px 30px 50px;
     box-shadow: 12px 12px 0 0 rgba(0, 0, 0, 0.3);
+    justify-content: center;
 }
 
 /* END - DASHBOARD */
