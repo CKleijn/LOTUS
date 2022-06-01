@@ -8,30 +8,11 @@ const router = express.Router();
 // router.put("/", userController.updateUserById);
 // router.delete("/", userController.updateUserById);
 
-//register client
-router.get("/register", (req, res) => {
-    // res.render("register", { firstNameErr: "", lastNameErr: "", emailAddressErr: "", passwordErr: "" });
-    res.render("register", { pageName: "Registreren" });
+router.get("/user_overview", (req, res) => {
+    res.render("user_overview", { pageName: "Gebruikers" });
 });
 
-router.post("/register", userController.createUser);
-
-//login client
-router.get("/login", (req, res) => {
-    var session = req.session;
-  
-    if (session.userRoles == "coordinator") {
-        res.render("overviewCoordinator")
-    } else if (session.userRoles == "client") {
-        res.render("overviewClient")
-    } else if (session.userRoles == "member") {
-        res.render("overviewMember")
-    } else {
-        res.render("login", { pageName: "Inloggen" });
-    }
-});
-
-router.post("/login", userController.login);
+router.post("/create_member", userController.createMember);
 
 router.get("/form", (req, res) => {
     res.render("form", { pageName: "Formulier" });
@@ -40,3 +21,4 @@ router.get("/form", (req, res) => {
 router.post("/form", formController.createForm);
 
 module.exports = router;
+
