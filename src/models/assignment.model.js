@@ -49,11 +49,11 @@ const assignmentSchema = new mongoose.Schema({
     // Factuur adres
     billingStreet: {
         type: String,
-        required: [true, "Straat is verplicht!"],
+        required: [true, "Factuur straat is verplicht!"],
     },
     billingHouseNumber: {
         type: Number,
-        required: [true, "Huisnummer is verplicht!"],
+        required: [true, "Factuur huisnummer is verplicht!"],
     },
     billingHouseNumberAddition: {
         type: String,
@@ -66,24 +66,24 @@ const assignmentSchema = new mongoose.Schema({
             },
             message: (props) => `${props.value} is geen geldig postcode!`,
         },
-        required: [true, "Postcode is verplicht!"],
+        required: [true, "Factuur postcode is verplicht!"],
     },
     billingTown: {
         type: String,
-        required: [true, "Plaats is verplicht"],
+        required: [true, "Factuur plaats is verplicht!"],
     },
     dateTime: {
-        type: Date,
+        type: String,
         required: [true, "Datum en tijd is verplicht"],
     },
     // Speelplaats
     playgroundStreet: {
         type: String,
-        required: [true, "Straat is verplicht!"],
+        required: [true, "Speelplaats straat is verplicht!"],
     },
     playgroundHouseNumber: {
         type: Number,
-        required: [true, "Huisnummer is verplicht!"],
+        required: [true, "Speelplaats huisnummer is verplicht!"],
     },
     playgroundHouseNumberAddition: {
         type: String,
@@ -96,11 +96,11 @@ const assignmentSchema = new mongoose.Schema({
             },
             message: (props) => `${props.value} is geen geldig postcode!`,
         },
-        required: [true, "Postcode is verplicht!"],
+        required: [true, "Speelplaats postcode is verplicht!"],
     },
     playgroundTown: {
         type: String,
-        required: [true, "Plaats is verplicht"],
+        required: [true, "Speelplaats plaats is verplicht!"],
     },
     amountOfLotusVictims: {
         type: Number,
