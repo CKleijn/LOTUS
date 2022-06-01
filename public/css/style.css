@@ -166,10 +166,6 @@ input[type="checkbox"] {
 
 /* START - DASHBOARD */
 
-#dashboard .logout_button {
-    padding: 25px;
-}
-
 #dashboard .menu_item {
     padding: 10px;
 }
