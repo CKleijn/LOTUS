@@ -15,6 +15,6 @@ router.post("/register", userController.createUser);
 
 router.get("/member_setup", authController.getSetupPage);
 
-// router.post("/member_setup", userController.createMember);
+router.post("/member_setup", authController.setupMember);
 
 module.exports = router;
