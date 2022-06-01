@@ -1,54 +1,29 @@
 <%- include("./header/header") %>
 
-    <section id="dashboard" class="vh-100 dashboard">
-        <div class="container h-100">
-            <div class="row d-flex justify-content-center align-items-center h-100">
-                <div class="col-lg-12 col-xl-11">
-                    <div style="border-radius: 25px">
-                        <div class="row justify-content-center">
-                            <div class="col-md-8 col-lg-8 col-xl-10 order-2 order-lg-1 dashboard_content">
-                                <p class="text-center h1 fw-bold mb-5 mx-1 mx-md-6 mt-4 dashboard_title">Dashboard</p>
-                                <p class="text-center h1 fw-bold mb-5 mx-1 mx-md-6 mt-4 dashboard_subtitle">Welkom <% if (roles == "coordinator") {%>coördinator<%} else if (roles == "client") {%>opdrachtgever<%} else if (roles == "member") {%>lid<%} %> <%=firstName%> %></p>
-                                <% if (roles == "coordinator") { %>
-                                    <div class="row">
-                                        <div class="col-sm-12 col-md-6 col-lg-6 menu_item">
-                                            <a href="/user_overview"><i class="fa-solid fa-user fa-7x menu_item_image"></i></a>
-                                        </div>
-                                        <div class="col-sm-12 col-md-6 col-lg-6 menu_item">
-                                            <a href="/assignment_overview"><i class="fa-solid fa-pen-to-square fa-7x menu_item_image"></i></a>
-                                        </div>
-                                    </div>
-                                    <div class="row">
-                                        <div class="col-sm-12 col-md-6 col-lg-6 menu_item">
-                                            <a href="/request_overview"><i class="fa-solid fa-comment fa-7x menu_item_image"></i></a>
-                                        </div>
-                                        <div class="col-sm-12 col-md-6 col-lg-6 menu_item">
-                                            <a href="/settings"><i class="fa-solid fa-gear fa-7x menu_item_image"></i></a>
-                                        </div>
-                                    </div>
-                                <% } else if (roles == "client") { %>
-                                    <div class="row">
-                                        <div class="col-sm-12 col-md-6 col-lg-6 menu_item">
-                                            <a href="/assignment_overview"><i class="fa-solid fa-pen-to-square fa-7x menu_item_image"></i></a>
-                                        </div>
-                                        <div class="col-sm-12 col-md-6 col-lg-6 menu_item">
-                                            <a href="/settings"><i class="fa-solid fa-gear fa-7x menu_item_image"></i></a>
-                                        </div>
-                                    </div>
-                                <% } else if (roles == "member") { %>
-                                    <div class="row">
-                                        <div class="col-sm-12 col-md-6 col-lg-6 menu_item">
-                                            <a href="/assignment_overview"><i class="fa-solid fa-pen-to-square fa-7x menu_item_image"></i></a>
-                                        </div>
-                                        <div class="col-sm-12 col-md-6 col-lg-6 menu_item">
-                                            <a href="/settings"><i class="fa-solid fa-gear fa-7x menu_item_image"></i></a>
-                                        </div>
-                                    </div>
-                                <% } %>
-                            </div>
-                        </div>
-                    </div>
+    <section id="dashboard" class="dashboard">
+        <div class="container">
+            <div class="row dashboard_row">
+                <div class="col-12 dashboard_content">
+                    <p class="text-center h1 fw-bold mb-5 mx-1 mx-md-6 mt-4 dashboard_title">Dashboard</p>
+                    <p class="text-center h1 fw-bold mb-5 mx-1 mx-md-6 mt-4 dashboard_subtitle">Welkom <% if (roles == "coordinator") {%>coördinator<%} else if (roles == "client") {%>opdrachtgever<%} else if (roles == "member") {%>lid<%} %> <%=firstName%> %></p>
                 </div>
+                <% if (roles == "coordinator") { %>
+                        <div class="col-sm-12 col-md-3 col-lg-3">
+                            <a href="/user_overview"><i class="fa-solid fa-user fa-7x menu_item_image"></i></a>
+                        </div>
+                        <div class="col-sm-12 col-md-3 col-lg-3">
+                            <a href="/request_overview"><i class="fa-solid fa-comment fa-7x menu_item_image"></i></a>
+                        </div>
+                <% } %>
+            
+                <% if (roles == "client" || roles == "coordinator" || roles == "member") { %>
+                        <div class="col-sm-12 col-md-3 col-lg-3">
+                            <a href="/assignment_overview"><i class="fa-solid fa-pen-to-square fa-7x menu_item_image"></i></a>
+                        </div>
+                        <div class="col-sm-12 col-md-3 col-lg-3">
+                            <a href="/settings"><i class="fa-solid fa-gear fa-7x menu_item_image"></i></a>
+                        </div>
+                <% } %>
             </div>
         </div>
     </section>
