@@ -8,10 +8,6 @@ const router = express.Router();
 // router.put("/", userController.updateUserById);
 // router.delete("/", userController.updateUserById);
 
-router.get("/user_overview", (req, res) => {
-    res.render("user_overview", { pageName: "Gebruikers" });
-});
-
 router.post("/create_member", userController.createMember);
 
 router.get("/form", (req, res) => {
