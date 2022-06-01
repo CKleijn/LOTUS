@@ -7,6 +7,7 @@ const sessions = require("express-session");
 const homeRoutes = require(__dirname + "/src/routes/home.routes");
 const userRoutes = require(__dirname + "/src/routes/user.routes");
 const authRoutes = require(__dirname + "/src/routes/auth.routes");
+const assignmentRoutes = require(__dirname + "/src/routes/assignment.routes");
 
 const app = express();
 
@@ -32,6 +33,8 @@ app.use(authRoutes);
 app.use(homeRoutes);
 
 app.use(userRoutes);
+
+app.use(assignmentRoutes);
 
 app.listen(port, () => {
     console.log("Server running at " + port);
