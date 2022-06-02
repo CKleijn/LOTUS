@@ -1,0 +1,71 @@
+<%- include("header/header") %>
+
+
+<main>
+  <div class="container">
+
+    <section class="section register min-vh-100 d-flex flex-column align-items-center justify-content-center py-4">
+      <div class="container">
+        <div class="row justify-content-center">
+          <div class="col-lg-4 col-md-6 d-flex flex-column align-items-center justify-content-center">
+
+            <div class="card mb-3">
+
+              <div class="card-body">
+
+                <div class="pt-4 pb-2">
+                  <h5 class="card-title text-center pb-0 fs-4">Account aanmaken</h5>
+                  <p class="text-center small">als opdrachtgever</p>
+                </div>
+
+                <form class="row g-3 needs-validation" action="register" method="POST">
+                  <div class="col-12">
+                    <label class="form-label">Voornaam</label>
+                    <input type="text" name="firstName" class="form-control" value="<% if(typeof oldValues != "undefined"){%><%=oldValues.firstName%><%}%>">
+                    <label class="form-error"><% if(typeof firstNameErr != "undefined"){%><%=firstNameErr%><%}%></label>
+
+                  </div>
+
+                  <div class="col-12">
+                    <label class="form-label">Achternaam</label>
+                    <input type="text" name="lastName" class="form-control" value="<% if(typeof oldValues != "undefined"){%><%=oldValues.lastName%><%}%>">
+                    <label class="form-error"><% if(typeof lastNameErr != "undefined"){%><%=lastNameErr%><%}%></label>
+
+                  </div>
+
+                  <div class="col-12">
+                    <label class="form-label">E-mailadres</label>
+                    <input type="text" name="emailAddress" class="form-control" value="<% if(typeof oldValues != "undefined"){%><%=oldValues.emailAddress%><%}%>">
+                    <label class="form-error"><% if(typeof emailAddressErr != "undefined"){%><%=emailAddressErr%><%}%></label>
+
+                  </div>
+
+                  <div class="col-12">
+                    <label class="form-label">Wachtwoord</label>
+                      <input type="password" name="password" class="form-control" value="<% if(typeof oldValues != "undefined"){%><%=oldValues.password%><%}%>">
+                      <label class="form-error"><% if(typeof passwordErr != "undefined"){%><%=passwordErr%><%}%></label>
+              
+                  </div>
+        
+                  <div class="col-12">
+                    <button class="btn btn-primary w-100" type="submit">Account aanmaken</button>
+                  </div>
+                  <div class="col-12">
+                    <p class="small mb-0">Heb je al een account? <a href="login">Log hier in</a></p>
+                  </div>
+                </form>
+
+              </div>
+            </div>
+
+
+          </div>
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+</main><!-- End #main -->
+
+<%- include("footer/footer") %>
