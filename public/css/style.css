@@ -1,0 +1,380 @@
+:root {
+    --mainColor: #197278;
+    --secondaryColor: #edddd4;
+    --hoverTextColor: #23a0a9;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: "Lato", sans-serif;
+    font-family: "Oswald", sans-serif;
+}
+
+.wrapper {
+    position: fixed;
+    top: 0;
+    right: -100%;
+    height: 100%;
+    width: 100%;
+    background: var(--mainColor);
+    transition: all 0.6s ease-in-out;
+    z-index: 10;
+}
+
+#active:checked ~ .wrapper {
+    right: 0;
+}
+
+.menu-btn {
+    position: absolute;
+    z-index: 2;
+    right: 20px;
+    top: 20px;
+    height: 50px;
+    width: 50px;
+    text-align: center;
+    line-height: 50px;
+    border-radius: 50%;
+    font-size: 20px;
+    cursor: pointer;
+    z-index: 11;
+    transition: all 0.3s ease-in-out;
+}
+
+.menu-btn span,
+.menu-btn:before,
+.menu-btn:after {
+    content: "";
+    position: absolute;
+    top: calc(50% - 1px);
+    left: 30%;
+    width: 40%;
+    border-bottom: 2px solid #000;
+    transition: transform 0.6s cubic-bezier(0.215, 0.61, 0.355, 1);
+}
+
+.menu-btn:before {
+    transform: translateY(-8px);
+}
+
+.menu-btn:after {
+    transform: translateY(8px);
+}
+
+.close {
+    z-index: 1;
+    height: 100%;
+    pointer-events: none;
+    transition: background 0.6s;
+}
+
+#active:checked + .menu-btn span {
+    transform: scaleX(0);
+}
+
+#active:checked + .menu-btn:before {
+    transform: rotate(45deg);
+    border-color: #fff;
+}
+
+#active:checked + .menu-btn:after {
+    transform: rotate(-45deg);
+    border-color: #fff;
+}
+
+.wrapper ul {
+    position: absolute;
+    top: 60%;
+    left: 50%;
+    height: 90%;
+    transform: translate(-50%, -50%);
+    list-style: none;
+    text-align: center;
+}
+
+.wrapper ul li {
+    height: 10%;
+    margin: 15px 0;
+}
+
+.wrapper ul li a {
+    text-decoration: none;
+    font-size: 40px;
+    font-weight: 500;
+    padding: 5px 0px;
+    color: #fff;
+    border-radius: 50px;
+    line-height: 50px;
+    opacity: 0;
+    transition: all 0.3s ease;
+    transition: transform 0.6s cubic-bezier(0.215, 0.61, 0.355, 1);
+    width: fit-content;
+}
+
+.wrapper ul li a:hover:after {
+    transform: scaleY(1);
+}
+
+.menuCheckbox {
+    display: none;
+}
+
+.content {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: -1;
+    text-align: center;
+    width: 100%;
+    color: #202020;
+}
+
+.content .title {
+    font-size: 40px;
+    font-weight: 700;
+}
+
+.content p {
+    font-size: 35px;
+    font-weight: 600;
+}
+
+#active:checked ~ .wrapper ul li a {
+    opacity: 1;
+}
+
+.wrapper ul li a {
+    transition: opacity 1.2s, transform 1.2s cubic-bezier(0.215, 0.61, 0.355, 1);
+    transform: translateX(100px);
+}
+
+#active:checked ~ .wrapper ul li a {
+    transform: none;
+    transition-timing-function: ease, cubic-bezier(0.1, 1.3, 0.3, 1);
+    transform: translateX(-100px);
+}
+
+.form-heading {
+    color: #555;
+    font-size: 22px;
+    font-weight: 200;
+}
+
+.form-assignment-horizontal {
+    width: 100%;
+    margin: 5%;
+}
+
+/* START - DASHBOARD */
+
+#dashboard .menu_item {
+    padding: 10px;
+}
+
+#dashboard .menu_item_image {
+    text-decoration: none;
+    color: var(--mainColor);
+    border-radius: 60px;
+    box-shadow: 0 0 2px #888;
+    padding: 0.5em 0.6em;
+    margin-bottom: 150px;
+}
+
+#dashboard .menu_item_image:hover {
+    text-decoration: none;
+    color: var(--hoverTextColor);
+}
+
+#dashboard .dashboard_title {
+    color: #555;
+    font-size: 30px;
+    font-weight: 600;
+    letter-spacing: 1px;
+    text-transform: capitalize;
+    margin: 0 0 20px 0;
+}
+
+#dashboard .dashboard_subtitle {
+    color: #555;
+    font-size: 18px;
+    font-weight: 200;
+}
+
+.dashboard {
+    background: linear-gradient(to right, var(--mainColor) 50%, var(--secondaryColor) 50%);
+}
+
+.dashboard_content {
+    background-color: #fff;
+    font-family: "Arimo", sans-serif;
+    padding: 50px 30px 50px;
+}
+
+.dashboard_row {
+    background-color: white;
+    height: 100vh;
+}
+
+/* END - DASHBOARD */
+
+.form-error {
+    color: red;
+    margin-top: 15px;
+    margin-bottom: 0;
+    height: 25px;
+}
+
+/* START - REGISTER */
+
+.form-bg {
+    background: linear-gradient(to right, var(--mainColor) 50%, var(--secondaryColor) 50%);
+}
+
+.form-horizontal {
+    background-color: #fff;
+    font-family: "Arimo", sans-serif;
+    text-align: center;
+    padding: 50px 30px 50px;
+    box-shadow: 12px 12px 0 0 rgba(0, 0, 0, 0.3);
+}
+
+.form-horizontal .heading {
+    color: #555;
+    font-size: 30px;
+    font-weight: 600;
+    letter-spacing: 1px;
+    text-transform: capitalize;
+    margin: 0 0 20px 0;
+}
+
+.form-horizontal .heading .subheading {
+    color: #555;
+    font-size: 18px;
+    font-weight: 200;
+    text-transform: lowercase;
+}
+
+.form-horizontal .form-group {
+    margin: 0 auto 30px;
+    position: relative;
+}
+
+.form-horizontal .form-group:nth-last-child(2) {
+    margin-bottom: 20px;
+}
+
+.form-horizontal .form-group:last-child {
+    margin: 0;
+}
+
+.form-horizontal .form-group > i {
+    color: #999;
+    transform: translateY(-50%);
+    position: absolute;
+    left: 5px;
+    top: 50%;
+}
+
+.form-horizontal .form-control {
+    text-align: center;
+    color: #555;
+    background-color: #fff;
+    font-size: 17px;
+    letter-spacing: 1px;
+    height: 40px;
+    padding: 5px 10px 2px 25px;
+    box-shadow: 0 0 0 0 transparent;
+    border: none;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.2);
+    border-radius: 0;
+    display: inline-block;
+}
+
+.form-control::placeholder {
+    color: rgba(0, 0, 0, 0.3);
+    font-size: 16px;
+}
+
+.form-horizontal .form-control:focus {
+    border-bottom: 1px solid #f4f3ee;
+    box-shadow: none;
+}
+
+.form-horizontal .btn {
+    color: var(--mainColor);
+    background-color: #f4f3ee;
+    font-size: 18px;
+    font-weight: 700;
+    letter-spacing: 1px;
+    border-radius: 5px;
+    width: 50%;
+    height: 45px;
+    padding: 7px 30px;
+    margin: 0 auto 25px;
+    border: none;
+    display: block;
+    position: relative;
+    transition: all 0.3s ease;
+}
+
+.form-horizontal .btn:focus,
+.form-horizontal .btn:hover {
+    color: #fff;
+    background-color: var(--mainColor);
+}
+
+.form-horizontal .btn:before,
+.form-horizontal .btn:after {
+    content: "";
+    background-color: var(--mainColor);
+    height: 50%;
+    width: 2px;
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    z-index: 1;
+    transition: all 0.3s;
+}
+
+.form-horizontal .btn:after {
+    bottom: auto;
+    top: 0;
+    left: auto;
+    right: 0;
+}
+
+.form-horizontal .btn:hover:before,
+.form-horizontal .btn:hover:after {
+    height: 100%;
+    width: 50%;
+    opacity: 0;
+}
+
+.form-horizontal .create_account {
+    color: var(--mainColor);
+    font-size: 16px;
+    font-weight: 600;
+    display: inline-block;
+}
+
+.form-horizontal .create_account:hover {
+    color: var(--hoverTextColor);
+    text-decoration: none;
+}
+
+/* END - REGISTER */
+
+@media screen and (max-width: 600px) {
+    .wrapper ul li a {
+        font-size: 30px;
+    }
+}
+
+@media screen and (max-width: 400px) {
+    .wrapper ul li a {
+        font-size: 20px;
+    }
+}
