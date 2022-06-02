@@ -62,7 +62,7 @@ exports.createAssignment = (req, res) => {
             } else {
                 errors.oldValues.emailAddress = req.body.emailAddress;
             }
-          
+
             if (err.errors.street) {
                 errors.streetErr = err.errors.street.properties.message;
             } else {
@@ -201,7 +201,7 @@ exports.createAssignment = (req, res) => {
                 errors.oldValues.comments = req.body.comments;
             }
             // Show the errors on the assignment page
-            res.render("assignment", { pageName: "Formulier", ...errors });
+            res.render("assignment", { pageName: "Formulier", session: req.session.user, ...errors });
         } else {
             // Redirect to the dashboard
             res.redirect("/");

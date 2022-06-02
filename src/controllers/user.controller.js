@@ -99,11 +99,11 @@ exports.createMember = (req, res) => {
 
                 res.redirect("/user_overview");
             } else {
-                res.render("user_overview", { pageName: "Gebruikers", emailAddressErr: "Dit e-mailadres is al in gebruik!" });
+                res.render("user_overview", { pageName: "Gebruikers", session: req.session.user, emailAddressErr: "Dit e-mailadres is al in gebruik!" });
             }
         })();
     } else {
-        res.render("user_overview", { pageName: "Gebruikers", emailAddressErr: "Het ingevulde e-mailadres is ongeldig!" });
+        res.render("user_overview", { pageName: "Gebruikers", session: req.session.user, emailAddressErr: "Het ingevulde e-mailadres is ongeldig!" });
     }
 };
 
