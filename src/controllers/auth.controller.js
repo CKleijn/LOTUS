@@ -143,7 +143,7 @@ exports.getRegisterPage = (req, res) => {
 };
 
 exports.getLoginPage = (req, res) => {
-    res.render("login", { pageName: "Inloggen" });
+    res.render("login", { pageName: "Inloggen", isCreated: req.flash("isCreated") });
 };
 
 exports.getSetupPage = (req, res) => {
