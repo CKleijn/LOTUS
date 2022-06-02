@@ -164,7 +164,7 @@ exports.createAssignment = (req, res) => {
             res.render("assignment", { pageName: "Formulier", session: req.session.user, ...errors });
         } else {
             // Redirect to the dashboard
-            res.redirect("dashboard");
+            res.redirect("/");
         }
     });
 };
