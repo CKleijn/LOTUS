@@ -7,7 +7,7 @@ const cryptr = new Cryptr(process.env.EMAIL_SETUP_HASH);
 exports.isLoggedIn = (req, res, next) => {
     const session = req.session;
 
-    if (typeof session.user !== "undefined") {
+    if (typeof session.user != "undefined") {
         next();
     } else {
         res.redirect("/login");
@@ -16,7 +16,7 @@ exports.isLoggedIn = (req, res, next) => {
 
 exports.isNotLoggedIn = (req, res, next) => {
     const session = req.session;
-    if (typeof session.user !== "undefined") {
+    if (typeof session.user != "undefined") {
         res.redirect("back");
     } else {
         next();
