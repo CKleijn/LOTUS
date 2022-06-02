@@ -102,6 +102,32 @@ const assignmentSchema = new mongoose.Schema({
         type: String,
         required: [true, "Speelplaats plaats is verplicht!"],
     },
+    // Grimeer
+    makeUpStreet: {
+        type: String,
+    },
+    makeUpHouseNumber: {
+        type: Number,
+    },
+    makeUpHouseNumberAddition: {
+        type: String,
+    },
+    makeUpPostalCode: {
+        type: String,
+        validate: {
+            validator: function(v) {
+                if(v == "") {
+                    return true;
+                } else {
+                    return /^[1-9][0-9]{3} ?(?!sa|sd|ss)[a-z]{2}$/i.test(v);
+                }
+            },
+            message: (props) => `${props.value} is geen geldig postcode!`,
+        },
+    },
+    makeUpTown: {
+        type: String,
+    },
     amountOfLotusVictims: {
         type: Number,
         min: [1,"Aantal LOTUS slachtoffers moet minimaal 1 zijn!"],
