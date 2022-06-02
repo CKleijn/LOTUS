@@ -117,7 +117,7 @@
     transform: scaleY(1);
 }
 
-input[type="checkbox"] {
+.menuCheckbox {
     display: none;
 }
 
