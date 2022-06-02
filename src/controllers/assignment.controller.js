@@ -36,8 +36,6 @@ exports.createAssignment = (req, res) => {
         amountOfLotusVictims: amountOfLotusVictims,
         comments: comments,
     });
-
-    console.log(req.body)
     // Save assignment object in database and show errors if they exists
     assignment.save((err) => {
         if (err) {
@@ -207,4 +205,8 @@ exports.createAssignment = (req, res) => {
             res.redirect("/");
         }
     });
+};
+
+exports.getAssignmentPage = (req, res) => {
+    res.render("assignment", { pageName: "Formulier", session: req.session.user });
 };
