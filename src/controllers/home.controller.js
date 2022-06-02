@@ -1,11 +1,11 @@
 exports.getHomepage = (req, res) => {
     const session = req.session;
 
-    res.render("dashboard", { pageName: "Dashboard", roles: session.roles, firstName: session.firstname });
+    res.render("dashboard", { pageName: "Dashboard", session: req.session.user });
 };
 
 exports.getUserOverview = (req, res) => {
-    res.render("user_overview", { pageName: "Gebruikers" });
+    res.render("user_overview", { pageName: "Gebruikers", session: req.session.user });
 };
 
 exports.sendMessage = (req, res) => {
