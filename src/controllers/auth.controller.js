@@ -1,11 +1,13 @@
 const User = require("./../models/user.model");
 const bcrypt = require("bcrypt");
 const Cryptr = require("cryptr");
+const { update } = require("./../models/user.model");
 const cryptr = new Cryptr(process.env.EMAIL_SETUP_HASH);
 
 exports.isLoggedIn = (req, res, next) => {
     const session = req.session;
-    if (typeof session !== "undefined") {
+
+    if (typeof session.user != "undefined") {
         next();
     } else {
         res.redirect("/login");
@@ -14,7 +16,7 @@ exports.isLoggedIn = (req, res, next) => {
 
 exports.isNotLoggedIn = (req, res, next) => {
     const session = req.session;
-    if (typeof session !== "undefined") {
+    if (typeof session.user != "undefined") {
         res.redirect("back");
     } else {
         next();
@@ -24,7 +26,7 @@ exports.isNotLoggedIn = (req, res, next) => {
 exports.isCoordinator = (req, res, next) => {
     const session = req.session;
 
-    if (session.roles === "coordinator") {
+    if (session.user.roles === "coordinator") {
         next();
     } else {
         res.redirect("back");
@@ -34,7 +36,7 @@ exports.isCoordinator = (req, res, next) => {
 exports.isClient = (req, res, next) => {
     const session = req.session;
 
-    if (session.roles === "client") {
+    if (session.user.roles === "client") {
         next();
     } else {
         res.redirect("back");
@@ -44,7 +46,7 @@ exports.isClient = (req, res, next) => {
 exports.isMember = (req, res, next) => {
     const session = req.session;
 
-    if (session.roles === "member") {
+    if (session.user.roles === "member") {
         next();
     } else {
         res.redirect("back");
@@ -73,12 +75,19 @@ exports.login = (req, res) => {
                         const encryptedEmail = cryptr.encrypt(emailAddress);
                         res.redirect(`/member_setup?t=${encryptedEmail}`);
                     } else {
-                        User.findOneAndUpdate({ _id: user._id }, { lastLoginDate: Date.now() }, { new: true }, (err, updatedUser) => {
+                        User.findOneAndUpdate({ _id: user._id }, { lastLoginDate: Date.now() }, { new: true }, (err, currentUser) => {
                             if (err) throw err;
                             let session = req.session;
-                            session.userid = updatedUser._id;
-                            session.roles = updatedUser.roles[0];
-                            session.firstname = updatedUser.firstName;
+                            session.user = {
+                                userId: currentUser._id,
+                                firstName: currentUser.firstName,
+                                lastName: currentUser.lastName,
+                                emailAddress: currentUser.emailAddress,
+                                roles: currentUser.roles[0],
+                                createdDate: currentUser.createdDate,
+                                lastLoginDate: currentUser.lastLoginDate,
+                            };
+
                             return res.redirect("/");
                         });
                     }
@@ -125,7 +134,7 @@ exports.setupMember = (req, res) => {
     }
 
     if (typeof errors.firstNameErr != "undefined" || typeof errors.lastNameErr != "undefined" || typeof errors.passwordErr != "undefined") {
-        res.render("member_setup", { pageName: "Accountgegevens", ...errors, email });
+        res.render("member_setup", { pageName: "Accountgegevens", session: req.session.user, ...errors, email });
     } else {
         User.findOneAndUpdate({ emailAddress: decryptedMail }, { firstName, lastName, password: bcrypt.hashSync(password, bcrypt.genSaltSync()), lastLoginDate: Date.now() }, { new: true }, (err, updatedUser) => {
             res.redirect("/login");
