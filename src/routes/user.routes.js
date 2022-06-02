@@ -1,6 +1,5 @@
 const express = require("express");
 const userController = require("./../controllers/user.controller");
-const formController = require("./../controllers/form.controller");
 const router = express.Router();
 
 // router.get("/getallusers", userController.getAllUsers);
@@ -9,12 +8,6 @@ const router = express.Router();
 // router.delete("/", userController.updateUserById);
 
 router.post("/create_member", userController.createMember);
-
-router.get("/form", (req, res) => {
-    res.render("form", { pageName: "Formulier" });
-});
-
-router.post("/form", formController.createForm);
 
 module.exports = router;
 
