@@ -74,7 +74,7 @@ const assignmentSchema = new mongoose.Schema({
     },
     dateTime: {
         type: String,
-        required: [true, "Datum en tijd is verplicht"],
+        required: [true, "Datum en tijd is verplicht!"],
     },
     // Speelplaats
     playgroundStreet: {
