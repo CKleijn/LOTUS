@@ -1,11 +1,13 @@
 const express = require("express");
 const homeController = require("./../controllers/home.controller");
-const { isLoggedIn } = require("./../controllers/auth.controller");
+const { isLoggedIn, isCoordinator } = require("./../controllers/auth.controller");
 const router = express.Router();
 
 router.get("/", isLoggedIn, homeController.getHomepage);
 
-router.get("/assignment_overview", isLoggedIn, homeController.sendMessage);
+router.get("/user_overview", isLoggedIn, isCoordinator, homeController.getUserOverview);
+
+router.get("/assignment_overview", isLoggedIn, isCoordinator, homeController.sendMessage);
 
 router.get("/request_overview", isLoggedIn, homeController.sendMessage);
 
