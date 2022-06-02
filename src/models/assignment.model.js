@@ -16,7 +16,7 @@ const assignmentSchema = new mongoose.Schema({
             validator: function(v) {
                 return /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(v);
             },
-            message: (props) => `${props.value} is geen geldig e-mailadres!`,
+            message: `Gebruik een geldig e-mailadres zoals j.doe@gmail.com!`,
         },
         required: [true, "E-mailadres is verplicht!"],
     },
@@ -38,7 +38,7 @@ const assignmentSchema = new mongoose.Schema({
             validator: function(v) {
                 return /^[1-9][0-9]{3} ?(?!sa|sd|ss)[a-z]{2}$/i.test(v);
             },
-            message: (props) => `${props.value} is geen geldig postcode!`,
+            message: `Gebruik een geldig postcode zoals 2973FD!`,
         },
         required: [true, "Postcode is verplicht!"],
     },
@@ -64,7 +64,7 @@ const assignmentSchema = new mongoose.Schema({
             validator: function(v) {
                 return /^[1-9][0-9]{3} ?(?!sa|sd|ss)[a-z]{2}$/i.test(v);
             },
-            message: (props) => `${props.value} is geen geldig postcode!`,
+            message: `Gebruik een geldig postcode zoals 2973FD!`,
         },
         required: [true, "Factuur postcode is verplicht!"],
     },
@@ -94,7 +94,7 @@ const assignmentSchema = new mongoose.Schema({
             validator: function(v) {
                 return /^[1-9][0-9]{3} ?(?!sa|sd|ss)[a-z]{2}$/i.test(v);
             },
-            message: (props) => `${props.value} is geen geldig postcode!`,
+            message: `Gebruik een geldig postcode zoals 2973FD!`,
         },
         required: [true, "Speelplaats postcode is verplicht!"],
     },
@@ -122,7 +122,7 @@ const assignmentSchema = new mongoose.Schema({
                     return /^[1-9][0-9]{3} ?(?!sa|sd|ss)[a-z]{2}$/i.test(v);
                 }
             },
-            message: (props) => `${props.value} is geen geldig postcode!`,
+            message: `Gebruik een geldig postcode zoals 2973FD!`,
         },
     },
     makeUpTown: {
