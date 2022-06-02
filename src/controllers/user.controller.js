@@ -15,7 +15,6 @@ const passGenerator = require("generate-password");
 //     });
 // };
 
-
 // Functionality for creating an user
 exports.createUser = (req, res) => {
     // Declare all variables out of req.body

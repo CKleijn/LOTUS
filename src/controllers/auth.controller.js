@@ -5,10 +5,49 @@ const cryptr = new Cryptr(process.env.EMAIL_SETUP_HASH);
 
 exports.isLoggedIn = (req, res, next) => {
     const session = req.session;
-    if (session.userid && session.roles && session.firstname) {
+    if (typeof session !== "undefined") {
         next();
     } else {
         res.redirect("/login");
+    }
+};
+
+exports.isNotLoggedIn = (req, res, next) => {
+    const session = req.session;
+    if (typeof session !== "undefined") {
+        res.redirect("back");
+    } else {
+        next();
+    }
+};
+
+exports.isCoordinator = (req, res, next) => {
+    const session = req.session;
+
+    if (session.roles === "coordinator") {
+        next();
+    } else {
+        res.redirect("back");
+    }
+};
+
+exports.isClient = (req, res, next) => {
+    const session = req.session;
+
+    if (session.roles === "client") {
+        next();
+    } else {
+        res.redirect("back");
+    }
+};
+
+exports.isMember = (req, res, next) => {
+    const session = req.session;
+
+    if (session.roles === "member") {
+        next();
+    } else {
+        res.redirect("back");
     }
 };
 
