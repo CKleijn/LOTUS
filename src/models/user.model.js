@@ -17,7 +17,7 @@ const userSchema = new mongoose.Schema({
             validator: function (v) {
                 return /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(v);
             },
-            message: (props) => `${props.value} is geen geldig e-mailadres!`,
+            message: `Gebruik een geldig e-mailadres zoals j.doe@gmail.com!`,
         },
         required: [true, "E-mailadres is verplicht!"],
     },
@@ -27,7 +27,7 @@ const userSchema = new mongoose.Schema({
             validator: function (v) {
                 return /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z\d]{8,}$/.test(v);
             },
-            message: (props) => `${props.value} is geen geldig wachtwoord!`,
+            message: `Gebruik minimaal 8 letters, 1 hoofdletter en 1 cijfer!`,
         },
         required: [true, "Wachtwoord is verplicht!"],
     },

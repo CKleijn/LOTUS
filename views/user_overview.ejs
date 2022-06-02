@@ -1,33 +1,101 @@
-<%- include("./header/header") %>
+<%- include("header/header") %>
 
-<section class="vh-100" style="background-color: #eee">
-    <div class="container h-100">
-        <div class="row d-flex justify-content-center align-items-center h-100">
-            <div class="col-lg-12 col-xl-11">
-                <div class="card text-black" style="border-radius: 25px">
-                    <div class="card-body p-md-5">
-                        <div class="row justify-content-center">
-                            <div class="col-md-10 col-lg-6 col-xl-5 order-2 order-lg-1">
-                                <form action="create_member" method="POST" class="mx-1 mx-md-4">
-                                    <div class="d-flex flex-row align-items-center mb-4">
-                                        <div class="form-outline flex-fill mb-0">
-                                            <label class="form-label" for="form3Example3c">E-mailadres:</label>
-                                            <input type="text" id="form3Example3c" name="emailAddress" class="form-control" value="<% if(typeof oldValues !== "undefined"){%><%=oldValues.emailAddress%><%}%>"/>
-                                            <label class="form-label" style="color: red; padding: 10px 0px"><% if(typeof emailAddressErr !== "undefined"){%><%=emailAddressErr%><%}%></label>
-                                        </div>
-                                    </div>
+<main id="main" class="main">
+    <div class="pagetitle">
+        <h1>Gebruikers</h1>
+        <nav>
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="/">Dashboard</a></li>
+                <li class="breadcrumb-item active">Gebruikers</li>
+            </ol>
+        </nav>
+    </div>
+    <!-- End Page Title -->
 
-                                    <div class="d-flex justify-content-center mb-4 mb-lg-4">
-                                        <button type="submit" class="btn btn-primary btn-block">Lid aanmaken</button>
-                                    </div>
-                                </form>
+    <section class="section dashboard">
+        <div class="row">
+            <!-- Left side columns -->
+            <div class="col-lg-8">
+                <div class="row">
+                    <!-- Recent Sales -->
+                    <div class="col-12">
+                        <div class="card recent-sales overflow-auto">
+                            <div class="card-body">
+                                <table class="table table-borderless datatable">
+                                    <thead>
+                                        <tr>
+                                            <th scope="col">Voornaam</th>
+                                            <th scope="col">Achternaam</th>
+                                            <th scope="col">E-mailadres</th>
+                                            <th scope="col">Rol</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td><%=session.firstName%></td>
+                                            <td><%=session.lastName%></td>
+                                            <td><a href="#" class="text-primary"><%=session.emailAddress%></a></td>
+                                            <td>Coördinator</td>
+                                        </tr>
+                                        <tr>
+                                            <td>Calvin</td>
+                                            <td>Kleijn</td>
+                                            <td><a href="#" class="text-primary">cl.kleijn@student.avans.nl</a></td>
+                                            <td>Opdrachtgever</td>
+                                        </tr>
+                                        <tr>
+                                            <td>Mick</td>
+                                            <td>Holster</td>
+                                            <td><a href="#" class="text-primary">mj.holster@student.avans.nl</a></td>
+                                            <td>Lid</td>
+                                        </tr>
+                                        <tr>
+                                            <td>Guus</td>
+                                            <td>van Damme</td>
+                                            <td><a href="#" class="text-primary">g.vandamme@student.avans.nl</a></td>
+                                            <td>Lid</td>
+                                        </tr>
+                                        <tr>
+                                            <td>Mike</td>
+                                            <td>van der Caaij</td>
+                                            <td><a href="#" class="text-primary">m.vandercaaij@student.avans.nl</a></td>
+                                            <td>Lid</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
                             </div>
                         </div>
                     </div>
+                    <!-- End Recent Sales -->
                 </div>
             </div>
-        </div>
-    </div>
-</section>
+            <!-- End Left side columns -->
 
-<%- include("./footer/footer") %>
+            <!-- Right side columns -->
+            <div class="col-lg-4">
+                <!-- Recent Activity -->
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">Lid aanmaken</h5>
+                        <form action="create_member" method="POST">
+                            <div class="col-12">
+                                <label class="form-label">E-mailadres</label>
+                                <input type="text" id="form3Example3c" name="emailAddress" class="form-control" value="<% if(typeof oldValues !== "undefined"){%><%=oldValues.emailAddress%><%}%>"/>
+                                <label class="form-label" style="color: red; padding: 10px 0px"><% if(typeof emailAddressErr !== "undefined"){%><%=emailAddressErr%><%}%></label>
+                            </div>
+
+                            <div class="col-12">
+                                <button class="btn btn-primary w-100" type="submit">Aanmaken</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+                <!-- End Recent Activity -->
+            </div>
+            <!-- End Right side columns -->
+        </div>
+    </section>
+</main>
+<!-- End #main -->
+
+<%- include("footer/footer") %>

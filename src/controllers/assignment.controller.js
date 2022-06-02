@@ -3,7 +3,10 @@ const Assignment = require("../models/assignment.model");
 // Functionality for creating an assignment
 exports.createAssignment = (req, res) => {
     // Declare all variables out of req.body
-    const { firstName, lastName, emailAddress, street, houseNumber, houseNumberAddition, postalCode, town, billingStreet, billingHouseNumber, billingHouseNumberAddition, billingPostalCode, billingTown, dateTime, playgroundStreet, playgroundHouseNumber, playgroundHouseNumberAddition, playgroundPostalCode, playgroundTown, amountOfLotusVictims, comments } = req.body;
+    const { firstName, lastName, emailAddress, street, houseNumber, houseNumberAddition, postalCode, town, billingStreet, 
+            billingHouseNumber, billingHouseNumberAddition, billingPostalCode, billingTown, dateTime, playgroundStreet, 
+            playgroundHouseNumber, playgroundHouseNumberAddition, playgroundPostalCode, playgroundTown, makeUpStreet,
+            makeUpHouseNumber, makeUpHouseNumberAddition, makeUpPostalCode, makeUpTown, amountOfLotusVictims, comments } = req.body;
     // Create new assignment object
     const assignment = new Assignment({
         firstName: firstName,
@@ -25,6 +28,11 @@ exports.createAssignment = (req, res) => {
         playgroundHouseNumberAddition: playgroundHouseNumberAddition,
         playgroundPostalCode: playgroundPostalCode,
         playgroundTown: playgroundTown,
+        makeUpStreet: makeUpStreet,
+        makeUpHouseNumber: makeUpHouseNumber,
+        makeUpHouseNumberAddition: makeUpHouseNumberAddition,
+        makeUpPostalCode: makeUpPostalCode,
+        makeUpTown: makeUpTown,
         amountOfLotusVictims: amountOfLotusVictims,
         comments: comments,
     });
@@ -98,7 +106,7 @@ exports.createAssignment = (req, res) => {
             if (err.errors.billingHouseNumberAddition) {
                 errors.billingHouseNumberAdditionErr = err.errors.billingHouseNumberAddition.properties.message;
             } else {
-                errors.oldValues.houseNumberAddition = req.body.billingHouseNumberAddition;
+                errors.oldValues.billingHouseNumberAddition = req.body.billingHouseNumberAddition;
             }
 
             if (err.errors.billingPostalCode) {
@@ -149,6 +157,36 @@ exports.createAssignment = (req, res) => {
                 errors.oldValues.playgroundTown = req.body.playgroundTown;
             }
 
+            if (err.errors.makeUpStreet) {
+                errors.makeUpStreetErr = err.errors.makeUpStreet.properties.message;
+            } else {
+                errors.oldValues.makeUpStreet = req.body.makeUpStreet;
+            }
+
+            if (err.errors.makeUpHouseNumber) {
+                errors.makeUpHouseNumberErr = err.errors.makeUpHouseNumber.properties.message;
+            } else {
+                errors.oldValues.makeUpHouseNumber = req.body.makeUpHouseNumber;
+            }
+
+            if (err.errors.makeUpHouseNumberAddition) {
+                errors.makeUpHouseNumberAdditionErr = err.errors.makeUpHouseNumberAddition.properties.message;
+            } else {
+                errors.oldValues.makeUpHouseNumberAddition = req.body.makeUpHouseNumberAddition;
+            }
+
+            if (err.errors.makeUpPostalCode) {
+                errors.makeUpPostalCodeErr = err.errors.makeUpPostalCode.properties.message;
+            } else {
+                errors.oldValues.makeUpPostalCode = req.body.makeUpPostalCode;
+            }
+
+            if (err.errors.makeUpTown) {
+                errors.makeUpTownErr = err.errors.makeUpTown.properties.message;
+            } else {
+                errors.oldValues.makeUpTown = req.body.makeUpTown;
+            }
+
             if (err.errors.amountOfLotusVictims) {
                 errors.amountOfLotusVictimsErr = err.errors.amountOfLotusVictims.properties.message;
             } else {
@@ -167,4 +205,8 @@ exports.createAssignment = (req, res) => {
             res.redirect("/");
         }
     });
+};
+
+exports.getAssignmentPage = (req, res) => {
+    res.render("assignment", { pageName: "Formulier", session: req.session.user });
 };
