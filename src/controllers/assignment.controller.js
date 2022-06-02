@@ -3,10 +3,7 @@ const Assignment = require("../models/assignment.model");
 // Functionality for creating an assignment
 exports.createAssignment = (req, res) => {
     // Declare all variables out of req.body
-    const { firstName, lastName, emailAddress, street, houseNumber, houseNumberAddition, postalCode, town, billingStreet, 
-            billingHouseNumber, billingHouseNumberAddition, billingPostalCode, billingTown, dateTime, playgroundStreet, 
-            playgroundHouseNumber, playgroundHouseNumberAddition, playgroundPostalCode, playgroundTown, amountOfLotusVictims, 
-            comments } = req.body;
+    const { firstName, lastName, emailAddress, street, houseNumber, houseNumberAddition, postalCode, town, billingStreet, billingHouseNumber, billingHouseNumberAddition, billingPostalCode, billingTown, dateTime, playgroundStreet, playgroundHouseNumber, playgroundHouseNumberAddition, playgroundPostalCode, playgroundTown, amountOfLotusVictims, comments } = req.body;
     // Create new assignment object
     const assignment = new Assignment({
         firstName: firstName,
@@ -55,7 +52,7 @@ exports.createAssignment = (req, res) => {
             } else {
                 errors.oldValues.emailAddress = req.body.emailAddress;
             }
-          
+
             if (err.errors.street) {
                 errors.streetErr = err.errors.street.properties.message;
             } else {
@@ -164,7 +161,7 @@ exports.createAssignment = (req, res) => {
                 errors.oldValues.comments = req.body.comments;
             }
             // Show the errors on the assignment page
-            res.render("assignment", { pageName: "Formulier", ...errors });
+            res.render("assignment", { pageName: "Formulier", session: req.session.user, ...errors });
         } else {
             // Redirect to the dashboard
             res.redirect("/");
