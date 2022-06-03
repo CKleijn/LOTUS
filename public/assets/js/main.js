@@ -304,13 +304,14 @@
     //     );
     // });
 
-    /**
-     * Initiate Datatables
-     */
-    // const datatables = select(".datatable", true);
-    // datatables.forEach((datatable) => {
-    //     new simpleDatatables.DataTable(datatable);
-    // });
+    $("#datatable").DataTable({
+        language: {
+            url: "http://cdn.datatables.net/plug-ins/1.12.1/i18n/nl-NL.json",
+        },
+        lengthMenu: false,
+        bLengthChange: false,
+        scrollX: true,
+    });
 
     /**
      * Autoresize echart charts

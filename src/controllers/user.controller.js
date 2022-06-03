@@ -223,16 +223,14 @@ const updateUserByEmail = async (user) => {
     }
 };
 
-// // Functionality for getting all the users
-// exports.getAllUsers = (req, res) => {
-//     User.find(function (err, users) {
-//         if (err) throw err;
+// Functionality for getting all the users
+exports.getAllUsers = async () => {
+    return await User.find();
+};
 
-//         mongoose.connection.close();
-
-//         res.render("", { users });
-//     });
-// };
+exports.getAllValidUsers = async () => {
+    return await User.find({ firstName: { $ne: "" }, lastName: { $ne: "" } });
+};
 
 // // Functionality for deleting an user
 // exports.deleteUserById = (req, res) => {
