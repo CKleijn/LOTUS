@@ -1,185 +1,166 @@
-<%- include("header/header") %> 
+<%- include("header/header") %>
 
-  <main id="main" class="main">
-
+<main id="main" class="main">
     <div class="pagetitle">
-      <h1>Mijn profiel</h1>
-      <nav>
-        <ol class="breadcrumb">
-          <li class="breadcrumb-item"><a href="/">Dashboard</a></li>
-          <li class="breadcrumb-item active">Mijn profiel</li>
-        </ol>
-      </nav>
-    </div><!-- End Page Title -->
+        <h1>Mijn profiel</h1>
+        <nav>
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="/">Dashboard</a></li>
+                <li class="breadcrumb-item active">Mijn profiel</li>
+            </ol>
+        </nav>
+    </div>
+    <!-- End Page Title -->
 
     <section class="section profile">
-      <div class="row">
-        <div class="col-xl-4">
+        <div class="row">
+            <div class="col-xl-4">
+                <div class="card">
+                    <div class="card-body profile-card pt-4 d-flex flex-column align-items-center">
+                        <img src="assets/img/avatar.jpg" alt="Profile" class="rounded-circle" />
+                        <h2><%= session.firstName + " " + session.lastName%></h2>
+                        <% let role = ""; switch(session.roles) { case "coordinator": role = "Coördinator"; break; case "client" : role = "Opdrachtgever"; break; case "member": role = "LOTUSslachtoffer"; break; } %>
 
-          <div class="card">
-            <div class="card-body profile-card pt-4 d-flex flex-column align-items-center">
-
-              <img src="assets/img/avatar.jpg" alt="Profile" class="rounded-circle">
-              <h2><%= session.firstName + " " + session.lastName%></h2>
-              <% let role = ""; switch(session.roles) { case "coordinator": role = "Coördinator"; break; case "client" : role = "Opdrachtgever"; break; case "member": role = "LOTUSslachtoffer"; break; } %>
-
-              <h3><%=role%></h3>
+                        <h3><%=role%></h3>
+                    </div>
+                </div>
             </div>
-          </div>
 
-        </div>
+            <div class="col-xl-8">
+                <div class="card">
+                    <div class="card-body pt-3">
+                        <!-- Bordered Tabs -->
+                        <ul class="nav nav-tabs nav-tabs-bordered">
+                            <li class="nav-item">
+                                <button class="nav-link active" data-bs-toggle="tab" data-bs-target="#profile-overview">Overzicht</button>
+                            </li>
 
-        <div class="col-xl-8">
+                            <li class="nav-item">
+                                <button class="nav-link" data-bs-toggle="tab" data-bs-target="#profile-edit">Persoonlijke gegevens wijzigen</button>
+                            </li>
 
-          <div class="card">
-            <div class="card-body pt-3">
-              <!-- Bordered Tabs -->
-              <ul class="nav nav-tabs nav-tabs-bordered">
+                            <li class="nav-item">
+                                <button class="nav-link" data-bs-toggle="tab" data-bs-target="#profile-change-password">Wachtwoord veranderen</button>
+                            </li>
+                        </ul>
+                        <div class="tab-content pt-2">
+                            <div class="tab-pane fade show active profile-overview" id="profile-overview">
+                                <h5 class="card-title">Persoonlijke gegevens</h5>
 
-                <li class="nav-item">
-                  <button class="nav-link active" data-bs-toggle="tab" data-bs-target="#profile-overview">Overzicht</button>
-                </li>
+                                <div class="row">
+                                    <div class="col-lg-3 col-md-4 label">Voornaam</div>
+                                    <div class="col-lg-9 col-md-8"><%= session.firstName %></div>
+                                </div>
 
-                <li class="nav-item">
-                  <button class="nav-link" data-bs-toggle="tab" data-bs-target="#profile-edit">Persoonlijke gegevens wijzigen</button>
-                </li>
+                                <div class="row">
+                                    <div class="col-lg-3 col-md-4 label">Achternaam</div>
+                                    <div class="col-lg-9 col-md-8"><%=session.lastName %></div>
+                                </div>
 
-                <li class="nav-item">
-                  <button class="nav-link" data-bs-toggle="tab" data-bs-target="#profile-change-password">Wachtwoord veranderen</button>
-                </li>
+                                <div class="row">
+                                    <div class="col-lg-3 col-md-4 label">E-mailadres</div>
+                                    <div class="col-lg-9 col-md-8"><%= session.emailAddress %></div>
+                                </div>
 
-              </ul>
-              <div class="tab-content pt-2">
+                                <div class="row">
+                                    <div class="col-lg-3 col-md-4 label">Rol</div>
+                                    <div class="col-lg-9 col-md-8"><%= role %></div>
+                                </div>
+                            </div>
+                            <div class="tab-pane fade profile-edit pt-3" id="profile-edit">
+                                <!-- Profile Edit Form -->
+                                <form action="change_user_profile" method="POST">
+                                    <div class="row mb-3">
+                                        <label for="fullName" class="col-md-4 col-lg-3 col-form-label">Voornaam</label>
+                                        <div class="col-md-8 col-lg-9">
+                                            <% if(typeof oldValues != "undefined" && typeof oldValues.firstName != "undefined") { %>
+                                            <input name="firstName" type="text" class="form-control" id="firstName" value="<%= oldValues.firstName %>" />
+                                            <% } else if (typeof firstNameErr != "undefined") { %>
+                                            <input name="firstName" type="text" class="form-control" id="firstName" />
+                                            <% } else { %>
+                                            <input name="firstName" type="text" class="form-control" id="firstName" value="<%= session.firstName %>" />
+                                            <% } %>
+                                            <label class="form-error"><% if(typeof firstNameErr != "undefined"){%><%=firstNameErr%><%}%></label>
+                                        </div>
+                                    </div>
 
-                <div class="tab-pane fade show active profile-overview" id="profile-overview">
-                  <h5 class="card-title">Persoonlijke gegevens</h5>
+                                    <div class="row mb-3">
+                                        <label for="fullName" class="col-md-4 col-lg-3 col-form-label">Achternaam</label>
+                                        <div class="col-md-8 col-lg-9">
+                                            <% if(typeof oldValues != "undefined" && typeof oldValues.lastName != "undefined") { %>
+                                            <input name="lastName" type="text" class="form-control" id="lastName" value="<%= oldValues.lastName %>" />
+                                            <% } else if (typeof lastNameErr != "undefined") { %>
+                                            <input name="lastName" type="text" class="form-control" id="lastName" />
+                                            <% } else { %>
+                                            <input name="lastName" type="text" class="form-control" id="lastName" value="<%= session.lastName %>" />
+                                            <% } %>
+                                            <label class="form-error"><% if(typeof lastNameErr != "undefined"){%><%=lastNameErr%><%}%></label>
+                                        </div>
+                                    </div>
 
-                  <div class="row">
-                    <div class="col-lg-3 col-md-4 label ">Voornaam</div>
-                    <div class="col-lg-9 col-md-8"><%= session.firstName %></div>
-                  </div>
+                                    <div class="row mb-3">
+                                        <label for="Email" class="col-md-4 col-lg-3 col-form-label">E-mailadres</label>
+                                        <div class="col-md-8 col-lg-9">
+                                            <% if(typeof oldValues != "undefined" && typeof oldValues.emailAddress != "undefined") { %>
+                                            <input name="emailAddress" type="text" class="form-control" id="Email" value="<%= oldValues.emailAddress %>" />
+                                            <% } else if (typeof emailAddressErr != "undefined") { %>
+                                            <input name="emailAddress" type="text" class="form-control" id="Email" />
+                                            <% } else { %>
+                                            <input name="emailAddress" type="text" class="form-control" id="Email" value="<%= session.emailAddress %>" />
+                                            <% } %>
 
-                  <div class="row">
-                    <div class="col-lg-3 col-md-4 label ">Achternaam</div>
-                    <div class="col-lg-9 col-md-8"><%=session.lastName %></div>
-                  </div>
+                                            <label class="form-error"><% if(typeof emailAddressErr != "undefined"){%><%=emailAddressErr%><%}%></label>
+                                        </div>
+                                    </div>
 
-                  <div class="row">
-                    <div class="col-lg-3 col-md-4 label">E-mailadres</div>
-                    <div class="col-lg-9 col-md-8"><%= session.emailAddress %></div>
-                  </div>
+                                    <div class="text-center">
+                                        <button type="submit" class="btn btn-primary">Wijzigingen opslaan</button>
+                                    </div>
+                                </form>
+                                <!-- End Profile Edit Form -->
+                            </div>
 
-                  <div class="row">
-                    <div class="col-lg-3 col-md-4 label">Rol</div>
-                    <div class="col-lg-9 col-md-8"><%= role %></div>
-                  </div>
+                            <div class="tab-pane fade pt-3" id="profile-change-password">
+                                <!-- Change Password Form -->
+                                <form action="change_password" method="POST">
+                                    <div class="row mb-3">
+                                        <label for="currentPassword" class="col-md-4 col-lg-3 col-form-label">Huidige wachtwoord</label>
+                                        <div class="col-md-8 col-lg-9">
+                                            <input name="currentPassword" type="password" class="form-control" id="currentPassword" value="<% if(typeof oldValues != "undefined" && typeof oldValues.oldPassword != "undefined"){%><%=oldValues.oldPassword%><%}%>">
+                                            <label class="form-error"><% if(typeof currentPasswordErr != "undefined"){%><%=currentPasswordErr%><%}%></label>
+                                        </div>
+                                    </div>
 
+                                    <div class="row mb-3">
+                                        <label for="newPassword" class="col-md-4 col-lg-3 col-form-label">Nieuwe wachtwoord</label>
+                                        <div class="col-md-8 col-lg-9">
+                                            <input name="newPassword" type="password" class="form-control" id="newPassword" />
+                                            <label class="form-error"><% if(typeof newPasswordErr != "undefined"){%><%=newPasswordErr%><%}%></label>
+                                        </div>
+                                    </div>
+
+                                    <div class="row mb-3">
+                                        <label for="renewPassword" class="col-md-4 col-lg-3 col-form-label">Bevestig wachtwoord</label>
+                                        <div class="col-md-8 col-lg-9">
+                                            <input name="confirmPassword" type="password" class="form-control" id="renewPassword" />
+                                            <label class="form-error"><% if(typeof confirmPasswordErr != "undefined"){%><%=confirmPasswordErr%><%}%></label>
+                                        </div>
+                                    </div>
+
+                                    <div class="text-center">
+                                        <button type="submit" class="btn btn-primary">Wachtwoord wijzigen</button>
+                                    </div>
+                                </form>
+                                <!-- End Change Password Form -->
+                            </div>
+                        </div>
+                        <!-- End Bordered Tabs -->
+                    </div>
                 </div>
-
-                <div class="tab-pane fade profile-edit pt-3" id="profile-edit">
-
-                  <!-- Profile Edit Form -->
-                  <form action="change_user_profile" method="POST">
-                    <div class="row mb-3">
-                      <label for="fullName" class="col-md-4 col-lg-3 col-form-label">Voornaam</label>
-                      <div class="col-md-8 col-lg-9">
-                        <% if(typeof oldValues != "undefined" && typeof oldValues.firstName != "undefined") { %> 
-                          <input name="firstName" type="text" class="form-control" id="firstName" value="<%= oldValues.firstName %>">
-                        <% } else if (typeof firstNameErr != "undefined") { %> 
-                          <input name="firstName" type="text" class="form-control" id="firstName">
-                        <% } else { %> 
-                          <input name="firstName" type="text" class="form-control" id="firstName" value="<%= session.firstName %>">
-                        <% } %> 
-                        <label class="form-error"><% if(typeof firstNameErr != "undefined"){%><%=firstNameErr%><%}%></label>
-
-                      </div>
-                    </div>
-
-                    <div class="row mb-3">
-                      <label for="fullName" class="col-md-4 col-lg-3 col-form-label">Achternaam</label>
-                      <div class="col-md-8 col-lg-9">
-                        <% if(typeof oldValues != "undefined" && typeof oldValues.lastName != "undefined") { %> 
-                          <input name="lastName" type="text" class="form-control" id="lastName" value="<%= oldValues.lastName %>">
-                        <% } else if (typeof lastNameErr != "undefined") { %> 
-                          <input name="lastName" type="text" class="form-control" id="lastName">
-                        <% } else { %> 
-                          <input name="lastName" type="text" class="form-control" id="lastName" value="<%= session.lastName %>">
-                        <% } %> 
-                        <label class="form-error"><% if(typeof lastNameErr != "undefined"){%><%=lastNameErr%><%}%></label>
-
-                      </div>
-                    </div>
-
-                    <div class="row mb-3">
-                      <label for="Email" class="col-md-4 col-lg-3 col-form-label">E-mailadres</label>
-                      <div class="col-md-8 col-lg-9">
-                        <% if(typeof oldValues != "undefined" && typeof oldValues.emailAddress != "undefined") { %> 
-                          <input name="emailAddress" type="text" class="form-control" id="Email" value="<%= oldValues.emailAddress %>">
-                        <% } else if (typeof emailAddressErr != "undefined") { %> 
-                          <input name="emailAddress" type="text" class="form-control" id="Email">
-                        <% } else { %> 
-                          <input name="emailAddress" type="text" class="form-control" id="Email" value="<%= session.emailAddress %>">
-                        <% } %> 
-
-                        <label class="form-error"><% if(typeof emailAddressErr != "undefined"){%><%=emailAddressErr%><%}%></label>
-
-                      </div>
-                    </div>
-
-                    <div class="text-center">
-                      <button type="submit" class="btn btn-primary">Wijzigingen opslaan</button>
-                    </div>
-                  </form><!-- End Profile Edit Form -->
-
-                </div>
-
-                <div class="tab-pane fade pt-3" id="profile-change-password">
-                  <!-- Change Password Form -->
-                  <form action="change_password" method="POST">
-
-                    <div class="row mb-3">
-                      <label for="currentPassword" class="col-md-4 col-lg-3 col-form-label">Huidige wachtwoord</label>
-                      <div class="col-md-8 col-lg-9">
-                        <input name="currentPassword" type="password" class="form-control" id="currentPassword" value="<% if(typeof oldValues != "undefined" && typeof oldValues.oldPassword != "undefined"){%><%=oldValues.oldPassword%><%}%>">
-                        <label class="form-error"><% if(typeof currentPasswordErr != "undefined"){%><%=currentPasswordErr%><%}%></label>
-
-                      </div>
-                    </div>
-
-                    <div class="row mb-3">
-                      <label for="newPassword" class="col-md-4 col-lg-3 col-form-label">Nieuwe wachtwoord</label>
-                      <div class="col-md-8 col-lg-9">
-                        <input name="newPassword" type="password" class="form-control" id="newPassword">
-                        <label class="form-error"><% if(typeof newPasswordErr != "undefined"){%><%=newPasswordErr%><%}%></label>
-
-                      </div>
-                    </div>
-
-                    <div class="row mb-3">
-                      <label for="renewPassword" class="col-md-4 col-lg-3 col-form-label">Bevestig wachtwoord</label>
-                      <div class="col-md-8 col-lg-9">
-                        <input name="confirmPassword" type="password" class="form-control" id="renewPassword">
-                        <label class="form-error"><% if(typeof confirmPasswordErr != "undefined"){%><%=confirmPasswordErr%><%}%></label>
-
-                      </div>
-                    </div>
-
-                    <div class="text-center">
-                      <button type="submit" class="btn btn-primary">Wachtwoord wijzigen</button>
-                    </div>
-                  </form><!-- End Change Password Form -->
-
-                </div>
-
-              </div><!-- End Bordered Tabs -->
-
             </div>
-          </div>
-
         </div>
-      </div>
     </section>
+</main>
+<!-- End #main -->
 
-  </main><!-- End #main -->
-
-  <%- include("footer/footer") %> 
+<%- include("footer/footer") %>

@@ -1,13 +1,15 @@
 const bcrypt = require("bcrypt");
 const mongoose = require("./../../database/dbconnection");
 const { sendMemberInviteMail } = require("./../controllers/mail.controller");
+const userController = require("./../controllers/user.controller");
 const User = require("./../models/user.model");
 const passGenerator = require("generate-password");
 
 // Functionality for creating an user
 exports.createUser = (req, res) => {
     // Declare all variables out of req.body
-    const { firstName, lastName, emailAddress, password } = req.body;
+    let { firstName, lastName, emailAddress, password } = req.body;
+    emailAddress = emailAddress.toLowerCase();
     // Create new user object
     const user = new User({
         firstName: firstName,
@@ -75,25 +77,30 @@ exports.getUserByEmailAddress = async (req, res) => {
 
 // Functionality for getting user by id
 exports.createMember = (req, res) => {
-    const emailAddress = req.body.emailAddress;
-    const emailRegex = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
+    (async () => {
+        let emailAddress = req.body.emailAddress;
+        emailAddress = emailAddress.toLowerCase();
+        const emailRegex = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
 
-    if (emailRegex.test(emailAddress)) {
-        (async () => {
-            const result = await this.getUserByEmailAddress(req, res);
+        const allUsers = await userController.getAllValidUsers();
 
-            if (result.length === 0) {
-                const password = await insertMember(emailAddress);
-                await sendMemberInviteMail(emailAddress, password);
+        if (emailRegex.test(emailAddress)) {
+            (async () => {
+                const result = await this.getUserByEmailAddress(req, res);
 
-                res.redirect("/user_overview");
-            } else {
-                res.render("user_overview", { pageName: "Gebruikers", session: req.session.user, emailAddressErr: "Dit e-mailadres is al in gebruik!" });
-            }
-        })();
-    } else {
-        res.render("user_overview", { pageName: "Gebruikers", session: req.session.user, emailAddressErr: "Het ingevulde e-mailadres is ongeldig!" });
-    }
+                if (result.length === 0) {
+                    const password = await insertMember(emailAddress);
+                    await sendMemberInviteMail(emailAddress, password);
+
+                    res.redirect("/user_overview");
+                } else {
+                    res.render("user_overview", { pageName: "Gebruikers", session: req.session.user, emailAddressErr: "Dit e-mailadres is al in gebruik!", allUsers });
+                }
+            })();
+        } else {
+            res.render("user_overview", { pageName: "Gebruikers", session: req.session.user, emailAddressErr: "Het ingevulde e-mailadres is ongeldig!", allUsers });
+        }
+    })();
 };
 
 const insertMember = async (emailAddress) => {
@@ -117,7 +124,8 @@ exports.getUserProfile = (req, res) => {
 };
 
 exports.changeUserProfileDetails = (req, res) => {
-    const { firstName, lastName, emailAddress } = req.body;
+    let { firstName, lastName, emailAddress } = req.body;
+    emailAddress = emailAddress.toLowerCase();
 
     const errors = {};
     const oldValues = {};

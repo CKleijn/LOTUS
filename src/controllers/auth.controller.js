@@ -55,7 +55,8 @@ exports.isMember = (req, res, next) => {
 
 //Functionality for login
 exports.login = (req, res) => {
-    const { emailAddress, password } = req.body;
+    let { emailAddress, password } = req.body;
+    emailAddress = emailAddress.toLowerCase();
 
     const emailRegex = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
 
