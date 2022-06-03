@@ -19,48 +19,26 @@
                 <div class="row">
                     <!-- Recent Sales -->
                     <div class="col-12">
-                        <div class="card recent-sales overflow-auto">
+                        <div class="card">
                             <div class="card-body">
-                                <table class="table table-borderless datatable">
+                                <h5 class="card-title">Alle gebruikers</h5>
+                                <table id="datatable" class="display nowrap" width="100%">
                                     <thead>
                                         <tr>
-                                            <th scope="col">Voornaam</th>
-                                            <th scope="col">Achternaam</th>
+                                            <th scope="col">Naam</th>
                                             <th scope="col">E-mailadres</th>
                                             <th scope="col">Rol</th>
                                         </tr>
                                     </thead>
                                     <tbody>
+                                        <% allUsers.forEach(user => { %>
                                         <tr>
-                                            <td><%=session.firstName%></td>
-                                            <td><%=session.lastName%></td>
-                                            <td><a href="#" class="text-primary"><%=session.emailAddress%></a></td>
-                                            <td>Coördinator</td>
+                                            <td><%=user.firstName + " " + user.lastName%></td>
+                                            <% let role = ""; switch(user.roles[0]) { case "coordinator": role = "Coördinator"; break; case "client" : role = "Opdrachtgever"; break; case "member": role = "LOTUSslachtoffer"; break; } %>
+                                            <td><%=user.emailAddress%></td>
+                                            <td><%= role %></td>
                                         </tr>
-                                        <tr>
-                                            <td>Calvin</td>
-                                            <td>Kleijn</td>
-                                            <td><a href="#" class="text-primary">cl.kleijn@student.avans.nl</a></td>
-                                            <td>Opdrachtgever</td>
-                                        </tr>
-                                        <tr>
-                                            <td>Mick</td>
-                                            <td>Holster</td>
-                                            <td><a href="#" class="text-primary">mj.holster@student.avans.nl</a></td>
-                                            <td>Lid</td>
-                                        </tr>
-                                        <tr>
-                                            <td>Guus</td>
-                                            <td>van Damme</td>
-                                            <td><a href="#" class="text-primary">g.vandamme@student.avans.nl</a></td>
-                                            <td>Lid</td>
-                                        </tr>
-                                        <tr>
-                                            <td>Mike</td>
-                                            <td>van der Caaij</td>
-                                            <td><a href="#" class="text-primary">m.vandercaaij@student.avans.nl</a></td>
-                                            <td>Lid</td>
-                                        </tr>
+                                        <% }) %>
                                     </tbody>
                                 </table>
                             </div>

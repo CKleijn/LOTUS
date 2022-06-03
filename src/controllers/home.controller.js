@@ -1,11 +1,14 @@
-exports.getHomepage = (req, res) => {
-    const session = req.session;
+const { getAllValidUsers } = require("./../controllers/user.controller");
 
+exports.getHomepage = (req, res) => {
     res.render("dashboard", { pageName: "Dashboard", session: req.session.user });
 };
 
 exports.getUserOverview = (req, res) => {
-    res.render("user_overview", { pageName: "Gebruikers", session: req.session.user });
+    (async () => {
+        const allUsers = await getAllValidUsers();
+        return res.render("user_overview", { pageName: "Gebruikers", session: req.session.user, allUsers });
+    })();
 };
 
 exports.sendMessage = (req, res) => {
