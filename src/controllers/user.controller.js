@@ -124,7 +124,7 @@ exports.getUserProfile = (req, res) => {
 };
 
 exports.changeUserProfileDetails = (req, res) => {
-    let { firstName, lastName, emailAddress } = req.body;
+    let { firstName, lastName, emailAddress, type } = req.body;
     emailAddress = emailAddress.toLowerCase();
 
     const errors = {};
@@ -161,7 +161,7 @@ exports.changeUserProfileDetails = (req, res) => {
         }
 
         if (typeof errors.firstNameErr != "undefined" || typeof errors.lastNameErr != "undefined" || typeof errors.emailAddressErr != "undefined") {
-            res.render("user_profile", { pageName: "Mijn profiel", session: req.session.user, ...errors });
+            res.render("user_profile", { pageName: "Mijn profiel", session: req.session.user, ...errors, type });
         } else {
             (async () => {
                 const user = req.session.user;
@@ -176,9 +176,7 @@ exports.changeUserProfileDetails = (req, res) => {
 };
 
 exports.changePassword = (req, res) => {
-    console.log(req.body);
-
-    const { currentPassword, newPassword, confirmPassword } = req.body;
+    const { currentPassword, newPassword, confirmPassword, type } = req.body;
 
     const errors = {};
     const oldValues = {};
@@ -211,7 +209,7 @@ exports.changePassword = (req, res) => {
         }
 
         if (typeof errors.currentPasswordErr != "undefined" || typeof errors.newPasswordErr != "undefined" || typeof errors.confirmPasswordErr != "undefined") {
-            res.render("user_profile", { pageName: "Mijn profiel", session: req.session.user, ...errors });
+            res.render("user_profile", { pageName: "Mijn profiel", session: req.session.user, ...errors, type });
         } else {
             (async () => {
                 await User.updateOne({ _id: req.session.user.userId }, { $set: { password: bcrypt.hashSync(newPassword, bcrypt.genSaltSync()) } });
@@ -239,14 +237,3 @@ exports.getAllUsers = async () => {
 exports.getAllValidUsers = async () => {
     return await User.find({ firstName: { $ne: "" }, lastName: { $ne: "" } });
 };
-
-// // Functionality for deleting an user
-// exports.deleteUserById = (req, res) => {
-//     User.findByIdAndDelete(req.body._id, function (err) {
-//         if (err) throw err;
-
-//         mongoose.connection.close();
-
-//         console.log(`User with an ID of ${req.body._id} has been deleted successfully!`);
-//     });
-// };
