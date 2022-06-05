@@ -59,9 +59,23 @@ exports.createUser = (req, res) => {
             // Show the errors on the register page
             res.render("register", { pageName: "Registreren", ...errors });
         } else {
-            // Redirect to the login page so the new user can login
-            req.flash("isCreated", true);
-            res.redirect("login");
+            (async () => {
+                let user = await User.find({ emailAddress: emailAddress });
+                user = user[0];
+
+                let session = req.session;
+                session.user = {
+                    userId: user._id,
+                    firstName: user.firstName,
+                    lastName: user.lastName,
+                    emailAddress: user.emailAddress,
+                    roles: user.roles[0],
+                    createdDate: user.createdDate,
+                    lastLoginDate: user.lastLoginDate,
+                };
+
+                return res.redirect("/");
+            })();
         }
     });
 };

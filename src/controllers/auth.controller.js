@@ -138,7 +138,18 @@ exports.setupMember = (req, res) => {
         res.render("member_setup", { pageName: "Accountgegevens", session: req.session.user, ...errors, email });
     } else {
         User.findOneAndUpdate({ emailAddress: decryptedMail }, { firstName, lastName, password: bcrypt.hashSync(password, bcrypt.genSaltSync()), lastLoginDate: Date.now() }, { new: true }, (err, updatedUser) => {
-            res.redirect("/login");
+            let session = req.session;
+            session.user = {
+                userId: updatedUser._id,
+                firstName: updatedUser.firstName,
+                lastName: updatedUser.lastName,
+                emailAddress: updatedUser.emailAddress,
+                roles: updatedUser.roles[0],
+                createdDate: updatedUser.createdDate,
+                lastLoginDate: updatedUser.lastLoginDate,
+            };
+
+            return res.redirect("/");
         });
     }
 };
