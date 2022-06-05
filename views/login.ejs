@@ -21,7 +21,10 @@
 
                                     <div class="col-12">
                                         <label for="yourPassword" class="form-label">Wachtwoord</label>
-                                        <input type="password" name="password" class="form-control" />
+                                        <p>
+                                            <input id="password" type="password" name="password" class="form-control" />
+                                            <i class="bi bi-eye-slash" id="togglePassword"></i>
+                                        </p>
                                         <label class="form-label form-error"><% if(typeof err != "undefined"){%><%=err%><%}%></label>
                                     </div>
 
@@ -44,5 +47,16 @@
     </div>
 </main>
 <!-- End #main -->
+
+<script>
+    const togglePassword = document.querySelector("#togglePassword");
+    const password = document.querySelector("#password");
+
+    togglePassword.addEventListener("click", function (e) {
+        const type = password.getAttribute("type") === "password" ? "text" : "password";
+        password.setAttribute("type", type);
+        this.classList.toggle("bi-eye");
+    });
+</script>
 
 <%- include("footer/footer") -%>
