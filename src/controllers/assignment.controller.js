@@ -5,10 +5,10 @@ exports.createAssignment = (req, res) => {
     // Get session
     const session = req.session;
     // Declare all variables out of req.body
-    const { firstName, lastName, emailAddress, street, houseNumber, houseNumberAddition, postalCode, town, billingStreet, 
-            billingHouseNumber, billingHouseNumberAddition, billingPostalCode, billingTown, dateTime, playgroundStreet, 
-            playgroundHouseNumber, playgroundHouseNumberAddition, playgroundPostalCode, playgroundTown, makeUpStreet,
-            makeUpHouseNumber, makeUpHouseNumberAddition, makeUpPostalCode, makeUpTown, amountOfLotusVictims, comments, isApproved } = req.body;
+    const { firstName, lastName, emailAddress, street, houseNumber, houseNumberAddition, postalCode, town, billingEmailAddress, 
+            dateTime, playgroundStreet, playgroundHouseNumber, playgroundHouseNumberAddition, playgroundPostalCode, playgroundTown, 
+            makeUpStreet, makeUpHouseNumber, makeUpHouseNumberAddition, makeUpPostalCode, makeUpTown, amountOfLotusVictims, 
+            comments, isApproved } = req.body;
     // Create new assignment object
     const assignment = new Assignment({
         firstName: firstName,
@@ -19,11 +19,7 @@ exports.createAssignment = (req, res) => {
         houseNumberAddition: houseNumberAddition,
         postalCode: postalCode,
         town: town,
-        billingStreet: billingStreet,
-        billingHouseNumber: billingHouseNumber,
-        billingHouseNumberAddition: billingHouseNumberAddition,
-        billingPostalCode: billingPostalCode,
-        billingTown: billingTown,
+        billingEmailAddress: billingEmailAddress,
         dateTime: dateTime,
         playgroundStreet: playgroundStreet,
         playgroundHouseNumber: playgroundHouseNumber,
@@ -83,6 +79,7 @@ exports.createAssignment = (req, res) => {
             if (err.errors.houseNumberAddition) {
                 errors.houseNumberAdditionErr = err.errors.houseNumberAddition.properties.message;
             } else {
+                errors.houseNumberAdditionErr = "Dit veld is correct ingevuld!";
                 errors.oldValues.houseNumberAddition = req.body.houseNumberAddition;
             }
 
@@ -98,34 +95,10 @@ exports.createAssignment = (req, res) => {
                 errors.oldValues.town = req.body.town;
             }
 
-            if (err.errors.billingStreet) {
-                errors.billingStreetErr = err.errors.billingStreet.properties.message;
+            if (err.errors.billingEmailAddress) {
+                errors.billingEmailAddressErr = err.errors.billingEmailAddress.properties.message;
             } else {
-                errors.oldValues.billingStreet = req.body.billingStreet;
-            }
-
-            if (err.errors.billingHouseNumber) {
-                errors.billingHouseNumberErr = err.errors.billingHouseNumber.properties.message;
-            } else {
-                errors.oldValues.billingHouseNumber = req.body.billingHouseNumber;
-            }
-
-            if (err.errors.billingHouseNumberAddition) {
-                errors.billingHouseNumberAdditionErr = err.errors.billingHouseNumberAddition.properties.message;
-            } else {
-                errors.oldValues.billingHouseNumberAddition = req.body.billingHouseNumberAddition;
-            }
-
-            if (err.errors.billingPostalCode) {
-                errors.billingPostalCodeErr = err.errors.billingPostalCode.properties.message;
-            } else {
-                errors.oldValues.billingPostalCode = req.body.billingPostalCode;
-            }
-
-            if (err.errors.billingTown) {
-                errors.billingTownErr = err.errors.billingTown.properties.message;
-            } else {
-                errors.oldValues.billingTown = req.body.billingTown;
+                errors.oldValues.billingEmailAddress = req.body.billingEmailAddress;
             }
 
             if (err.errors.dateTime) {
