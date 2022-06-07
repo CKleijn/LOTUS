@@ -8,7 +8,7 @@ const passGenerator = require("generate-password");
 // Functionality for creating an user
 exports.createUser = (req, res) => {
     // Declare all variables out of req.body
-    let { firstName, lastName, emailAddress, password } = req.body;
+    let { firstName, lastName, emailAddress, password, street, houseNumber, houseNumberAddition, postalCode, town } = req.body;
     emailAddress = emailAddress.toLowerCase();
     // Create new user object
     const user = new User({
@@ -18,6 +18,11 @@ exports.createUser = (req, res) => {
         password: password,
         roles: "client",
         lastLoginDate: Date.now(),
+        street: street,
+        houseNumber: houseNumber,
+        houseNumberAddition: houseNumberAddition,
+        postalCode: postalCode,
+        town: town,
     });
 
     // Save user object in database and show errors if they exists
@@ -54,6 +59,30 @@ exports.createUser = (req, res) => {
                     errors.passwordErr = err.errors.password.properties.message;
                 } else {
                     oldValues.password = password;
+                }
+
+                if (err.errors.street) {
+                    errors.streetErr = err.errors.street.properties.message;
+                } else {
+                    oldValues.street = street;
+                }
+
+                if (err.errors.houseNumber) {
+                    errors.houseNumberErr = err.errors.houseNumber.properties.message;
+                } else {
+                    oldValues.houseNumber = houseNumber;
+                }
+
+                if (err.errors.postalCode) {
+                    errors.postalCodeErr = err.errors.postalCode.properties.message;
+                } else {
+                    oldValues.postalCode = postalCode;
+                }
+
+                if (err.errors.town) {
+                    errors.townErr = err.errors.town.properties.message;
+                } else {
+                    oldValues.town = town;
                 }
             }
             // Show the errors on the register page
@@ -255,5 +284,5 @@ exports.getAllUsers = async () => {
 };
 
 exports.getAllValidUsers = async () => {
-    return await User.find({ firstName: { $ne: "" }, lastName: { $ne: "" } });
+    return await User.find({ firstName: { $ne: "" }, lastName: { $ne: "" }, roles: { $ne: "coordinator" } });
 };

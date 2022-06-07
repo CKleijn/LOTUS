@@ -43,6 +43,32 @@ const userSchema = new mongoose.Schema({
     lastLoginDate: {
         type: Date,
     },
+    // Normale adres
+    street: {
+        type: String,
+        required: [true, "Straat is verplicht!"],
+    },
+    houseNumber: {
+        type: Number,
+        required: [true, "Huisnummer is verplicht!"],
+    },
+    houseNumberAddition: {
+        type: String,
+    },
+    postalCode: {
+        type: String,
+        validate: {
+            validator: function (v) {
+                return /^[1-9][0-9]{3} ?(?!sa|sd|ss)[a-z]{2}$/i.test(v);
+            },
+            message: `Gebruik een geldig postcode zoals 2973FD!`,
+        },
+        required: [true, "Postcode is verplicht!"],
+    },
+    town: {
+        type: String,
+        required: [true, "Plaats is verplicht!"],
+    },
 });
 // Hash password before saving user
 userSchema.pre("save", function () {

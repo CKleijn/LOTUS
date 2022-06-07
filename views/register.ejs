@@ -42,6 +42,36 @@
                                     </div>
 
                                     <div class="col-12">
+                                        <label class="form-label">Straat</label>
+                                        <input type="text" name="street" class="form-control" value="<% if(typeof oldValues != "undefined"){%><%=oldValues.street%><%}%>">
+                                        <label class="form-error"><% if(typeof streetErr != "undefined"){%><%=streetErr%><%}%></label>
+                                    </div>
+
+                                    <div class="col-6">
+                                        <label class="form-label">Huisnummer</label>
+                                        <input type="text" name="houseNumber" class="form-control" value="<% if(typeof oldValues != "undefined"){%><%=oldValues.houseNumber%><%}%>">
+                                        <label class="form-error"><% if(typeof houseNumberErr != "undefined"){%><%=houseNumberErr%><%}%></label>
+                                    </div>
+
+                                    <div class="col-6">
+                                        <label class="form-label">Toevoeging</label>
+                                        <input type="text" name="houseNumberAddition" class="form-control" value="<% if(typeof oldValues != "undefined"){%><%=oldValues.houseNumberAddition%><%}%>">
+                                        <label class="form-error"><% if(typeof houseNumberAdditionErr != "undefined"){%><%=houseNumberAdditionErr%><%}%></label>
+                                    </div>
+
+                                    <div class="col-12">
+                                        <label class="form-label">Postcode</label>
+                                        <input type="text" name="postalCode" class="form-control" value="<% if(typeof oldValues != "undefined"){%><%=oldValues.postalCode%><%}%>">
+                                        <label class="form-error"><% if(typeof postalCodeErr != "undefined"){%><%=postalCodeErr%><%}%></label>
+                                    </div>
+
+                                    <div class="col-12">
+                                        <label class="form-label">Plaats</label>
+                                        <input type="text" name="town" class="form-control" value="<% if(typeof oldValues != "undefined"){%><%=oldValues.town%><%}%>">
+                                        <label class="form-error"><% if(typeof townErr != "undefined"){%><%=townErr%><%}%></label>
+                                    </div>
+
+                                    <div class="col-12">
                                         <button class="btn btn-primary w-100" type="submit">Account aanmaken</button>
                                     </div>
                                     <div class="col-12">
