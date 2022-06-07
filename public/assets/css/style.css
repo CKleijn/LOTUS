@@ -878,12 +878,25 @@ h6 {
 }
 
 /*--------------------------------------------------------------
+# Password eye
+--------------------------------------------------------------*/
+
+form i {
+    margin-left: -30px;
+    cursor: pointer;
+}
+
+.form-control {
+    display: inline !important;
+}
+
+/*--------------------------------------------------------------
 # Login
 --------------------------------------------------------------*/
 
 .form-error {
     font-size: 14px;
-    color: red;
+    color: red !important;
     margin-top: 10px;
     margin-bottom: 20px;
     height: 12px;
