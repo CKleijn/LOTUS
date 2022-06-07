@@ -47,13 +47,13 @@
                                         <label class="form-error"><% if(typeof streetErr != "undefined"){%><%=streetErr%><%}%></label>
                                     </div>
 
-                                    <div class="col-6">
+                                    <div class="col-8">
                                         <label class="form-label">Huisnummer</label>
                                         <input type="text" name="houseNumber" class="form-control" value="<% if(typeof oldValues != "undefined"){%><%=oldValues.houseNumber%><%}%>">
                                         <label class="form-error"><% if(typeof houseNumberErr != "undefined"){%><%=houseNumberErr%><%}%></label>
                                     </div>
 
-                                    <div class="col-6">
+                                    <div class="col-4">
                                         <label class="form-label">Toevoeging</label>
                                         <input type="text" name="houseNumberAddition" class="form-control" value="<% if(typeof oldValues != "undefined"){%><%=oldValues.houseNumberAddition%><%}%>">
                                         <label class="form-error"><% if(typeof houseNumberAdditionErr != "undefined"){%><%=houseNumberAdditionErr%><%}%></label>

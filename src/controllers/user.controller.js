@@ -16,13 +16,13 @@ exports.createUser = (req, res) => {
         lastName: lastName,
         emailAddress: emailAddress,
         password: password,
-        roles: "client",
-        lastLoginDate: Date.now(),
         street: street,
         houseNumber: houseNumber,
         houseNumberAddition: houseNumberAddition,
         postalCode: postalCode,
         town: town,
+        roles: "client",
+        lastLoginDate: Date.now(),
     });
 
     // Save user object in database and show errors if they exists
@@ -67,10 +67,16 @@ exports.createUser = (req, res) => {
                     oldValues.street = street;
                 }
 
-                if (err.errors.houseNumber) {
+                if (isNaN(houseNumber)) {
+                    errors.houseNumberErr = "Huisnummer moet een getal zijn!";
+                } else if (err.errors.houseNumber) {
                     errors.houseNumberErr = err.errors.houseNumber.properties.message;
                 } else {
                     oldValues.houseNumber = houseNumber;
+                }
+
+                if (houseNumberAddition || !houseNumberAddition.length === 0) {
+                    oldValues.houseNumberAddition = houseNumberAddition;
                 }
 
                 if (err.errors.postalCode) {
@@ -98,6 +104,11 @@ exports.createUser = (req, res) => {
                     firstName: user.firstName,
                     lastName: user.lastName,
                     emailAddress: user.emailAddress,
+                    street: user.street,
+                    houseNumber: user.houseNumber,
+                    houseNumberAddition: user.houseNumberAddition,
+                    postalCode: user.postalCode,
+                    town: user.town,
                     roles: user.roles[0],
                     createdDate: user.createdDate,
                     lastLoginDate: user.lastLoginDate,

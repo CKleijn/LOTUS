@@ -31,19 +31,6 @@ const userSchema = new mongoose.Schema({
         },
         required: [true, "Wachtwoord is verplicht!"],
     },
-    roles: {
-        type: [String],
-        enum: ["coordinator", "client", "member"],
-        required: [true, "Minstens één rol verplicht!"],
-    },
-    createdDate: {
-        type: Date,
-        default: Date.now,
-    },
-    lastLoginDate: {
-        type: Date,
-    },
-    // Normale adres
     street: {
         type: String,
         required: [true, "Straat is verplicht!"],
@@ -68,6 +55,18 @@ const userSchema = new mongoose.Schema({
     town: {
         type: String,
         required: [true, "Plaats is verplicht!"],
+    },
+    roles: {
+        type: [String],
+        enum: ["coordinator", "client", "member"],
+        required: [true, "Minstens één rol verplicht!"],
+    },
+    createdDate: {
+        type: Date,
+        default: Date.now,
+    },
+    lastLoginDate: {
+        type: Date,
     },
 });
 // Hash password before saving user
