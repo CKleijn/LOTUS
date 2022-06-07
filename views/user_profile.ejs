@@ -102,11 +102,6 @@
 
                                 <% } %> 
 
-
-                                <div class="row">
-                                    <div class="col-lg-3 col-md-4 label">Rol</div>
-                                    <div class="col-lg-9 col-md-8"><%= role %></div>
-                                </div>
                             </div>
 
                             <% if(typeof type != "undefined" && type == "profile_info_change") { %>
@@ -158,6 +153,86 @@
                                             <label class="form-error"><% if(typeof emailAddressErr != "undefined"){%><%=emailAddressErr%><%}%></label>
                                         </div>
                                     </div>
+
+                                   <% if(session.roles == "client") { %>
+
+                                    <div class="row mb-3">
+                                        <label for="Email" class="col-md-4 col-lg-3 col-form-label">Straat</label>
+                                        <div class="col-md-8 col-lg-9">
+                                            <% if(typeof oldValues != "undefined" && typeof oldValues.street != "undefined") { %>
+                                            <input name="street" type="text" class="form-control" id="Street" value="<%= oldValues.street %>" />
+                                            <% } else if (typeof streetErr != "undefined") { %>
+                                            <input name="street" type="text" class="form-control" id="Street" />
+                                            <% } else { %>
+                                            <input name="street" type="text" class="form-control" id="Street" value="<%= session.street %>" />
+                                            <% } %>
+
+                                            <label class="form-error"><% if(typeof streetErr != "undefined"){%><%=streetErr%><%}%></label>
+                                        </div>
+                                    </div>
+
+                                    <div class="row mb-3">
+                                        <label for="Email" class="col-md-4 col-lg-3 col-form-label">Huisnummer</label>
+                                        <div class="col-md-8 col-lg-9">
+                                            <% if(typeof oldValues != "undefined" && typeof oldValues.houseNumber != "undefined") { %>
+                                            <input name="houseNumber" type="text" class="form-control" id="HouseNumber" value="<%= oldValues.houseNumber %>" />
+                                            <% } else if (typeof houseNumberErr != "undefined") { %>
+                                            <input name="houseNumber" type="text" class="form-control" id="HouseNumber" />
+                                            <% } else { %>
+                                            <input name="houseNumber" type="text" class="form-control" id="HouseNumber" value="<%= session.houseNumber %>" />
+                                            <% } %>
+
+                                            <label class="form-error"><% if(typeof houseNumberErr != "undefined"){%><%=houseNumberErr%><%}%></label>
+                                        </div>
+                                    </div>
+
+                                    <div class="row mb-3">
+                                        <label for="Email" class="col-md-4 col-lg-3 col-form-label">Huisnummer toevoeging</label>
+                                        <div class="col-md-8 col-lg-9">
+                                            <% if(typeof oldValues != "undefined" && typeof oldValues.houseNumberAddition != "undefined") { %>
+                                            <input name="houseNumberAddition" type="text" class="form-control" id="HouseNumberAddition" value="<%= oldValues.houseNumberAddition %>" />
+                                            <% } else if (typeof houseNumberAdditionErr != "undefined") { %>
+                                            <input name="houseNumberAddition" type="text" class="form-control" id="HouseNumberAddition" />
+                                            <% } else { %>
+                                            <input name="houseNumberAddition" type="text" class="form-control" id="HouseNumberAddition" value="<%= session.houseNumberAddition %>" />
+                                            <% } %>
+
+                                            <label class="form-error"><% if(typeof houseNumberAdditionErr != "undefined"){%><%=houseNumberAdditionErr%><%}%></label>
+                                        </div>
+                                    </div>
+
+                                    <div class="row mb-3">
+                                        <label for="Email" class="col-md-4 col-lg-3 col-form-label">Plaats</label>
+                                        <div class="col-md-8 col-lg-9">
+                                            <% if(typeof oldValues != "undefined" && typeof oldValues.town != "undefined") { %>
+                                            <input name="town" type="text" class="form-control" id="town" value="<%= oldValues.town %>" />
+                                            <% } else if (typeof townErr != "undefined") { %>
+                                            <input name="town" type="text" class="form-control" id="town" />
+                                            <% } else { %>
+                                            <input name="town" type="text" class="form-control" id="town" value="<%= session.town %>" />
+                                            <% } %>
+
+                                            <label class="form-error"><% if(typeof townErr != "undefined"){%><%=townErr%><%}%></label>
+                                        </div>
+                                    </div>
+
+                                    <div class="row mb-3">
+                                        <label for="Email" class="col-md-4 col-lg-3 col-form-label">Postcode</label>
+                                        <div class="col-md-8 col-lg-9">
+                                            <% if(typeof oldValues != "undefined" && typeof oldValues.postalCode != "undefined") { %>
+                                            <input name="postalCode" type="text" class="form-control" id="postalCode" value="<%= oldValues.postalCode %>" />
+                                            <% } else if (typeof postalCodeErr != "undefined") { %>
+                                            <input name="postalCode" type="text" class="form-control" id="postalCode" />
+                                            <% } else { %>
+                                            <input name="postalCode" type="text" class="form-control" id="postalCode" value="<%= session.postalCode %>" />
+                                            <% } %>
+
+                                            <label class="form-error"><% if(typeof postalCodeErr != "undefined"){%><%=postalCodeErr%><%}%></label>
+                                        </div>
+                                    </div>
+
+                                   <% } %>
+
                                     <input type="hidden" name="type" value="profile_info_change" />
 
                                     <div class="text-center">
