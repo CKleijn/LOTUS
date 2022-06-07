@@ -2,11 +2,13 @@ const mongoose = require("../../database/dbconnection");
 const Assignment = require("../models/assignment.model");
 // Functionality for creating an assignment
 exports.createAssignment = (req, res) => {
+    // Get session
+    const session = req.session;
     // Declare all variables out of req.body
     const { firstName, lastName, emailAddress, street, houseNumber, houseNumberAddition, postalCode, town, billingStreet, 
             billingHouseNumber, billingHouseNumberAddition, billingPostalCode, billingTown, dateTime, playgroundStreet, 
             playgroundHouseNumber, playgroundHouseNumberAddition, playgroundPostalCode, playgroundTown, makeUpStreet,
-            makeUpHouseNumber, makeUpHouseNumberAddition, makeUpPostalCode, makeUpTown, amountOfLotusVictims, comments } = req.body;
+            makeUpHouseNumber, makeUpHouseNumberAddition, makeUpPostalCode, makeUpTown, amountOfLotusVictims, comments, isApproved } = req.body;
     // Create new assignment object
     const assignment = new Assignment({
         firstName: firstName,
@@ -35,7 +37,12 @@ exports.createAssignment = (req, res) => {
         makeUpTown: makeUpTown,
         amountOfLotusVictims: amountOfLotusVictims,
         comments: comments,
+        isApproved: isApproved,
     });
+    // Check if coordinator is trying to make an assignment
+    if (session.user.roles === "coordinator") {
+        assignment.isApproved = true;
+    }
     // Save assignment object in database and show errors if they exists
     assignment.save((err) => {
         if (err) {
@@ -230,7 +237,7 @@ exports.getAllAssignments = (req, res) => {
         return `${date}/${month}/${year}`;
     }
 
-    Assignment.find(function(err, results) {
+    Assignment.find({ isApproved: true }, function(err, results) {
         results.forEach(result => {
             result.dateTime = format(new Date(result.dateTime));
         });
