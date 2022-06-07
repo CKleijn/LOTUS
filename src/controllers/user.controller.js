@@ -104,7 +104,13 @@ exports.createMember = (req, res) => {
 
                 if (result.length === 0) {
                     const password = await insertMember(emailAddress);
-                    await sendMemberInviteMail(emailAddress, password);
+                    const sendStatus = await sendMemberInviteMail(emailAddress, password);
+
+                    if (sendStatus) {
+                        console.log("Send");
+                    } else {
+                        console.log("Not send");
+                    }
 
                     res.redirect("/user_overview");
                 } else {
