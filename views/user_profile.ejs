@@ -79,6 +79,30 @@
                                     <div class="col-lg-9 col-md-8"><%= session.emailAddress %></div>
                                 </div>
 
+                                <% if(session.roles == "client") { %> 
+                                    <div class="row">
+                                        <div class="col-lg-3 col-md-4 label">Straat</div>
+                                        <div class="col-lg-9 col-md-8"><%= session.street %></div>
+                                    </div>
+
+                                    <div class="row">
+                                        <div class="col-lg-3 col-md-4 label">Huisnummer</div>
+                                        <div class="col-lg-9 col-md-8"><%= session.houseNumber + session.houseNumberAddition %></div>
+                                    </div>
+
+                                    <div class="row">
+                                        <div class="col-lg-3 col-md-4 label">Plaats</div>
+                                        <div class="col-lg-9 col-md-8"><%= session.town %></div>
+                                    </div>
+
+                                    <div class="row">
+                                        <div class="col-lg-3 col-md-4 label">Postcode</div>
+                                        <div class="col-lg-9 col-md-8"><%= session.postalCode %></div>
+                                    </div>
+
+                                <% } %> 
+
+
                                 <div class="row">
                                     <div class="col-lg-3 col-md-4 label">Rol</div>
                                     <div class="col-lg-9 col-md-8"><%= role %></div>
