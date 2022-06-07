@@ -136,6 +136,10 @@ const assignmentSchema = new mongoose.Schema({
     comments: {
         type: String,
     },
+    isApproved: {
+        type: Boolean,
+        default: false
+    }
 });
 // Create a Assignment model
 module.exports = mongoose.model("Assignment", assignmentSchema);
