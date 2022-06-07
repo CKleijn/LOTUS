@@ -184,7 +184,7 @@ exports.getUserProfile = (req, res) => {
 };
 
 exports.changeUserProfileDetails = (req, res) => {
-    let { firstName, lastName, emailAddress, type } = req.body;
+    let { firstName, lastName, emailAddress, type, street, houseNumber, houseNumberAddition, town, postalCode } = req.body;
     emailAddress = emailAddress.toLowerCase();
 
     const errors = {};
@@ -193,12 +193,16 @@ exports.changeUserProfileDetails = (req, res) => {
 
     if (!firstName || firstName.length === 0) {
         errors.firstNameErr = "Voornaam is verplicht!";
+    } else if (!isNaN(firstName)) {
+        errors.firstNameErr = "Voornaam moet bestaan uit letters!";
     } else {
         oldValues.firstName = firstName;
     }
 
     if (!lastName || lastName.length === 0) {
         errors.lastNameErr = "Achternaam is verplicht!";
+    } else if (!isNaN(lastName)) {
+        errors.lastNameErr = "Achternaam moet bestaan uit letters!";
     } else {
         oldValues.lastName = lastName;
     }
@@ -213,6 +217,42 @@ exports.changeUserProfileDetails = (req, res) => {
         oldValues.emailAddress = emailAddress;
     }
 
+    if (req.session.user.roles == "client") {
+        if (!street || street.length === 0) {
+            errors.streetErr = "Straat is verplicht!";
+        } else if (!isNaN(street)) {
+            errors.streetErr = "Straat moet bestaan uit letters!";
+        } else {
+            oldValues.street = street;
+        }
+
+        if (!houseNumber || houseNumber.length === 0) {
+            errors.houseNumberErr = "Huisnummer is verplicht!";
+        } else if (isNaN(houseNumber)) {
+            errors.houseNumberErr = "Huisnummer moet een getal zijn!";
+        } else {
+            oldValues.houseNumber = houseNumber;
+        }
+
+        if (!town || town.length === 0) {
+            errors.townErr = "Plaats is verplicht!";
+        } else if (!isNaN(town)) {
+            errors.townErr = "Plaats moet bestaan uit letters!";
+        } else {
+            oldValues.town = town;
+        }
+
+        const postalCodeRegex = /^[1-9][0-9]{3} ?(?!sa|sd|ss)[a-z]{2}$/i;
+
+        if (!postalCode || town.postalCode === 0) {
+            errors.postalCodeErr = "Postcode is verplicht!";
+        } else if (!postalCodeRegex.test(postalCode)) {
+            errors.postalCodeErr = "Vul een geldige postcode in!";
+        } else {
+            oldValues.postalCode = postalCode;
+        }
+    }
+
     (async () => {
         const userExists = await User.findOne({ emailAddress: emailAddress, _id: { $ne: req.session.user.userId } }).lean();
         if (userExists) {
@@ -220,15 +260,35 @@ exports.changeUserProfileDetails = (req, res) => {
             errors.emailAddressErr = "E-mailadres is al in gebruik!";
         }
 
-        if (typeof errors.firstNameErr != "undefined" || typeof errors.lastNameErr != "undefined" || typeof errors.emailAddressErr != "undefined") {
+        if (typeof errors.firstNameErr != "undefined" || typeof errors.lastNameErr != "undefined" || typeof errors.emailAddressErr != "undefined" || typeof errors.streetErr != "undefined" || typeof errors.houseNumberErr != "undefined" || typeof errors.houseNumberAdditionErr != "undefined" || typeof errors.townErr != "undefined" || (typeof errors.postalCodeErr != "undefined" && req.session.user.roles == "client")) {
+            res.render("user_profile", { pageName: "Mijn profiel", session: req.session.user, ...errors, type });
+        } else if (typeof errors.firstNameErr != "undefined" || typeof errors.lastNameErr != "undefined" || (typeof errors.emailAddressErr != "undefined" && req.session.user.roles != "client")) {
             res.render("user_profile", { pageName: "Mijn profiel", session: req.session.user, ...errors, type });
         } else {
             (async () => {
                 const user = req.session.user;
-                await updateUserByEmail({ oldMail: user.emailAddress, firstName, lastName, emailAddress });
+
+                let updateInfo = {};
+
+                if (user.roles == "client") {
+                    updateInfo = { oldMail: user.emailAddress, firstName, lastName, emailAddress, street, houseNumber, houseNumberAddition, town, postalCode };
+                } else {
+                    updateInfo = { oldMail: user.emailAddress, firstName, lastName, emailAddress };
+                }
+
+                await updateUserByEmail(updateInfo);
                 user.firstName = firstName;
                 user.lastName = lastName;
                 user.emailAddress = emailAddress;
+
+                if (user.roles == "client") {
+                    user.street = street;
+                    user.houseNumber = houseNumber;
+                    user.houseNumberAddition = houseNumberAddition;
+                    user.town = town;
+                    user.postalCode = postalCode;
+                }
+
                 return res.redirect("/user_profile");
             })();
         }
@@ -281,8 +341,8 @@ exports.changePassword = (req, res) => {
 
 const updateUserByEmail = async (user) => {
     try {
-        const { oldMail, firstName, lastName, emailAddress } = user;
-        await User.updateOne({ emailAddress: oldMail }, { $set: { firstName: firstName, lastName: lastName, emailAddress: emailAddress } });
+        const { oldMail } = user;
+        await User.updateOne({ emailAddress: oldMail }, { $set: { ...user } });
         return;
     } catch (err) {
         throw err;
