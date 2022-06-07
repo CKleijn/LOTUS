@@ -1,7 +1,8 @@
-<html>
+<!DOCTYPE html>
     <head>
         <meta charset="utf-8" />
         <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+        <meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests">
 
         <title>Lotus | <%= pageName %></title>
         <meta content="Official LOTUS Here We Go Assignment handler." name="description" />
@@ -25,6 +26,8 @@
 
         <!-- Template Main CSS File -->
         <link href="assets/css/style.css" rel="stylesheet" />
+
+        <script src="http://code.jquery.com/jquery-1.11.3.min.js"></script>
     </head>
 
     <body>
@@ -140,6 +143,20 @@
                     <a class="nav-link collapsed" href="user_overview">
                         <i class="bi bi-people"></i>
                         <span>Gebruikers</span>
+                    </a>
+                </li>
+
+                <li class="nav-item">
+                    <a class="nav-link collapsed" href="assignment_overview">
+                        <i class="bi bi-archive"></i>
+                        <span>Opdrachten</span>
+                    </a>
+                </li>
+
+                <li class="nav-item">
+                    <a class="nav-link collapsed" href="request_overview">
+                        <i class="bi bi-inboxes"></i>
+                        <span>Verzoeken</span>
                     </a>
                 </li>
 

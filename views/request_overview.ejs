@@ -1,0 +1,42 @@
+<%- include("header/header") -%>
+
+<main id="main" class="main">
+    <div class="pagetitle">
+        <h1>Verzoeken</h1>
+        <nav>
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="/">Dashboard</a></li>
+                <li class="breadcrumb-item active">Verzoeken</li>
+            </ol>
+        </nav>
+    </div>
+
+    <section class="section">
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">Alle verzoeken</h5>
+                        <p>In één overzicht alle verzoeken kunnen zien? Dat kan doormiddel van deze tabel!</p>
+                        <table id="datatable" class="display nowrap" width="100%">
+                            <thead>
+                                <tr>
+                                    <th scope="col">Naam</th>
+                                    <th scope="col">Soort verzoek</th>
+                                    <th scope="col">Datum</th>
+                                    <th scope="col">Status</th>
+                                    <th scope="col">Acties</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+</main>
+
+<%- include("footer/footer") -%>
