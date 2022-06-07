@@ -5,12 +5,6 @@ function validate() {
     let postalCodeValue = document.getElementById("postalCode").value;
     let townValue = document.getElementById("town").value;
 
-    let billingStreet = document.getElementById("billingStreet");
-    let billingHouseNumber = document.getElementById("billingHouseNumber");
-    let billingHouseNumberAddition = document.getElementById("billingHouseNumberAddition");
-    let billingPostalCode = document.getElementById("billingPostalCode");
-    let billingTown = document.getElementById("billingTown");
-
     let playgroundStreet = document.getElementById("playgroundStreet");
     let playgroundHouseNumber = document.getElementById("playgroundHouseNumber");
     let playgroundHouseNumberAddition = document.getElementById("playgroundHouseNumberAddition");
@@ -27,20 +21,6 @@ function validate() {
     let makeUpHouseNumberAddition = document.getElementById("makeUpHouseNumberAddition");
     let makeUpPostalCode = document.getElementById("makeUpPostalCode");
     let makeUpTown = document.getElementById("makeUpTown");
-
-    if (document.getElementById("checkedOrNotBilling").checked) {
-        billingStreet.setAttribute("value", streetValue);
-        billingHouseNumber.setAttribute("value", houseNumberValue);
-        billingHouseNumberAddition.setAttribute("value", houseNumberAdditionValue);
-        billingPostalCode.setAttribute("value", postalCodeValue);
-        billingTown.setAttribute("value", townValue);
-    } else {
-        billingStreet.setAttribute("value", "");
-        billingHouseNumber.setAttribute("value", "");
-        billingHouseNumberAddition.setAttribute("value", "");
-        billingPostalCode.setAttribute("value", "");
-        billingTown.setAttribute("value", "");
-    }
 
     if (document.getElementById("checkedOrNotPlayground").checked) {
         playgroundStreet.setAttribute("value", streetValue);

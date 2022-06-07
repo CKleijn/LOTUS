@@ -11,7 +11,7 @@ const assignmentSchema = new mongoose.Schema({
     },
     emailAddress: {
         type: String,
-        unique: true,
+        unique: false,
         validate: {
             validator: function(v) {
                 return /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(v);
@@ -47,30 +47,15 @@ const assignmentSchema = new mongoose.Schema({
         required: [true, "Plaats is verplicht!"],
     },
     // Factuur adres
-    billingStreet: {
-        type: String,
-        required: [true, "Factuur straat is verplicht!"],
-    },
-    billingHouseNumber: {
-        type: Number,
-        required: [true, "Factuur huisnummer is verplicht!"],
-    },
-    billingHouseNumberAddition: {
-        type: String,
-    },
-    billingPostalCode: {
+    billingEmailAddress: {
         type: String,
         validate: {
             validator: function(v) {
-                return /^[1-9][0-9]{3} ?(?!sa|sd|ss)[a-z]{2}$/i.test(v);
+                return /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(v);
             },
-            message: `Gebruik een geldig postcode zoals 2973FD!`,
+            message: `Gebruik een geldig e-mailadres zoals j.doe@gmail.com!`,
         },
-        required: [true, "Factuur postcode is verplicht!"],
-    },
-    billingTown: {
-        type: String,
-        required: [true, "Factuur plaats is verplicht!"],
+        required: [true, "E-mailadres is verplicht!"],
     },
     dateTime: {
         type: String,
