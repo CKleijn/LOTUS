@@ -31,6 +31,31 @@ const userSchema = new mongoose.Schema({
         },
         required: [true, "Wachtwoord is verplicht!"],
     },
+    street: {
+        type: String,
+        required: [true, "Straat is verplicht!"],
+    },
+    houseNumber: {
+        type: Number,
+        required: [true, "Huisnummer is verplicht!"],
+    },
+    houseNumberAddition: {
+        type: String,
+    },
+    postalCode: {
+        type: String,
+        validate: {
+            validator: function (v) {
+                return /^[1-9][0-9]{3} ?(?!sa|sd|ss)[a-z]{2}$/i.test(v);
+            },
+            message: `Gebruik een geldig postcode zoals 2973FD!`,
+        },
+        required: [true, "Postcode is verplicht!"],
+    },
+    town: {
+        type: String,
+        required: [true, "Plaats is verplicht!"],
+    },
     roles: {
         type: [String],
         enum: ["coordinator", "client", "member"],

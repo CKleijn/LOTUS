@@ -8,7 +8,7 @@ const passGenerator = require("generate-password");
 // Functionality for creating an user
 exports.createUser = (req, res) => {
     // Declare all variables out of req.body
-    let { firstName, lastName, emailAddress, password } = req.body;
+    let { firstName, lastName, emailAddress, password, street, houseNumber, houseNumberAddition, postalCode, town } = req.body;
     emailAddress = emailAddress.toLowerCase();
     // Create new user object
     const user = new User({
@@ -16,6 +16,11 @@ exports.createUser = (req, res) => {
         lastName: lastName,
         emailAddress: emailAddress,
         password: password,
+        street: street,
+        houseNumber: houseNumber,
+        houseNumberAddition: houseNumberAddition,
+        postalCode: postalCode,
+        town: town,
         roles: "client",
         lastLoginDate: Date.now(),
     });
@@ -55,6 +60,36 @@ exports.createUser = (req, res) => {
                 } else {
                     oldValues.password = password;
                 }
+
+                if (err.errors.street) {
+                    errors.streetErr = err.errors.street.properties.message;
+                } else {
+                    oldValues.street = street;
+                }
+
+                if (isNaN(houseNumber)) {
+                    errors.houseNumberErr = "Huisnummer moet een getal zijn!";
+                } else if (err.errors.houseNumber) {
+                    errors.houseNumberErr = err.errors.houseNumber.properties.message;
+                } else {
+                    oldValues.houseNumber = houseNumber;
+                }
+
+                if (houseNumberAddition || !houseNumberAddition.length === 0) {
+                    oldValues.houseNumberAddition = houseNumberAddition;
+                }
+
+                if (err.errors.postalCode) {
+                    errors.postalCodeErr = err.errors.postalCode.properties.message;
+                } else {
+                    oldValues.postalCode = postalCode;
+                }
+
+                if (err.errors.town) {
+                    errors.townErr = err.errors.town.properties.message;
+                } else {
+                    oldValues.town = town;
+                }
             }
             // Show the errors on the register page
             res.render("register", { pageName: "Registreren", ...errors });
@@ -69,6 +104,11 @@ exports.createUser = (req, res) => {
                     firstName: user.firstName,
                     lastName: user.lastName,
                     emailAddress: user.emailAddress,
+                    street: user.street,
+                    houseNumber: user.houseNumber,
+                    houseNumberAddition: user.houseNumberAddition,
+                    postalCode: user.postalCode,
+                    town: user.town,
                     roles: user.roles[0],
                     createdDate: user.createdDate,
                     lastLoginDate: user.lastLoginDate,
@@ -104,7 +144,13 @@ exports.createMember = (req, res) => {
 
                 if (result.length === 0) {
                     const password = await insertMember(emailAddress);
-                    await sendMemberInviteMail(emailAddress, password);
+                    const sendStatus = await sendMemberInviteMail(emailAddress, password);
+
+                    if (sendStatus) {
+                        console.log("Send");
+                    } else {
+                        console.log("Not send");
+                    }
 
                     res.redirect("/user_overview");
                 } else {
@@ -249,5 +295,5 @@ exports.getAllUsers = async () => {
 };
 
 exports.getAllValidUsers = async () => {
-    return await User.find({ firstName: { $ne: "" }, lastName: { $ne: "" } });
+    return await User.find({ firstName: { $ne: "" }, lastName: { $ne: "" }, roles: { $ne: "coordinator" } });
 };
