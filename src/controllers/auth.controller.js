@@ -7,6 +7,8 @@ const cryptr = new Cryptr(process.env.EMAIL_SETUP_HASH);
 exports.isLoggedIn = (req, res, next) => {
     const session = req.session;
 
+    console.log(session.user);
+
     if (typeof session.user != "undefined") {
         next();
     } else {
@@ -79,15 +81,33 @@ exports.login = (req, res) => {
                         User.findOneAndUpdate({ _id: user._id }, { lastLoginDate: Date.now() }, { new: true }, (err, currentUser) => {
                             if (err) throw err;
                             let session = req.session;
-                            session.user = {
-                                userId: currentUser._id,
-                                firstName: currentUser.firstName,
-                                lastName: currentUser.lastName,
-                                emailAddress: currentUser.emailAddress,
-                                roles: currentUser.roles[0],
-                                createdDate: currentUser.createdDate,
-                                lastLoginDate: currentUser.lastLoginDate,
-                            };
+
+                            if (currentUser.roles[0] == "client") {
+                                session.user = {
+                                    userId: currentUser._id,
+                                    firstName: currentUser.firstName,
+                                    lastName: currentUser.lastName,
+                                    emailAddress: currentUser.emailAddress,
+                                    street: currentUser.street,
+                                    houseNumber: currentUser.houseNumber,
+                                    houseNumberAddition: currentUser.houseNumberAddition,
+                                    postalCode: currentUser.postalCode,
+                                    town: currentUser.town,
+                                    roles: currentUser.roles[0],
+                                    createdDate: currentUser.createdDate,
+                                    lastLoginDate: currentUser.lastLoginDate,
+                                };
+                            } else {
+                                session.user = {
+                                    userId: currentUser._id,
+                                    firstName: currentUser.firstName,
+                                    lastName: currentUser.lastName,
+                                    emailAddress: currentUser.emailAddress,
+                                    roles: currentUser.roles[0],
+                                    createdDate: currentUser.createdDate,
+                                    lastLoginDate: currentUser.lastLoginDate,
+                                };
+                            }
 
                             return res.redirect("/");
                         });
