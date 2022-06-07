@@ -210,3 +210,30 @@ exports.createAssignment = (req, res) => {
 exports.getAssignmentPage = (req, res) => {
     res.render("assignment", { pageName: "Formulier", session: req.session.user });
 };
+
+exports.getAllAssignments = (req, res) => {
+    function format(inputDate) {
+        let date, month, year;
+      
+        date = inputDate.getDate();
+        month = inputDate.getMonth() + 1;
+        year = inputDate.getFullYear();
+      
+        date = date
+            .toString()
+            .padStart(2, '0');
+    
+        month = month
+            .toString()
+            .padStart(2, '0');
+      
+        return `${date}/${month}/${year}`;
+    }
+
+    Assignment.find(function(err, results) {
+        results.forEach(result => {
+            result.dateTime = format(new Date(result.dateTime));
+        });
+        res.render("assignment_overview", { pageName: "Opdrachten", session: req.session.user, assignments: results });
+    });
+}

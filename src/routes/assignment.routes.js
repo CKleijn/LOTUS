@@ -5,6 +5,8 @@ const router = express.Router();
 
 router.get("/assignment", isLoggedIn, assignmentController.getAssignmentPage);
 
+router.get("/assignment_overview", isLoggedIn, assignmentController.getAllAssignments);
+
 router.post("/assignment", isLoggedIn, assignmentController.createAssignment);
 
 module.exports = router;
