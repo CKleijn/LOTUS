@@ -126,6 +126,8 @@ exports.setupMember = (req, res) => {
     const { firstName, lastName, password, email } = req.body;
     const decryptedMail = cryptr.decrypt(email);
 
+    console.log(req.body);
+
     const errors = {};
     const oldValues = {};
     errors.oldValues = oldValues;
