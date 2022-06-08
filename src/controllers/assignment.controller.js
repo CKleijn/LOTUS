@@ -1,5 +1,6 @@
 const mongoose = require("../../database/dbconnection");
 const Assignment = require("../models/assignment.model");
+const { createRequest } = require("./request.controller");
 // Functionality for creating an assignment
 exports.createAssignment = (req, res) => {
     // Get session
@@ -40,7 +41,7 @@ exports.createAssignment = (req, res) => {
         assignment.isApproved = true;
     }
     // Save assignment object in database and show errors if they exists
-    assignment.save((err) => {
+    assignment.save(function(err, savedAssignment) {
         if (err) {
             const errors = {};
             const oldValues = {};
@@ -79,7 +80,6 @@ exports.createAssignment = (req, res) => {
             if (err.errors.houseNumberAddition) {
                 errors.houseNumberAdditionErr = err.errors.houseNumberAddition.properties.message;
             } else {
-                errors.houseNumberAdditionErr = "Dit veld is correct ingevuld!";
                 errors.oldValues.houseNumberAddition = req.body.houseNumberAddition;
             }
 
@@ -181,6 +181,9 @@ exports.createAssignment = (req, res) => {
             // Show the errors on the assignment page
             res.render("assignment", { pageName: "Formulier", session: req.session.user, ...errors });
         } else {
+            const objectId = savedAssignment._id;
+            // Create a request
+            createRequest(req, res, objectId);
             // Redirect to the dashboard
             res.redirect("/");
         }

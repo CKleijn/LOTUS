@@ -20,7 +20,7 @@ const assignmentSchema = new mongoose.Schema({
         },
         required: [true, "E-mailadres is verplicht!"],
     },
-    // Normale adres
+    // Personal address
     street: {
         type: String,
         required: [true, "Straat is verplicht!"],
@@ -46,7 +46,7 @@ const assignmentSchema = new mongoose.Schema({
         type: String,
         required: [true, "Plaats is verplicht!"],
     },
-    // Factuur adres
+    // Billing address
     billingEmailAddress: {
         type: String,
         validate: {
@@ -61,7 +61,7 @@ const assignmentSchema = new mongoose.Schema({
         type: String,
         required: [true, "Datum en tijd is verplicht!"],
     },
-    // Speelplaats
+    // Playground address
     playgroundStreet: {
         type: String,
         required: [true, "Speelplaats straat is verplicht!"],
@@ -87,7 +87,7 @@ const assignmentSchema = new mongoose.Schema({
         type: String,
         required: [true, "Speelplaats plaats is verplicht!"],
     },
-    // Grimeer
+    // Make up address
     makeUpStreet: {
         type: String,
     },
