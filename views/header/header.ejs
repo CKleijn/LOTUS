@@ -161,7 +161,8 @@
                         <span>Opdracht aanmaken</span>
                     </a>
                 </li>
-                <% } %>
+                
+                <% } %> <% if(session.roles == "coordinator" || session.roles == "client" || session.roles == "member") { %>
 
                 <li class="nav-item">
                     <a class="nav-link collapsed" href="assignment_overview">
@@ -169,6 +170,8 @@
                         <span>Opdrachten</span>
                     </a>
                 </li>
+
+                <% } %>
             </ul>
         </aside>
         <!-- End Sidebar-->
