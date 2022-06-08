@@ -28,9 +28,14 @@
 
                                     <div class="col-12">
                                         <label class="form-label">Wachtwoord</label>
-                                        <input type="password" name="password" class="form-control" value="<% if(typeof oldValues != "undefined"){%><%=oldValues.password%><%}%>">
+                                        <p>
+                                            <input id="password" type="password" name="password" class="form-control" value="<% if(typeof oldValues != "undefined"){%><%=oldValues.password%><%}%>">
+                                            <i class="bi bi-eye-slash" id="togglePassword"></i>
+                                        </p>
+
                                         <label class="form-error"><% if(typeof passwordErr != "undefined"){%><%=passwordErr%><%}%></label>
                                     </div>
+
                                     <input type="hidden" name="email" value="<%=email%>" />
                                     <div class="col-12">
                                         <button class="btn btn-primary w-100" type="submit">Bevestigen</button>
@@ -45,5 +50,16 @@
     </div>
 </main>
 <!-- End #main -->
+
+<script>
+    const togglePassword = document.querySelector("#togglePassword");
+    const password = document.querySelector("#password");
+
+    togglePassword.addEventListener("click", function (e) {
+        const type = password.getAttribute("type") === "password" ? "text" : "password";
+        password.setAttribute("type", type);
+        this.classList.toggle("bi-eye");
+    });
+</script>
 
 <%- include("footer/footer") %>

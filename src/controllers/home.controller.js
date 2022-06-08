@@ -3,23 +3,24 @@ const Assignment = require("../models/assignment.model");
 
 exports.getHomepage = (req, res) => {
     if (req.session.user.roles == "coordinator") {
-        Assignment.find(function(err, assignments) {
+        Assignment.find(function (err, assignments) {
             res.render("dashboard", { pageName: "Dashboard", session: req.session.user, assignments_amount: assignments.length });
         });
     } else if (req.session.user.roles == "client") {
-        Assignment.find(function(err, assignments) {
-            let assignmentsFiltered = []
-    
-            assignments.forEach(assignment => {
+        Assignment.find(function (err, assignments) {
+            let assignmentsFiltered = [];
+
+            assignments.forEach((assignment) => {
                 if (assignment.emailAddress == req.session.user.emailAddress) {
-                    assignmentsFiltered.push(assignment)
+                    assignmentsFiltered.push(assignment);
                 }
             });
 
             res.render("dashboard", { pageName: "Dashboard", session: req.session.user, assignments_amount: assignmentsFiltered.length });
-        })
+        });
+    } else {
+        res.render("dashboard", { pageName: "Dashboard", session: req.session.user });
     }
-
 };
 
 exports.getUserOverview = (req, res) => {
