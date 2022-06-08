@@ -1,5 +1,6 @@
 const mongoose = require("../../database/dbconnection");
 const Assignment = require("../models/assignment.model");
+const { createRequest } = require("./request.controller");
 // Functionality for creating an assignment
 exports.createAssignment = (req, res) => {
     // Get session
@@ -40,7 +41,7 @@ exports.createAssignment = (req, res) => {
         assignment.isApproved = true;
     }
     // Save assignment object in database and show errors if they exists
-    assignment.save((err) => {
+    assignment.save(function(err, savedAssignment) {
         if (err) {
             const errors = {};
             const oldValues = {};
@@ -79,7 +80,6 @@ exports.createAssignment = (req, res) => {
             if (err.errors.houseNumberAddition) {
                 errors.houseNumberAdditionErr = err.errors.houseNumberAddition.properties.message;
             } else {
-                errors.houseNumberAdditionErr = "Dit veld is correct ingevuld!";
                 errors.oldValues.houseNumberAddition = req.body.houseNumberAddition;
             }
 
@@ -181,6 +181,9 @@ exports.createAssignment = (req, res) => {
             // Show the errors on the assignment page
             res.render("assignment", { pageName: "Formulier", session: req.session.user, ...errors });
         } else {
+            const objectId = savedAssignment._id;
+            // Create a request
+            createRequest(req, res, objectId);
             // Redirect to the dashboard
             res.redirect("/");
         }
@@ -210,26 +213,48 @@ exports.getAllAssignments = (req, res) => {
         return `${date}/${month}/${year}`;
     }
 
-    if (req.session.user.roles == "coordinator") {
-        Assignment.find({ isApproved: true }, function(err, results) {
-            results.forEach(result => {
-                result.dateTime = format(new Date(result.dateTime));
-            });
-            res.render("assignment_overview", { pageName: "Opdrachten", session: req.session.user, assignments: results });
-        })
-    } else if (req.session.user.roles == "client") {
-        let resultsFiltered = []
+    Assignment.find({ isApproved: true }, function(err, results) {
+        results.forEach(result => {
+            result.dateTime = format(new Date(result.dateTime));
+        });
 
-        Assignment.find(function(err, results) {
+    } else if (req.session.user.roles == "member") {
+        Assignment.find({ isApproved: true }, function(err, results) {
             results.forEach(result => {
 
                 if (result.emailAddress == req.session.user.emailAddress) {
                     result.dateTime = format(new Date(result.dateTime));
-
-                    resultsFiltered.push(result)
                 }
             });
-            res.render("assignment_overview", { pageName: "Opdrachten", session: req.session.user, assignments: resultsFiltered });
+            res.render("assignment_overview", { pageName: "Opdrachten", session: req.session.user, assignments: results });
         });
     }
+
+}
+
+exports.getAssignmentDetailPage = (req, res) => { 
+    function format(inputDate) {
+        let date, month, year;
+      
+        date = inputDate.getDate();
+        month = inputDate.getMonth() + 1;
+        year = inputDate.getFullYear();
+      
+        date = date
+            .toString()
+            .padStart(2, '0');
+    
+        month = month
+            .toString()
+            .padStart(2, '0');
+      
+        return `${date}/${month}/${year}`;
+    }
+
+    
+
+    Assignment.find({ isApproved: true , _id: req.query.id}, function(err, results) {
+        console.log(results);
+        res.render("assignment_detail", { pageName: "Detailpagina", session: req.session.user, assignments: results });
+    });
 }

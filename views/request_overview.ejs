@@ -22,14 +22,23 @@
                             <thead>
                                 <tr>
                                     <th scope="col">Naam</th>
-                                    <th scope="col">Soort verzoek</th>
                                     <th scope="col">Datum</th>
                                     <th scope="col">Status</th>
                                     <th scope="col">Acties</th>
                                 </tr>
                             </thead>
                             <tbody>
-                                
+                                <% requests.forEach(request => { %>
+                                    <tr>
+                                        <td><%= request.user.firstName %> <%= request.user.lastName %></td>
+                                        <td><%= request.requestDate %></td>
+                                        <td><%= request.status %></td>
+                                        <td>
+                                            <button type="button" class="btn btn-primary"><i class="bi bi-pencil"></i></button>
+                                            <button type="button" class="btn btn-danger"><i class="bi bi-trash"></i></button>
+                                        </td>
+                                    </tr>
+                                <% }); %>
                             </tbody>
                         </table>
                     </div>

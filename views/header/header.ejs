@@ -153,7 +153,7 @@
                     </a>
                 </li>
 
-                <% } %> <% if(session.roles === "coordinator" || session.roles === "client") { %>
+                <% } %> <% if(session.roles == "coordinator" || session.roles == "client") { %>
 
                 <li class="nav-item">
                     <a class="nav-link collapsed" href="assignment">
@@ -161,6 +161,7 @@
                         <span>Opdracht aanmaken</span>
                     </a>
                 </li>
+                <% } %>
 
                 <li class="nav-item">
                     <a class="nav-link collapsed" href="assignment_overview">
@@ -168,8 +169,6 @@
                         <span>Opdrachten</span>
                     </a>
                 </li>
-
-                <% } %>
             </ul>
         </aside>
         <!-- End Sidebar-->
