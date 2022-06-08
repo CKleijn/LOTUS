@@ -213,26 +213,10 @@ exports.getAllAssignments = (req, res) => {
         return `${date}/${month}/${year}`;
     }
 
-    if (req.session.user.roles == "coordinator") {
-        Assignment.find({ isApproved: true }, function(err, results) {
-            results.forEach(result => {
-                result.dateTime = format(new Date(result.dateTime));
-            });
-            res.render("assignment_overview", { pageName: "Opdrachten", session: req.session.user, assignments: results });
-        })
-    } else if (req.session.user.roles == "client") {
-        let resultsFiltered = []
-
-        Assignment.find(function(err, results) {
-            results.forEach(result => {
-
-                if (result.emailAddress == req.session.user.emailAddress) {
-                    result.dateTime = format(new Date(result.dateTime));
-
-                    resultsFiltered.push(result)
-                }
-            });
-            res.render("assignment_overview", { pageName: "Opdrachten", session: req.session.user, assignments: resultsFiltered });
+    Assignment.find({ isApproved: true }, function(err, results) {
+        results.forEach(result => {
+            result.dateTime = format(new Date(result.dateTime));
         });
-    }
+        res.render("assignment_overview", { pageName: "Opdrachten", session: req.session.user, assignments: results });
+    });
 }
