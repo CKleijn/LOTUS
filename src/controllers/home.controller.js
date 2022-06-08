@@ -1,4 +1,4 @@
-const { getAllValidUsers } = require("./../controllers/user.controller");
+const { getAllValidMembers, getAllInvitedClients, getAllInvitedMembers } = require("./../controllers/user.controller");
 const Assignment = require("../models/assignment.model");
 
 exports.getHomepage = (req, res) => {
@@ -19,12 +19,15 @@ exports.getHomepage = (req, res) => {
             res.render("dashboard", { pageName: "Dashboard", session: req.session.user, assignments_amount: assignmentsFiltered.length });
         })
     }
+
 };
 
 exports.getUserOverview = (req, res) => {
     (async () => {
-        const allUsers = await getAllValidUsers();
-        return res.render("user_overview", { pageName: "Gebruikers", session: req.session.user, allUsers });
+        const allMembers = await getAllValidMembers();
+        const allClients = await getAllInvitedClients();
+        const allInvitedMembers = await getAllInvitedMembers();
+        return res.render("user_overview", { pageName: "Gebruikers", session: req.session.user, allMembers, allClients, allInvitedMembers });
     })();
 };
 

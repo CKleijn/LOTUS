@@ -304,7 +304,7 @@
     //     );
     // });
 
-    $("#datatable").DataTable({
+    $(".datatable").DataTable({
         language: {
             url: "http://cdn.datatables.net/plug-ins/1.12.1/i18n/nl-NL.json",
         },

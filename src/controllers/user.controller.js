@@ -356,6 +356,14 @@ exports.getAllUsers = async () => {
     return await User.find();
 };
 
-exports.getAllValidUsers = async () => {
-    return await User.find({ firstName: { $ne: "" }, lastName: { $ne: "" }, roles: { $ne: "coordinator" } });
+exports.getAllInvitedClients = async () => {
+    return await User.find({ roles: "client" });
+};
+
+exports.getAllValidMembers = async () => {
+    return await User.find({ firstName: { $ne: "" }, lastName: { $ne: "" }, roles: "member" });
+};
+
+exports.getAllInvitedMembers = async () => {
+    return await User.find({ firstName: "", lastName: "" });
 };
