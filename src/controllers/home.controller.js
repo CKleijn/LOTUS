@@ -2,9 +2,24 @@ const { getAllValidMembers, getAllInvitedClients, getAllInvitedMembers } = requi
 const Assignment = require("../models/assignment.model");
 
 exports.getHomepage = (req, res) => {
-    Assignment.find(function (err, results) {
-        res.render("dashboard", { pageName: "Dashboard", session: req.session.user, assignments_amount: results.length });
-    });
+    if (req.session.user.roles == "coordinator") {
+        Assignment.find(function(err, assignments) {
+            res.render("dashboard", { pageName: "Dashboard", session: req.session.user, assignments_amount: assignments.length });
+        });
+    } else if (req.session.user.roles == "client") {
+        Assignment.find(function(err, assignments) {
+            let assignmentsFiltered = []
+    
+            assignments.forEach(assignment => {
+                if (assignment.emailAddress == req.session.user.emailAddress) {
+                    assignmentsFiltered.push(assignment)
+                }
+            });
+
+            res.render("dashboard", { pageName: "Dashboard", session: req.session.user, assignments_amount: assignmentsFiltered.length });
+        })
+    }
+
 };
 
 exports.getUserOverview = (req, res) => {
