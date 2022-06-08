@@ -20,7 +20,6 @@
                     <div class="card-body">
                         <h5 class="card-title">Alle opdrachten</h5>
                         <p>In één overzicht alle opdrachten kunnen zien? Dat kan doormiddel van deze tabel!</p>
-
                         <table id="datatable" class="display nowrap" width="100%">
                             <thead>
                                 <tr>
@@ -50,16 +49,27 @@
                 </div>
                 <% } else if (session.roles == "client") { %>
                     <div>
-                        <div class="card">
-                            <div class="card-body">
-                                <h5 class="card-title">Opdrachten</h5>
-                                <p>In één overzicht al je opdrachten kunnen zien? Dat kan op deze pagina!</p>
-                            </div>
-                        </div>
                         <div class="row">
                             <% assignments.forEach(assignment => { %>
                                 <div class="col-lg-6">
                                     <a href="/">
+                                        <div class="card">
+                                            <div class="card-body assignment_card">
+                                            <h5 class="card-title"><%= assignment.amountOfLotusVictims + " LOTUSslachtoffers nodig in " + assignment.playgroundTown %></h5>
+                                                <%= "Opdracht in " + assignment.playgroundHouseNumber + " " + assignment.playgroundStreet + " " + assignment.playgroundTown + ", " + assignment.playgroundPostalCode %> 
+                                            </div>
+                                        </div>
+                                    </a>
+                                </div>
+                            <% }); %>
+                        </div>
+                    </div>
+                <% } else if (session.roles == "member") { %>
+                    <div>
+                        <div class="row">
+                            <% assignments.forEach(assignment => { %>
+                                <div class="col-lg-6">
+                                    <a href="assignment_detail?id=<%=assignment._id%>">
                                         <div class="card">
                                             <div class="card-body assignment_card">
                                             <h5 class="card-title"><%= assignment.amountOfLotusVictims + " LOTUSslachtoffers nodig in " + assignment.playgroundTown %></h5>
@@ -76,5 +86,5 @@
         </div>
     </section>
 </main>
-
-    <%- include("footer/footer") -%>
+   
+<%- include("footer/footer") -%>
