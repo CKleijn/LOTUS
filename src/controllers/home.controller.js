@@ -1,4 +1,4 @@
-const { getAllValidMembers, getAllInvitedClients, getAllInvitedMembers } = require("./../controllers/user.controller");
+const { getAllValidMembers, getAllValidClients, getAllInvitedMembers } = require("./../controllers/user.controller");
 const Assignment = require("../models/assignment.model");
 
 exports.getHomepage = (req, res) => {
@@ -25,7 +25,7 @@ exports.getHomepage = (req, res) => {
 exports.getUserOverview = (req, res) => {
     (async () => {
         const allMembers = await getAllValidMembers();
-        const allClients = await getAllInvitedClients();
+        const allClients = await getAllValidClients();
         const allInvitedMembers = await getAllInvitedMembers();
         return res.render("user_overview", { pageName: "Gebruikers", session: req.session.user, allMembers, allClients, allInvitedMembers });
     })();
