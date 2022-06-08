@@ -136,7 +136,9 @@ exports.createMember = (req, res) => {
         emailAddress = emailAddress.toLowerCase();
         const emailRegex = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
 
-        const allUsers = await userController.getAllValidUsers();
+        const allMembers = await exports.getAllValidMembers();
+        const allClients = await exports.getAllValidClients();
+        const allInvitedMembers = await exports.getAllInvitedMembers();
 
         if (emailRegex.test(emailAddress)) {
             (async () => {
@@ -154,11 +156,11 @@ exports.createMember = (req, res) => {
 
                     res.redirect("/user_overview");
                 } else {
-                    res.render("user_overview", { pageName: "Gebruikers", session: req.session.user, emailAddressErr: "Dit e-mailadres is al in gebruik!", allUsers });
+                    res.render("user_overview", { pageName: "Gebruikers", session: req.session.user, emailAddressErr: "Dit e-mailadres is al in gebruik!", allMembers, allClients, allInvitedMembers });
                 }
             })();
         } else {
-            res.render("user_overview", { pageName: "Gebruikers", session: req.session.user, emailAddressErr: "Het ingevulde e-mailadres is ongeldig!", allUsers });
+            res.render("user_overview", { pageName: "Gebruikers", session: req.session.user, emailAddressErr: "Het ingevulde e-mailadres is ongeldig!", allMembers, allClients, allInvitedMembers });
         }
     })();
 };
@@ -356,7 +358,7 @@ exports.getAllUsers = async () => {
     return await User.find();
 };
 
-exports.getAllInvitedClients = async () => {
+exports.getAllValidClients = async () => {
     return await User.find({ roles: "client" });
 };
 
