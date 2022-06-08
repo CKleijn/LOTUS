@@ -9,4 +9,6 @@ router.get("/assignment_overview", isLoggedIn, assignmentController.getAllAssign
 
 router.post("/assignment", isLoggedIn, assignmentController.createAssignment);
 
+router.get("/assignment_detail", isLoggedIn, assignmentController.getAssignmentDetailPage);
+
 module.exports = router;

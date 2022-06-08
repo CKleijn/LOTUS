@@ -217,6 +217,44 @@ exports.getAllAssignments = (req, res) => {
         results.forEach(result => {
             result.dateTime = format(new Date(result.dateTime));
         });
-        res.render("assignment_overview", { pageName: "Opdrachten", session: req.session.user, assignments: results });
+
+    } else if (req.session.user.roles == "member") {
+        Assignment.find({ isApproved: true }, function(err, results) {
+            results.forEach(result => {
+
+                if (result.emailAddress == req.session.user.emailAddress) {
+                    result.dateTime = format(new Date(result.dateTime));
+                }
+            });
+            res.render("assignment_overview", { pageName: "Opdrachten", session: req.session.user, assignments: results });
+        });
+    }
+
+}
+
+exports.getAssignmentDetailPage = (req, res) => { 
+    function format(inputDate) {
+        let date, month, year;
+      
+        date = inputDate.getDate();
+        month = inputDate.getMonth() + 1;
+        year = inputDate.getFullYear();
+      
+        date = date
+            .toString()
+            .padStart(2, '0');
+    
+        month = month
+            .toString()
+            .padStart(2, '0');
+      
+        return `${date}/${month}/${year}`;
+    }
+
+    
+
+    Assignment.find({ isApproved: true , _id: req.query.id}, function(err, results) {
+        console.log(results);
+        res.render("assignment_detail", { pageName: "Detailpagina", session: req.session.user, assignments: results });
     });
 }
