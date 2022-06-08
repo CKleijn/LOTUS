@@ -193,7 +193,7 @@ exports.changeUserProfileDetails = (req, res) => {
 
     if (!firstName || firstName.length === 0) {
         errors.firstNameErr = "Voornaam is verplicht!";
-    } else if (!isNaN(firstName)) {
+    } else if (!isNaN(firstName) || /\d/.test(firstName)) {
         errors.firstNameErr = "Voornaam moet bestaan uit letters!";
     } else {
         oldValues.firstName = firstName;
@@ -201,7 +201,7 @@ exports.changeUserProfileDetails = (req, res) => {
 
     if (!lastName || lastName.length === 0) {
         errors.lastNameErr = "Achternaam is verplicht!";
-    } else if (!isNaN(lastName)) {
+    } else if (!isNaN(lastName) || /\d/.test(lastName)) {
         errors.lastNameErr = "Achternaam moet bestaan uit letters!";
     } else {
         oldValues.lastName = lastName;
@@ -220,7 +220,7 @@ exports.changeUserProfileDetails = (req, res) => {
     if (req.session.user.roles == "client") {
         if (!street || street.length === 0) {
             errors.streetErr = "Straat is verplicht!";
-        } else if (!isNaN(street)) {
+        } else if (!isNaN(street) || /\d/.test(street)) {
             errors.streetErr = "Straat moet bestaan uit letters!";
         } else {
             oldValues.street = street;
@@ -234,9 +234,11 @@ exports.changeUserProfileDetails = (req, res) => {
             oldValues.houseNumber = houseNumber;
         }
 
+        oldValues.houseNumberAddition = houseNumberAddition;
+
         if (!town || town.length === 0) {
             errors.townErr = "Plaats is verplicht!";
-        } else if (!isNaN(town)) {
+        } else if (!isNaN(town) || /\d/.test(town)) {
             errors.townErr = "Plaats moet bestaan uit letters!";
         } else {
             oldValues.town = town;
