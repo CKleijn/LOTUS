@@ -20,137 +20,145 @@
                                 <h5 class="card-title text-center pb-0 fs-4">Opdracht aanmaken</h5>
                                 <p class="text-center">Persoonlijke gegevens</p>
                             </div>
-                            <div class="row pr-0">
+                            <div class="row pb-4 pr-0">
                                 <div class="col-md-6">
                                     <div class="form-group">
-                                        <input type="text" name="firstName" class="form-control" placeholder="Voornaam *" value="<% if(typeof oldValues != "undefined"){%><%=oldValues.firstName%><%}%>"/>
-                                        <label class="form-label form-error"><% if(typeof firstNameErr != "undefined"){%><%=firstNameErr%><%}%></label>
+                                        <input type="text" name="firstName" id="firstName" class="form-control" placeholder="Voornaam *" value="<% if(typeof oldValues != "undefined"){%><%=oldValues.firstName%><%}%>"/>
+                                        <label class="form-label form-error"><% if(typeof firstNameErr != "undefined"){%><%=firstNameErr%><%}else{%>&nbsp;<%}%></label>
                                     </div>
                                     <div class="form-group">
-                                        <input type="text"name="lastName" class="form-control" placeholder="Achternaam *" value="<% if(typeof oldValues != "undefined"){%><%=oldValues.lastName%><%}%>" />
-                                        <label class="form-label form-error"><% if(typeof lastNameErr != "undefined"){%><%=lastNameErr%><%}%></label>
+                                        <input type="text"name="lastName" id="lastName" class="form-control" placeholder="Achternaam *" value="<% if(typeof oldValues != "undefined"){%><%=oldValues.lastName%><%}%>" />
+                                        <label class="form-label form-error"><% if(typeof lastNameErr != "undefined"){%><%=lastNameErr%><%}else{%>&nbsp;<%}%></label>
                                     </div>
                                     <div class="form-group">
-                                        <input type="text" name="emailAddress" class="form-control" placeholder="E-mailadres *" value="<% if(typeof oldValues != "undefined"){%><%=oldValues.emailAddress%><%}%>"/>
-                                        <label class="form-label form-error"><% if(typeof emailAddressErr != "undefined"){%><%=emailAddressErr%><%}%></label>
+                                        <input type="text" name="emailAddress" id="emailAddress" class="form-control" placeholder="E-mailadres *" value="<% if(typeof oldValues != "undefined"){%><%=oldValues.emailAddress%><%}%>"/>
+                                        <label class="form-label form-error"><% if(typeof emailAddressErr != "undefined"){%><%=emailAddressErr%><%}else{%>&nbsp;<%}%></label>
                                     </div>
                                     <div class="form-group">
                                         <input type="text" name="street" id="street" class="form-control" placeholder="Straat *" value="<% if(typeof oldValues != "undefined"){%><%=oldValues.street%><%}%>"/>
-                                        <label class="form-label form-error"><% if(typeof streetErr != "undefined"){%><%=streetErr%><%}%></label>
+                                        <label class="form-label form-error"><% if(typeof streetErr != "undefined"){%><%=streetErr%><%}else{%>&nbsp;<%}%></label>
+                                    </div>
+                                    <div class="form-group">
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="checkbox" id="checkedOrNotProfile" onclick='validate("<%= session.firstName %>","<%= session.lastName %>","<%= session.emailAddress %>","<%= session.street %>","<%= session.houseNumber %>","<%= session.houseNumberAddition %>","<%= session.postalCode %>","<%= session.town %>")'>
+                                            <label class="form-check-label">Gebruik mijn persoonlijke gegevens</label>
+                                        </div>
                                     </div>
                                 </div>
                                 <div class="col-md-6">
                                     <div class="form-group">
                                         <input type="number" name="houseNumber" id="houseNumber" class="form-control" placeholder="Huisnummer *" min="0" value="<% if(typeof oldValues != "undefined"){%><%=oldValues.houseNumber%><%}%>"/>
-                                        <label class="form-label form-error"><% if(typeof houseNumberErr != "undefined"){%><%=houseNumberErr%><%}%></label>
+                                        <label class="form-label form-error"><% if(typeof houseNumberErr != "undefined"){%><%=houseNumberErr%><%}else{%>&nbsp;<%}%></label>
                                     </div>
                                     <div class="form-group">
                                         <input type="text" name="houseNumberAddition" id="houseNumberAddition" class="form-control" placeholder="Huisnummer toevoeging" value="<% if(typeof oldValues != "undefined"){%><%=oldValues.houseNumberAddition%><%}%>"/>
-                                        <label class="form-label form-error"><% if(typeof houseNumberAdditionErr != "undefined"){%><%=houseNumberAdditionErr%><%}%></label>
+                                        <label class="form-label form-error"><% if(typeof houseNumberAdditionErr != "undefined"){%><%=houseNumberAdditionErr%><%}else{%>&nbsp;<%}%></label>
                                     </div>
                                     <div class="form-group">
                                         <input type="text" name="postalCode" id="postalCode" class="form-control" placeholder="Postcode *" value="<% if(typeof oldValues != "undefined"){%><%=oldValues.postalCode%><%}%>"/>
-                                        <label class="form-label form-error"><% if(typeof postalCodeErr != "undefined"){%><%=postalCodeErr%><%}%></label>
+                                        <label class="form-label form-error"><% if(typeof postalCodeErr != "undefined"){%><%=postalCodeErr%><%}else{%>&nbsp;<%}%></label>
                                     </div>
                                     <div class="form-group">
                                         <input type="text" name="town" id="town" class="form-control" placeholder="Plaats *" value="<% if(typeof oldValues != "undefined"){%><%=oldValues.town%><%}%>"/>
-                                        <label class="form-label form-error"><% if(typeof townErr != "undefined"){%><%=townErr%><%}%></label>
+                                        <label class="form-label form-error"><% if(typeof townErr != "undefined"){%><%=townErr%><%}else{%>&nbsp;<%}%></label>
                                     </div>
                                 </div>
                             </div>
-                            <div class="row pr-0">
+                            <hr>
+                            <div class="row pb-4 pr-0">
                                 <div class="col-md-6">
-                                    <div class="pt-5 pb-2">
+                                    <div class="pt-4 pb-2">
                                         <p class="text-center">Speelplaats adres gegevens</p>
                                     </div>
                                     <div class="form-group">
                                         <input type="text" name="playgroundStreet" id="playgroundStreet" class="form-control" placeholder="Speelplaats straat *" value="<% if(typeof oldValues != "undefined"){%><%=oldValues.playgroundStreet%><%}%>"/>
-                                        <label class="form-label form-error"><% if(typeof playgroundStreetErr != "undefined"){%><%=playgroundStreetErr%><%}%></label>
+                                        <label class="form-label form-error"><% if(typeof playgroundStreetErr != "undefined"){%><%=playgroundStreetErr%><%}else{%>&nbsp;<%}%></label>
                                     </div>
                                     <div class="form-group">
                                         <input type="number" name="playgroundHouseNumber" id="playgroundHouseNumber" class="form-control" min="0" placeholder="Speelplaats huisnummer *" value="<% if(typeof oldValues != "undefined"){%><%=oldValues.playgroundHouseNumber%><%}%>"/>
-                                        <label class="form-label form-error"><% if(typeof playgroundHouseNumberErr != "undefined"){%><%=playgroundHouseNumberErr%><%}%></label>
+                                        <label class="form-label form-error"><% if(typeof playgroundHouseNumberErr != "undefined"){%><%=playgroundHouseNumberErr%><%}else{%>&nbsp;<%}%></label>
                                     </div>
                                     <div class="form-group">
                                         <input type="text" name="playgroundHouseNumberAddition" id="playgroundHouseNumberAddition" class="form-control" placeholder="Speelplaats huisnummer toevoeging" max="1" value="<% if(typeof oldValues != "undefined"){%><%=oldValues.playgroundHouseNumberAddition%><%}%>"/>
-                                        <label class="form-label form-error"><% if(typeof playgroundHouseNumberAdditionErr != "undefined"){%><%=playgroundHouseNumberAdditionErr%><%}%></label>
+                                        <label class="form-label form-error"><% if(typeof playgroundHouseNumberAdditionErr != "undefined"){%><%=playgroundHouseNumberAdditionErr%><%}else{%>&nbsp;<%}%></label>
                                     </div>
                                     <div class="form-group">
                                         <input type="text" name="playgroundPostalCode" id="playgroundPostalCode" class="form-control" placeholder="Speelplaats postcode *" value="<% if(typeof oldValues != "undefined"){%><%=oldValues.playgroundPostalCode%><%}%>"/>
-                                        <label class="form-label form-error"><% if(typeof playgroundPostalCodeErr != "undefined"){%><%=playgroundPostalCodeErr%><%}%></label>
+                                        <label class="form-label form-error"><% if(typeof playgroundPostalCodeErr != "undefined"){%><%=playgroundPostalCodeErr%><%}else{%>&nbsp;<%}%></label>
                                     </div>
                                     <div class="form-group">
                                         <input type="text" name="playgroundTown" id="playgroundTown" class="form-control" placeholder="Speelplaats plaats *" value="<% if(typeof oldValues != "undefined"){%><%=oldValues.playgroundTown%><%}%>"/>
-                                        <label class="form-label form-error"><% if(typeof playgroundTownErr != "undefined"){%><%=playgroundTownErr%><%}%></label>
+                                        <label class="form-label form-error"><% if(typeof playgroundTownErr != "undefined"){%><%=playgroundTownErr%><%}else{%>&nbsp;<%}%></label>
                                     </div>
-                                    <div class="form-group pt-2">
+                                    <div class="form-group">
                                         <div class="form-check">
-                                            <input class="form-check-input" type="checkbox" id="checkedOrNotPlayground" onclick="validate()">
+                                            <input class="form-check-input" type="checkbox" id="checkedOrNotPlayground" onclick='validate("<%= session.firstName %>","<%= session.lastName %>","<%= session.emailAddress %>","<%= session.street %>","<%= session.houseNumber %>","<%= session.houseNumberAddition %>","<%= session.postalCode %>","<%= session.town %>")'>
                                             <label class="form-check-label">Speelplaats adres is hetzelfde als persoonlijk adres</label>
                                         </div>
                                     </div>
                                 </div>
                                 <div class="col-md-6">
-                                    <div class="pt-5 pb-2">
+                                    <div class="pt-4 pb-2">
                                         <p class="text-center">Grimeer adres gegevens (optioneel)</p>
                                     </div>
                                     <div class="form-group">
                                         <input type="text" name="makeUpStreet" id="makeUpStreet" class="form-control" placeholder="Grimeer straat" value="<% if(typeof oldValues != "undefined"){%><%=oldValues.makeUpStreet%><%}%>"/>
-                                        <label class="form-label form-error"><% if(typeof makeUpStreetErr != "undefined"){%><%=makeUpStreetErr%><%}%></label>
+                                        <label class="form-label form-error"><% if(typeof makeUpStreetErr != "undefined"){%><%=makeUpStreetErr%><%}else{%>&nbsp;<%}%></label>
                                     </div>
                                     <div class="form-group">
                                         <input type="number" name="makeUpHouseNumber" id="makeUpHouseNumber" class="form-control" min="0" placeholder="Grimeer huisnummer" value="<% if(typeof oldValues != "undefined"){%><%=oldValues.makeUpHouseNumber%><%}%>"/>
-                                        <label class="form-label form-error"><% if(typeof makeUpHouseNumberErr != "undefined"){%><%=makeUpHouseNumberErr%><%}%></label>
+                                        <label class="form-label form-error"><% if(typeof makeUpHouseNumberErr != "undefined"){%><%=makeUpHouseNumberErr%><%}else{%>&nbsp;<%}%></label>
                                     </div>
                                     <div class="form-group">
                                         <input type="text" name="makeUpHouseNumberAddition" id="makeUpHouseNumberAddition" class="form-control" placeholder="Grimeer huisnummer toevoeging" value="<% if(typeof oldValues != "undefined"){%><%=oldValues.makeUpHouseNumberAddition%><%}%>"/>
-                                        <label class="form-label form-error"><% if(typeof makeUpHouseNumberAdditionErr != "undefined"){%><%=makeUpHouseNumberAdditionErr%><%}%></label>
+                                        <label class="form-label form-error"><% if(typeof makeUpHouseNumberAdditionErr != "undefined"){%><%=makeUpHouseNumberAdditionErr%><%}else{%>&nbsp;<%}%></label>
                                     </div>
                                     <div class="form-group">
                                         <input type="text" name="makeUpPostalCode" id="makeUpPostalCode" class="form-control" placeholder="Grimeer postcode" value="<% if(typeof oldValues != "undefined"){%><%=oldValues.makeUpPostalCode%><%}%>"/>
-                                        <label class="form-label form-error"><% if(typeof makeUpPostalCodeErr != "undefined"){%><%=makeUpPostalCodeErr%><%}%></label>
+                                        <label class="form-label form-error"><% if(typeof makeUpPostalCodeErr != "undefined"){%><%=makeUpPostalCodeErr%><%}else{%>&nbsp;<%}%></label>
                                     </div>
                                     <div class="form-group">
                                         <input type="text" name="makeUpTown" id="makeUpTown" class="form-control" placeholder="Grimeer plaats" value="<% if(typeof oldValues != "undefined"){%><%=oldValues.makeUpTown%><%}%>"/>
-                                        <label class="form-label form-error"><% if(typeof makeUpTownErr != "undefined"){%><%=makeUpTownErr%><%}%></label>
+                                        <label class="form-label form-error"><% if(typeof makeUpTownErr != "undefined"){%><%=makeUpTownErr%><%}else{%>&nbsp;<%}%></label>
                                     </div>
-                                    <div class="form-group pt-2">
+                                    <div class="form-group">
                                         <div class="form-check">
-                                            <input class="form-check-input" type="checkbox" id="checkedOrNotMakeUp" onclick="validate()">
+                                            <input class="form-check-input" type="checkbox" id="checkedOrNotMakeUp" onclick='validate("<%= session.firstName %>","<%= session.lastName %>","<%= session.emailAddress %>","<%= session.street %>","<%= session.houseNumber %>","<%= session.houseNumberAddition %>","<%= session.postalCode %>","<%= session.town %>")'>
                                             <label class="form-check-label">Grimeer adres is hetzelfde als speelplaats adres</label>
                                         </div>
                                     </div>
                                 </div>
                             </div>
-                            <div class="row pr-0">
+                            <hr>
+                            <div class="row pb-4 pr-0">
                                 <div class="col-md-6">
-                                    <div class="pt-5 pb-2">
+                                    <div class="pt-4 pb-2">
                                         <p class="text-center">Overige</p>
                                     </div>
                                     <div class="form-group">
                                         <input type="datetime-local" name="dateTime" class="form-control" placeholder="Datum/tijd *" value="<% if(typeof oldValues != "undefined"){%><%=oldValues.dateTime%><%}%>"/>
-                                        <label class="form-label form-error"><% if(typeof dateTimeErr != "undefined"){%><%=dateTimeErr%><%}%></label>
+                                        <label class="form-label form-error"><% if(typeof dateTimeErr != "undefined"){%><%=dateTimeErr%><%}else{%>&nbsp;<%}%></label>
                                     </div>
                                     <div class="form-group">
                                         <input type="number" name="amountOfLotusVictims" class="form-control" placeholder="Aantal LOTUS slachtoffers *" value="<% if(typeof oldValues != "undefined"){%><%=oldValues.amountOfLotusVictims%><%}%>"/>
-                                        <label class="form-label form-error"><% if(typeof amountOfLotusVictimsErr != "undefined"){%><%=amountOfLotusVictimsErr%><%}%></label>
+                                        <label class="form-label form-error"><% if(typeof amountOfLotusVictimsErr != "undefined"){%><%=amountOfLotusVictimsErr%><%}else{%>&nbsp;<%}%></label>
                                     </div>
                                     <div class="form-group">
                                         <input type="text" name="comments" class="form-control" placeholder="Opmerkingen" value="<% if(typeof oldValues != "undefined"){%><%=oldValues.comments%><%}%>"/>
-                                        <label class="form-label form-error"><% if(typeof commentsErr != "undefined"){%><%=commentsErr%><%}%></label>
+                                        <label class="form-label form-error"><% if(typeof commentsErr != "undefined"){%><%=commentsErr%><%}else{%>&nbsp;<%}%></label>
                                     </div>
                                 </div>
                                 <div class="col-md-6">
-                                    <div class="pt-5 pb-2">
+                                    <div class="pt-4 pb-2">
                                         <p class="text-center">Factuur gegevens</p>
                                     </div>
                                     <div class="form-group">
                                         <input type="text" name="billingEmailAddress" id="billingEmailAddress" class="form-control" placeholder="Factuur e-mailadres *" value="<% if(typeof oldValues != "undefined"){%><%=oldValues.billingEmailAddress%><%}%>"/>
-                                        <label class="form-label form-error"><% if(typeof billingEmailAddressErr != "undefined"){%><%=billingEmailAddressErr%><%}%></label>
+                                        <label class="form-label form-error"><% if(typeof billingEmailAddressErr != "undefined"){%><%=billingEmailAddressErr%><%}else{%>&nbsp;<%}%></label>
                                     </div>
                                 </div>
                             </div>
-                            <div class="row pr-0 mt-5">
+                            <div class="row pr-0">
                                 <div class="col-12">
                                     <button class="btn btn-primary w-100" type="submit">Opdracht aanmaken</button>
                                 </div>
