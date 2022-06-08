@@ -744,6 +744,10 @@ h6 {
     background: #ffecdf;
 }
 
+.dashboard .assignment_card_text {
+    color: #212529;
+}
+
 /* Activity */
 .dashboard .activity {
     font-size: 14px;

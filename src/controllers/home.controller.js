@@ -1,7 +1,10 @@
 const { getAllValidUsers } = require("./../controllers/user.controller");
+const Assignment = require("../models/assignment.model");
 
 exports.getHomepage = (req, res) => {
-    res.render("dashboard", { pageName: "Dashboard", session: req.session.user });
+    Assignment.find(function(err, results) {
+        res.render("dashboard", { pageName: "Dashboard", session: req.session.user, assignments_amount: results.length });
+    })
 };
 
 exports.getUserOverview = (req, res) => {
