@@ -3,7 +3,7 @@ const Request = require("../models/request.model");
 const User = require("../models/user.model");
 const Assignment = require("../models/assignment.model");
 
-exports.createRequest = (req, res, objectId) => {
+exports.createRequest = async (req, res, objectId) => {
     // Get session
     const session = req.session;
     // Create request
@@ -13,6 +13,8 @@ exports.createRequest = (req, res, objectId) => {
     });
     // Save request
     request.save();
+    // Return request
+    return request;
 };
 
 exports.getAllRequests = async (req, res) => {

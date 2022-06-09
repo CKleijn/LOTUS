@@ -1,4 +1,5 @@
 const mongoose = require("../../database/dbconnection");
+const ObjectId = mongoose.Schema.Types.ObjectId;
 // Create assignmentSchema with all fields
 const assignmentSchema = new mongoose.Schema({
     firstName: {
@@ -124,7 +125,10 @@ const assignmentSchema = new mongoose.Schema({
     isApproved: {
         type: Boolean,
         default: false
-    }
+    },
+    requestId: {
+        type: ObjectId,
+    },
 });
 // Create a Assignment model
 module.exports = mongoose.model("Assignment", assignmentSchema);
