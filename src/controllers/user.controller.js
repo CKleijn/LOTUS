@@ -154,7 +154,7 @@ exports.createMember = (req, res) => {
                         console.log("Not send");
                     }
 
-                    res.redirect("/user/overview");
+                    res.redirect("/user");
                 } else {
                     res.render("user_overview", { pageName: "Gebruikers", session: req.session.user, emailAddressErr: "Dit e-mailadres is al in gebruik!", allMembers, allClients, allInvitedMembers });
                 }
