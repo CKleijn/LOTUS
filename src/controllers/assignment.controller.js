@@ -1,5 +1,6 @@
 const mongoose = require("../../database/dbconnection");
 const Assignment = require("../models/assignment.model");
+const Request = require("../models/request.model");
 const { createRequest } = require("./request.controller");
 // Functionality for creating an assignment
 exports.createAssignment = (req, res) => {
@@ -9,7 +10,7 @@ exports.createAssignment = (req, res) => {
     const { firstName, lastName, emailAddress, street, houseNumber, houseNumberAddition, postalCode, town, billingEmailAddress, 
             dateTime, playgroundStreet, playgroundHouseNumber, playgroundHouseNumberAddition, playgroundPostalCode, playgroundTown, 
             makeUpStreet, makeUpHouseNumber, makeUpHouseNumberAddition, makeUpPostalCode, makeUpTown, amountOfLotusVictims, 
-            comments, isApproved } = req.body;
+            comments, isApproved, requestId } = req.body;
     // Create new assignment object
     const assignment = new Assignment({
         firstName: firstName,
@@ -35,6 +36,7 @@ exports.createAssignment = (req, res) => {
         amountOfLotusVictims: amountOfLotusVictims,
         comments: comments,
         isApproved: isApproved,
+        requestId: requestId,
     });
     // Check if coordinator is trying to make an assignment
     if (session.user.roles === "coordinator") {
@@ -181,11 +183,15 @@ exports.createAssignment = (req, res) => {
             // Show the errors on the assignment page
             res.render("assignment", { pageName: "Formulier", session: req.session.user, ...errors });
         } else {
-            const objectId = savedAssignment._id;
-            // Create a request
-            createRequest(req, res, objectId);
-            // Redirect to the dashboard
-            res.redirect("/");
+            (async() => {
+                const objectId = savedAssignment._id;
+                // Create a request
+                const request = await createRequest(req, res, objectId);
+                // Update assignment
+                await Assignment.findOneAndUpdate({ _id: request.assignmentId }, {$set: { requestId: request._id }}, { upsert:true });
+                // Redirect to the dashboard
+                res.redirect("/");
+            })()
         }
     });
 };
@@ -222,16 +228,21 @@ exports.getAllAssignments = (req, res) => {
         })
     } else if (req.session.user.roles == "client") {
         let resultsFiltered = []
-
-        Assignment.find(function(err, results) {
-            results.forEach(result => {
-
-                if (result.emailAddress == req.session.user.emailAddress && result.isApproved == true) {
+        
+        Assignment.find(async function(err, results) {
+            for (let result of results) {
+                if (result.emailAddress == req.session.user.emailAddress) {
+                    let request = await Request.find({ _id: result.requestId }).exec();
                     result.dateTime = format(new Date(result.dateTime));
 
-                    resultsFiltered.push(result)
+                    result = {
+                        ...result._doc,
+                        "status": request[0].status,
+                    }
+
+                    resultsFiltered.push(result);
                 }
-            });
+            };
             res.render("assignment_overview", { pageName: "Opdrachten", session: req.session.user, assignments: resultsFiltered });
         });
     }
