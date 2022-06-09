@@ -10,7 +10,7 @@ exports.createAssignment = (req, res) => {
     const { firstName, lastName, emailAddress, street, houseNumber, houseNumberAddition, postalCode, town, billingEmailAddress, 
             dateTime, playgroundStreet, playgroundHouseNumber, playgroundHouseNumberAddition, playgroundPostalCode, playgroundTown, 
             makeUpStreet, makeUpHouseNumber, makeUpHouseNumberAddition, makeUpPostalCode, makeUpTown, amountOfLotusVictims, 
-            comments, isApproved, requestId } = req.body;
+            comments, isApproved, requestId, checkedOrNotProfile, checkedOrNotPlayground, checkedOrNotMakeUp } = req.body;
     // Create new assignment object
     const assignment = new Assignment({
         firstName: firstName,
@@ -180,17 +180,18 @@ exports.createAssignment = (req, res) => {
             } else {
                 errors.oldValues.comments = req.body.comments;
             }
+
             // Show the errors on the assignment page
-            res.render("assignment", { pageName: "Formulier", session: req.session.user, ...errors });
+            res.render("assignment", { pageName: "Formulier", session: req.session.user, ...errors, checkedOrNotProfile, checkedOrNotPlayground, checkedOrNotMakeUp });
         } else {
             (async() => {
                 const objectId = savedAssignment._id;
                 // Create a request
                 const request = await createRequest(req, res, objectId);
                 // Update assignment
-                await Assignment.findOneAndUpdate({ _id: request.assignmentId }, {$set: { requestId: request._id }}, { upsert:true });
+                await Assignment.findOneAndUpdate({ _id: request.assignmentId }, {$set: { requestId: request._id }});
                 // Redirect to the dashboard
-                res.redirect("/");
+                res.redirect("/assignment");
             })()
         }
     });

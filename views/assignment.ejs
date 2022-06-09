@@ -18,9 +18,15 @@
                         <form action="/assignment" method="POST" class="row g-3 needs-validation" novalidate>
                             <div class="pt-4 pb-2">
                                 <h5 class="card-title text-center pb-0 fs-4">Opdracht aanmaken</h5>
-                                <p class="text-center">Persoonlijke gegevens</p>
+                                <h6 class="text-center fs-5">Persoonlijke gegevens</h6>
                             </div>
-                            <div class="row pb-4 pr-0">
+                            <div class="row pr-0">
+                                <div class="form-group mb-3">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" id="checkedOrNotProfile" name="checkedOrNotProfile" onclick='validate("<%= session.firstName %>","<%= session.lastName %>","<%= session.emailAddress %>","<%= session.street %>","<%= session.houseNumber %>","<%= session.houseNumberAddition %>","<%= session.postalCode %>","<%= session.town %>")'>
+                                        <label class="form-check-label" style="font-size: 14px;">Gebruik mijn persoonlijke gegevens</label>
+                                    </div>
+                                </div>
                                 <div class="col-md-6">
                                     <div class="form-group">
                                         <input type="text" name="firstName" id="firstName" class="form-control" placeholder="Voornaam *" value="<% if(typeof oldValues != "undefined"){%><%=oldValues.firstName%><%}%>"/>
@@ -37,12 +43,6 @@
                                     <div class="form-group">
                                         <input type="text" name="street" id="street" class="form-control" placeholder="Straat *" value="<% if(typeof oldValues != "undefined"){%><%=oldValues.street%><%}%>"/>
                                         <label class="form-label form-error"><% if(typeof streetErr != "undefined"){%><%=streetErr%><%}else{%>&nbsp;<%}%></label>
-                                    </div>
-                                    <div class="form-group">
-                                        <div class="form-check">
-                                            <input class="form-check-input" type="checkbox" id="checkedOrNotProfile" onclick='validate("<%= session.firstName %>","<%= session.lastName %>","<%= session.emailAddress %>","<%= session.street %>","<%= session.houseNumber %>","<%= session.houseNumberAddition %>","<%= session.postalCode %>","<%= session.town %>")'>
-                                            <label class="form-check-label">Gebruik mijn persoonlijke gegevens</label>
-                                        </div>
                                     </div>
                                 </div>
                                 <div class="col-md-6">
@@ -65,10 +65,16 @@
                                 </div>
                             </div>
                             <hr>
-                            <div class="row pb-4 pr-0">
+                            <div class="row pr-0">
                                 <div class="col-md-6">
                                     <div class="pt-4 pb-2">
-                                        <p class="text-center">Speelplaats adres gegevens</p>
+                                        <h6 class="text-center fs-5">Speelplaats gegevens</h6>
+                                    </div>
+                                    <div class="form-group mb-3">
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="checkbox" id="checkedOrNotPlayground" name="checkedOrNotPlayground" onclick='validate("<%= session.firstName %>","<%= session.lastName %>","<%= session.emailAddress %>","<%= session.street %>","<%= session.houseNumber %>","<%= session.houseNumberAddition %>","<%= session.postalCode %>","<%= session.town %>")'>
+                                            <label class="form-check-label" style="font-size: 14px;">Speelplaats adres is hetzelfde als persoonlijk adres</label>
+                                        </div>
                                     </div>
                                     <div class="form-group">
                                         <input type="text" name="playgroundStreet" id="playgroundStreet" class="form-control" placeholder="Speelplaats straat *" value="<% if(typeof oldValues != "undefined"){%><%=oldValues.playgroundStreet%><%}%>"/>
@@ -90,16 +96,16 @@
                                         <input type="text" name="playgroundTown" id="playgroundTown" class="form-control" placeholder="Speelplaats plaats *" value="<% if(typeof oldValues != "undefined"){%><%=oldValues.playgroundTown%><%}%>"/>
                                         <label class="form-label form-error"><% if(typeof playgroundTownErr != "undefined"){%><%=playgroundTownErr%><%}else{%>&nbsp;<%}%></label>
                                     </div>
-                                    <div class="form-group">
-                                        <div class="form-check">
-                                            <input class="form-check-input" type="checkbox" id="checkedOrNotPlayground" onclick='validate("<%= session.firstName %>","<%= session.lastName %>","<%= session.emailAddress %>","<%= session.street %>","<%= session.houseNumber %>","<%= session.houseNumberAddition %>","<%= session.postalCode %>","<%= session.town %>")'>
-                                            <label class="form-check-label">Speelplaats adres is hetzelfde als persoonlijk adres</label>
-                                        </div>
-                                    </div>
                                 </div>
                                 <div class="col-md-6">
                                     <div class="pt-4 pb-2">
-                                        <p class="text-center">Grimeer adres gegevens (optioneel)</p>
+                                        <h6 class="text-center fs-5">Grimeer gegevens (optioneel)</h6>
+                                    </div>
+                                    <div class="form-group mb-3">
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="checkbox" id="checkedOrNotMakeUp" name="checkedOrNotMakeUp" onclick='validate("<%= session.firstName %>","<%= session.lastName %>","<%= session.emailAddress %>","<%= session.street %>","<%= session.houseNumber %>","<%= session.houseNumberAddition %>","<%= session.postalCode %>","<%= session.town %>")'>
+                                            <label class="form-check-label" style="font-size: 14px;">Grimeer adres is hetzelfde als speelplaats adres</label>
+                                        </div>
                                     </div>
                                     <div class="form-group">
                                         <input type="text" name="makeUpStreet" id="makeUpStreet" class="form-control" placeholder="Grimeer straat" value="<% if(typeof oldValues != "undefined"){%><%=oldValues.makeUpStreet%><%}%>"/>
@@ -121,19 +127,13 @@
                                         <input type="text" name="makeUpTown" id="makeUpTown" class="form-control" placeholder="Grimeer plaats" value="<% if(typeof oldValues != "undefined"){%><%=oldValues.makeUpTown%><%}%>"/>
                                         <label class="form-label form-error"><% if(typeof makeUpTownErr != "undefined"){%><%=makeUpTownErr%><%}else{%>&nbsp;<%}%></label>
                                     </div>
-                                    <div class="form-group">
-                                        <div class="form-check">
-                                            <input class="form-check-input" type="checkbox" id="checkedOrNotMakeUp" onclick='validate("<%= session.firstName %>","<%= session.lastName %>","<%= session.emailAddress %>","<%= session.street %>","<%= session.houseNumber %>","<%= session.houseNumberAddition %>","<%= session.postalCode %>","<%= session.town %>")'>
-                                            <label class="form-check-label">Grimeer adres is hetzelfde als speelplaats adres</label>
-                                        </div>
-                                    </div>
                                 </div>
                             </div>
                             <hr>
                             <div class="row pb-4 pr-0">
                                 <div class="col-md-6">
                                     <div class="pt-4 pb-2">
-                                        <p class="text-center">Overige</p>
+                                        <h6 class="text-center fs-5">Overige</h6>
                                     </div>
                                     <div class="form-group">
                                         <input type="datetime-local" name="dateTime" class="form-control" placeholder="Datum/tijd *" value="<% if(typeof oldValues != "undefined"){%><%=oldValues.dateTime%><%}%>"/>
@@ -150,7 +150,7 @@
                                 </div>
                                 <div class="col-md-6">
                                     <div class="pt-4 pb-2">
-                                        <p class="text-center">Factuur gegevens</p>
+                                        <h6 class="text-center fs-5">Factuur gegevens</h6>
                                     </div>
                                     <div class="form-group">
                                         <input type="text" name="billingEmailAddress" id="billingEmailAddress" class="form-control" placeholder="Factuur e-mailadres *" value="<% if(typeof oldValues != "undefined"){%><%=oldValues.billingEmailAddress%><%}%>"/>
@@ -170,5 +170,67 @@
         </div>
     </section>
 </main>
+
+<script>
+    '<% if(typeof checkedOrNotProfile != "undefined") { %>'
+        document.getElementById("checkedOrNotProfile").checked = true;
+        if (document.getElementById("firstName").value !== "") {
+            document.getElementById("firstName").setAttribute("readonly", true);
+        }
+        if (document.getElementById("lastName").value !== "") {
+            document.getElementById("lastName").setAttribute("readonly", true);
+        }
+        if (document.getElementById("emailAddress").value !== "") {
+            document.getElementById("emailAddress").setAttribute("readonly", true);
+        }
+        if (document.getElementById("street").value !== "") {
+            document.getElementById("street").setAttribute("readonly", true);
+        }
+        if (document.getElementById("houseNumber").value !== "") {
+            document.getElementById("houseNumber").setAttribute("readonly", true);
+            document.getElementById("houseNumberAddition").setAttribute("readonly", true);
+        }
+        if (document.getElementById("postalCode").value !== "") {
+            document.getElementById("postalCode").setAttribute("readonly", true);
+        }
+        if (document.getElementById("town").value !== "") {
+            document.getElementById("town").setAttribute("readonly", true);
+        }
+    '<%}%>'
+
+    '<% if(typeof checkedOrNotPlayground != "undefined") { %>'
+        document.getElementById("checkedOrNotPlayground").checked = true;
+        if (document.getElementById("playgroundStreet").value !== "") {
+            document.getElementById("playgroundStreet").setAttribute("readonly", true);
+        }
+        if (document.getElementById("playgroundHouseNumber").value !== "") {
+            document.getElementById("playgroundHouseNumber").setAttribute("readonly", true);
+            document.getElementById("playgroundHouseNumberAddition").setAttribute("readonly", true);
+        }
+        if (document.getElementById("playgroundPostalCode").value !== "") {
+            document.getElementById("playgroundPostalCode").setAttribute("readonly", true);
+        }
+        if (document.getElementById("playgroundTown").value !== "") {
+            document.getElementById("playgroundTown").setAttribute("readonly", true);
+        }
+    '<%}%>'
+
+    '<% if(typeof checkedOrNotMakeUp != "undefined") { %>'
+        document.getElementById("checkedOrNotMakeUp").checked = true;
+        if (document.getElementById("makeUpStreet").value !== "") {
+            document.getElementById("makeUpStreet").setAttribute("readonly", true);
+        }
+        if (document.getElementById("makeUpHouseNumber").value !== "") {
+            document.getElementById("makeUpHouseNumber").setAttribute("readonly", true);
+            document.getElementById("makeUpHouseNumberAddition").setAttribute("readonly", true);
+        }
+        if (document.getElementById("makeUpPostalCode").value !== "") {
+            document.getElementById("makeUpPostalCode").setAttribute("readonly", true);
+        }
+        if (document.getElementById("makeUpTown").value !== "") {
+            document.getElementById("makeUpTown").setAttribute("readonly", true);
+        }
+    '<%}%>'
+</script>
 
 <%- include("footer/footer") %>
