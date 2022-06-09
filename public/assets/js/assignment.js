@@ -82,18 +82,50 @@ function validate(sesFirstName, sesLastName, sesEmailAddress, sesStreet, sesHous
         postalCode.removeAttribute("readonly");
         town.removeAttribute("readonly");
 
-        if (document.getElementById("checkedOrNotPlayground").checked) {
+        if (document.getElementById("checkedOrNotPlayground").checked && playgroundStreetValue == streetValue && playgroundHouseNumberValue == houseNumberValue
+        && playgroundHouseNumberAdditionValue == houseNumberAdditionValue && playgroundPostalCodeValue == postalCodeValue && playgroundTownValue == townValue) {
             document.getElementById("checkedOrNotPlayground").checked = false;
             playgroundStreet.removeAttribute("value");
             playgroundHouseNumber.removeAttribute("value");
             playgroundHouseNumberAddition.removeAttribute("value");
             playgroundPostalCode.removeAttribute("value");
             playgroundTown.removeAttribute("value");
+
+            playgroundStreet.removeAttribute("readonly");
+            playgroundHouseNumber.removeAttribute("readonly");
+            playgroundHouseNumberAddition.removeAttribute("readonly");
+            playgroundPostalCode.removeAttribute("readonly");
+            playgroundTown.removeAttribute("readonly");
+        }
+
+        if (document.getElementById("checkedOrNotMakeUp").checked && playgroundStreetValue == makeUpStreet.value && playgroundHouseNumberValue == makeUpHouseNumber.value
+        && playgroundHouseNumberAdditionValue == makeUpHouseNumberAddition.value && playgroundPostalCodeValue == makeUpPostalCode.value && playgroundTownValue == makeUpTown.value) {
+            document.getElementById("checkedOrNotMakeUp").checked = false;
+            makeUpStreet.removeAttribute("value");
+            makeUpHouseNumber.removeAttribute("value");
+            makeUpHouseNumberAddition.removeAttribute("value");
+            makeUpPostalCode.removeAttribute("value");
+            makeUpTown.removeAttribute("value");
+
+            makeUpStreet.removeAttribute("readonly");
+            makeUpHouseNumber.removeAttribute("readonly");
+            makeUpHouseNumberAddition.removeAttribute("readonly");
+            makeUpPostalCode.removeAttribute("readonly");
+            makeUpTown.removeAttribute("readonly");
         }
     }
 
     if (document.getElementById("checkedOrNotPlayground").checked) {
         if(streetValue !== "" && houseNumberValue  !== "" && postalCodeValue !== "" && townValue !== "") {
+            firstName.setAttribute("readonly", true);
+            lastName.setAttribute("readonly", true);
+            emailAddress.setAttribute("readonly", true);
+            street.setAttribute("readonly", true);
+            houseNumber.setAttribute("readonly", true);
+            houseNumberAddition.setAttribute("readonly", true);
+            postalCode.setAttribute("readonly", true);
+            town.setAttribute("readonly", true);
+
             playgroundStreet.setAttribute("value", streetValue);
             playgroundHouseNumber.setAttribute("value", houseNumberValue);
             playgroundHouseNumberAddition.setAttribute("value", houseNumberAdditionValue);
@@ -121,7 +153,8 @@ function validate(sesFirstName, sesLastName, sesEmailAddress, sesStreet, sesHous
         playgroundPostalCode.removeAttribute("readonly");
         playgroundTown.removeAttribute("readonly");
 
-        if (document.getElementById("checkedOrNotMakeUp").checked) {
+        if (document.getElementById("checkedOrNotMakeUp").checked && playgroundStreetValue == makeUpStreet.value && playgroundHouseNumberValue == makeUpHouseNumber.value
+            && playgroundHouseNumberAdditionValue == makeUpHouseNumberAddition.value && playgroundPostalCodeValue == makeUpPostalCode.value && playgroundTownValue == makeUpTown.value) {
             document.getElementById("checkedOrNotMakeUp").checked = false;
             makeUpStreet.removeAttribute("value");
             makeUpHouseNumber.removeAttribute("value");
@@ -132,18 +165,32 @@ function validate(sesFirstName, sesLastName, sesEmailAddress, sesStreet, sesHous
     }
 
     if (document.getElementById("checkedOrNotMakeUp").checked) {
-        makeUpStreet.setAttribute("value", playgroundStreetValue);
-        makeUpHouseNumber.setAttribute("value", playgroundHouseNumberValue);
-        makeUpHouseNumberAddition.setAttribute("value", playgroundHouseNumberAdditionValue);
-        makeUpPostalCode.setAttribute("value", playgroundPostalCodeValue);
-        makeUpTown.setAttribute("value", playgroundTownValue);
+        if(playgroundStreetValue !== "" && playgroundHouseNumberValue  !== "" && playgroundPostalCodeValue !== "" && playgroundTownValue !== "") {
+            if (document.getElementById("checkedOrNotPlayground").checked == false) {
+                document.getElementById("checkedOrNotPlayground").disabled = true;
+            }
+            playgroundStreet.setAttribute("readonly", true);
+            playgroundHouseNumber.setAttribute("readonly", true);
+            playgroundHouseNumberAddition.setAttribute("readonly", true);
+            playgroundPostalCode.setAttribute("readonly", true);
+            playgroundTown.setAttribute("readonly", true);
 
-        makeUpStreet.setAttribute("readonly", true);
-        makeUpHouseNumber.setAttribute("readonly", true);
-        makeUpHouseNumberAddition.setAttribute("readonly", true);
-        makeUpPostalCode.setAttribute("readonly", true);
-        makeUpTown.setAttribute("readonly", true);
+            makeUpStreet.setAttribute("value", playgroundStreetValue);
+            makeUpHouseNumber.setAttribute("value", playgroundHouseNumberValue);
+            makeUpHouseNumberAddition.setAttribute("value", playgroundHouseNumberAdditionValue);
+            makeUpPostalCode.setAttribute("value", playgroundPostalCodeValue);
+            makeUpTown.setAttribute("value", playgroundTownValue);
+
+            makeUpStreet.setAttribute("readonly", true);
+            makeUpHouseNumber.setAttribute("readonly", true);
+            makeUpHouseNumberAddition.setAttribute("readonly", true);
+            makeUpPostalCode.setAttribute("readonly", true);
+            makeUpTown.setAttribute("readonly", true);
+        } else {
+            document.getElementById("checkedOrNotMakeUp").checked = false;
+        }
     } else {
+        document.getElementById("checkedOrNotPlayground").disabled = false;
         makeUpStreet.removeAttribute("value");
         makeUpHouseNumber.removeAttribute("value");
         makeUpHouseNumberAddition.removeAttribute("value");
