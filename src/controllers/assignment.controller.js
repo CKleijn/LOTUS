@@ -267,8 +267,7 @@ exports.getAssignmentDetailPage = (req, res) => {
         return `${date}/${month}/${year}`;
     }
 
-    Assignment.find({isApproved: true, _id: req.query.id}, function(err, results) {
-        console.log(results);
+    Assignment.find({_id: req.query.id}, function(err, results) {
         res.render("assignment_detail", { pageName: "Detailpagina", session: req.session.user, assignments: results });
     });
 }
