@@ -3,12 +3,12 @@ const userController = require("./../controllers/user.controller");
 const { isLoggedIn } = require("./../controllers/auth.controller");
 const router = express.Router();
 
-router.post("/create_member", isLoggedIn, userController.createMember);
+router.post("/user/create", isLoggedIn, userController.createMember);
 
-router.get("/user_profile", isLoggedIn, userController.getUserProfile);
+router.get("/user/profile", isLoggedIn, userController.getUserProfile);
 
-router.post("/change_user_profile", isLoggedIn, userController.changeUserProfileDetails);
+router.post("/user/profile/edit", isLoggedIn, userController.changeUserProfileDetails);
 
-router.post("/change_password", isLoggedIn, userController.changePassword);
+router.post("/user/profile/password", isLoggedIn, userController.changePassword);
 
 module.exports = router;

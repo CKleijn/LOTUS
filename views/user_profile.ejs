@@ -17,7 +17,7 @@
             <div class="col-xl-4">
                 <div class="card">
                     <div class="card-body profile-card pt-4 d-flex flex-column align-items-center">
-                        <img src="assets/img/avatar.jpg" alt="Profile" class="rounded-circle" />
+                        <img src="/assets/img/avatar.jpg" alt="Profile" class="rounded-circle" />
                         <h2><%= session.firstName + " " + session.lastName%></h2>
                         <% let role = ""; switch(session.roles) { case "coordinator": role = "Coördinator"; break; case "client" : role = "Opdrachtgever"; break; case "member": role = "LOTUSslachtoffer"; break; } %>
 
@@ -110,7 +110,7 @@
                                 <div class="tab-pane fade profile-edit pt-3" id="profile-edit">
                             <% } %> 
                                 <!-- Profile Edit Form -->
-                                <form action="change_user_profile" method="POST">
+                                <form action="/profile/edit" method="POST">
                                     <div class="row mb-3">
                                         <label for="fullName" class="col-md-4 col-lg-3 col-form-label">Voornaam</label>
                                         <div class="col-md-8 col-lg-9">
@@ -248,7 +248,7 @@
                                 <div class="tab-pane fade pt-3" id="profile-change-password">
                             <% } %> 
                                 <!-- Change Password Form -->
-                                <form action="change_password" method="POST">
+                                <form action="/profile/password" method="POST">
                                     <div class="row mb-3">
                                         <label for="currentPassword" class="col-md-4 col-lg-3 col-form-label">Huidige wachtwoord</label>
                                         <div class="col-md-8 col-lg-9">

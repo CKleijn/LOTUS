@@ -5,6 +5,6 @@ const router = express.Router();
 
 router.get("/", isLoggedIn, homeController.getHomepage);
 
-router.get("/user_overview", isLoggedIn, isCoordinator, homeController.getUserOverview);
+router.get("/user/overview", isLoggedIn, isCoordinator, homeController.getUserOverview);
 
 module.exports = router;

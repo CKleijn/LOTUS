@@ -74,7 +74,7 @@ exports.login = (req, res) => {
 
                     if (firstLogin === true) {
                         const encryptedEmail = cryptr.encrypt(emailAddress);
-                        res.redirect(`/member_setup?t=${encryptedEmail}`);
+                        res.redirect(`/user/create?t=${encryptedEmail}`);
                     } else {
                         User.findOneAndUpdate({ _id: user._id }, { lastLoginDate: Date.now() }, { new: true }, (err, currentUser) => {
                             if (err) throw err;
