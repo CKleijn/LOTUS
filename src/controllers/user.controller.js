@@ -154,7 +154,7 @@ exports.createMember = (req, res) => {
                         console.log("Not send");
                     }
 
-                    res.redirect("/user_overview");
+                    res.redirect("/user/overview");
                 } else {
                     res.render("user_overview", { pageName: "Gebruikers", session: req.session.user, emailAddressErr: "Dit e-mailadres is al in gebruik!", allMembers, allClients, allInvitedMembers });
                 }
@@ -293,7 +293,7 @@ exports.changeUserProfileDetails = (req, res) => {
                     user.postalCode = postalCode;
                 }
 
-                return res.redirect("/user_profile");
+                return res.redirect("/user/profile");
             })();
         }
     })();

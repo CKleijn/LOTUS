@@ -1,162 +1,148 @@
 <!DOCTYPE html>
-    <head>
-        <meta charset="utf-8" />
-        <meta content="width=device-width, initial-scale=1.0" name="viewport" />
-        <meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests">
+<head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests" />
 
-        <title>Lotus | <%= pageName %></title>
-        <meta content="Official LOTUS Here We Go Assignment handler." name="description" />
+    <title>Lotus | <%= pageName %></title>
+    <meta content="Official LOTUS Here We Go Assignment handler." name="description" />
 
-        <!-- Favicons -->
-        <link href="assets/img/lotus_icon.png" rel="icon" />
-        <link href="assets/img/img/lotus_icon.png" rel="apple-touch-icon" />
+    <!-- Favicons -->
+    <link href="/assets/img/lotus_icon.png" rel="icon" />
+    <link href="/assets/img/img/lotus_icon.png" rel="apple-touch-icon" />
 
-        <!-- Google Fonts -->
-        <link href="https://fonts.gstatic.com" rel="preconnect" />
-        <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,300i,400,400i,600,600i,700,700i|Nunito:300,300i,400,400i,600,600i,700,700i|Poppins:300,300i,400,400i,500,500i,600,600i,700,700i" rel="stylesheet" />
+    <!-- Google Fonts -->
+    <link href="https://fonts.gstatic.com" rel="preconnect" />
+    <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,300i,400,400i,600,600i,700,700i|Nunito:300,300i,400,400i,600,600i,700,700i|Poppins:300,300i,400,400i,500,500i,600,600i,700,700i" rel="stylesheet" />
 
-        <!-- Vendor CSS Files -->
-        <link href="assets/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet" />
-        <link href="assets/vendor/bootstrap-icons/bootstrap-icons.css" rel="stylesheet" />
-        <link href="assets/vendor/boxicons/css/boxicons.min.css" rel="stylesheet" />
-        <link href="assets/vendor/quill/quill.snow.css" rel="stylesheet" />
-        <link href="assets/vendor/quill/quill.bubble.css" rel="stylesheet" />
-        <link href="assets/vendor/remixicon/remixicon.css" rel="stylesheet" />
-        <link href="https://nightly.datatables.net/css/jquery.dataTables.css" rel="stylesheet" type="text/css" />
+    <!-- Vendor CSS Files -->
+    <link href="/assets/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet" />
+    <link href="/assets/vendor/bootstrap-icons/bootstrap-icons.css" rel="stylesheet" />
+    <link href="/assets/vendor/boxicons/css/boxicons.min.css" rel="stylesheet" />
+    <link href="/assets/vendor/quill/quill.snow.css" rel="stylesheet" />
+    <link href="/assets/vendor/quill/quill.bubble.css" rel="stylesheet" />
+    <link href="/assets/vendor/remixicon/remixicon.css" rel="stylesheet" />
+    <link href="https://nightly.datatables.net/css/jquery.dataTables.css" rel="stylesheet" type="text/css" />
 
-        <!-- Template Main CSS File -->
-        <link href="assets/css/style.css" rel="stylesheet" />
+    <!-- Template Main CSS File -->
+    <link href="/assets/css/style.css" rel="stylesheet" />
 
-        <script src="http://code.jquery.com/jquery-1.11.3.min.js"></script>
-    </head>
+    <script src="http://code.jquery.com/jquery-1.11.3.min.js"></script>
+</head>
 
-    <body>
-        <% if (typeof session != "undefined") {%>
-        <!-- ======= Header ======= -->
-        <header id="header" class="header fixed-top d-flex align-items-center">
-            <div class="d-flex align-items-center justify-content-between">
-                <a href="/" class="logo d-flex align-items-center">
-                    <img src="assets/img/lotus_icon.png" alt="" />
-                    <span class="d-none d-lg-block">LOTUS-Kring Here We Go</span>
+<body>
+    <% if (typeof session != "undefined") {%>
+    <!-- ======= Header ======= -->
+    <header id="header" class="header fixed-top d-flex align-items-center">
+        <div class="d-flex align-items-center justify-content-between">
+            <a href="/" class="logo d-flex align-items-center">
+                <img src="/assets/img/lotus_icon.png" alt="" />
+                <span class="d-none d-lg-block">LOTUS-Kring Here We Go</span>
+            </a>
+            <i class="bi bi-list toggle-sidebar-btn"></i>
+        </div>
+        <!-- End Logo -->
+
+        <nav class="header-nav ms-auto">
+            <ul class="d-flex align-items-center">
+                <li class="nav-item dropdown">
+                    <a class="nav-link nav-icon" href="#" data-bs-toggle="dropdown">
+                        <i class="bi bi-bell"></i>
+                        <span class="badge bg-primary badge-number">1</span>
+                    </a>
+                    <!-- End Notification Icon -->
+
+                    <ul class="dropdown-menu dropdown-menu-end dropdown-menu-arrow notifications">
+                        <li class="dropdown-header">
+                            Je hebt 1 nieuwe notificatie
+                            <a href="#"><span class="badge rounded-pill bg-primary p-2 ms-2">Bekijk alle</span></a>
+                        </li>
+                        <li>
+                            <hr class="dropdown-divider" />
+                        </li>
+
+                        <li class="notification-item">
+                            <i class="bi bi-exclamation-circle text-warning"></i>
+                            <div>
+                                <h4>Inschrijving opdracht</h4>
+                                <p>Gerard heeft zich ingeschreven voor een opdracht</p>
+                                <p>30 minuten geleden</p>
+                            </div>
+                        </li>
+
+                        <li>
+                            <hr class="dropdown-divider" />
+                        </li>
+                        <li class="dropdown-footer">
+                            <a href="#">Bekijk alle notificaties</a>
+                        </li>
+                    </ul>
+                    <!-- End Notification Dropdown Items -->
+                </li>
+                <!-- End Notification Nav -->
+
+                <li class="nav-item dropdown pe-3">
+                    <a class="nav-link nav-profile d-flex align-items-center pe-0" href="#" data-bs-toggle="dropdown">
+                        <img src="/assets/img/avatar.jpg" alt="Profile" class="rounded-circle" />
+                        <span class="d-none d-md-block dropdown-toggle ps-2"><%= session.firstName.charAt(0).toUpperCase() + ". " + session.lastName %></span>
+                    </a>
+                    <!-- End Profile Iamge Icon -->
+
+                    <ul class="dropdown-menu dropdown-menu-end dropdown-menu-arrow profile">
+                        <li class="dropdown-header">
+                            <% let role = ""; switch(session.roles) { case "coordinator": role = "Coördinator"; break; case "client" : role = "Opdrachtgever"; break; case "member": role = "LOTUSslachtoffer"; break; } %>
+
+                            <h6><%= session.firstName + " " + session.lastName %></h6>
+                            <span><%= role %></span>
+                        </li>
+                        <li>
+                            <hr class="dropdown-divider" />
+                        </li>
+
+                        <li>
+                            <a class="dropdown-item d-flex align-items-center" href="/user/profile">
+                                <i class="bi bi-person"></i>
+                                <span>Mijn profiel</span>
+                            </a>
+                        </li>
+
+                        <li>
+                            <hr class="dropdown-divider" />
+                        </li>
+
+                        <li>
+                            <a class="dropdown-item d-flex align-items-center" href="/logout">
+                                <i class="bi bi-box-arrow-right"></i>
+                                <span>Uitloggen</span>
+                            </a>
+                        </li>
+                    </ul>
+                    <!-- End Profile Dropdown Items -->
+                </li>
+                <!-- End Profile Nav -->
+            </ul>
+        </nav>
+        <!-- End Icons Navigation -->
+    </header>
+    <!-- End Header -->
+
+    <!-- ======= Sidebar ======= -->
+    <aside id="sidebar" class="sidebar">
+        <ul class="sidebar-nav" id="sidebar-nav">
+            <li class="nav-item">
+                <a class="nav-link collapsed" href="/">
+                    <i class="bi bi-grid"></i>
+                    <span>Dashboard</span>
                 </a>
-                <i class="bi bi-list toggle-sidebar-btn"></i>
-            </div>
-            <!-- End Logo -->
+            </li>
+            <!-- End Dashboard Nav -->
 
-            <nav class="header-nav ms-auto">
-                <ul class="d-flex align-items-center">
-                    <li class="nav-item dropdown">
-                        <a class="nav-link nav-icon" href="#" data-bs-toggle="dropdown">
-                            <i class="bi bi-bell"></i>
-                            <span class="badge bg-primary badge-number">1</span>
-                        </a>
-                        <!-- End Notification Icon -->
-
-                        <ul class="dropdown-menu dropdown-menu-end dropdown-menu-arrow notifications">
-                            <li class="dropdown-header">
-                                Je hebt 1 nieuwe notificatie
-                                <a href="#"><span class="badge rounded-pill bg-primary p-2 ms-2">Bekijk alle</span></a>
-                            </li>
-                            <li>
-                                <hr class="dropdown-divider" />
-                            </li>
-
-                            <li class="notification-item">
-                                <i class="bi bi-exclamation-circle text-warning"></i>
-                                <div>
-                                    <h4>Inschrijving opdracht</h4>
-                                    <p>Gerard heeft zich ingeschreven voor een opdracht</p>
-                                    <p>30 minuten geleden</p>
-                                </div>
-                            </li>
-
-                            <li>
-                                <hr class="dropdown-divider" />
-                            </li>
-                            <li class="dropdown-footer">
-                                <a href="#">Bekijk alle notificaties</a>
-                            </li>
-                        </ul>
-                        <!-- End Notification Dropdown Items -->
-                    </li>
-                    <!-- End Notification Nav -->
-
-                    <li class="nav-item dropdown pe-3">
-                        <a class="nav-link nav-profile d-flex align-items-center pe-0" href="#" data-bs-toggle="dropdown">
-                            <img src="assets/img/avatar.jpg" alt="Profile" class="rounded-circle" />
-                            <span class="d-none d-md-block dropdown-toggle ps-2"><%= session.firstName.charAt(0).toUpperCase() + ". " + session.lastName %></span>
-                        </a>
-                        <!-- End Profile Iamge Icon -->
-
-                        <ul class="dropdown-menu dropdown-menu-end dropdown-menu-arrow profile">
-                            <li class="dropdown-header">
-                                <% let role = ""; switch(session.roles) { case "coordinator": role = "Coördinator"; break; case "client" : role = "Opdrachtgever"; break; case "member": role = "LOTUSslachtoffer"; break; } %>
-
-                                <h6><%= session.firstName + " " + session.lastName %></h6>
-                                <span><%= role %></span>
-                            </li>
-                            <li>
-                                <hr class="dropdown-divider" />
-                            </li>
-
-                            <li>
-                                <a class="dropdown-item d-flex align-items-center" href="/user_profile">
-                                    <i class="bi bi-person"></i>
-                                    <span>Mijn profiel</span>
-                                </a>
-                            </li>
-
-                            <li>
-                                <hr class="dropdown-divider" />
-                            </li>
-
-                            <li>
-                                <a class="dropdown-item d-flex align-items-center" href="logout">
-                                    <i class="bi bi-box-arrow-right"></i>
-                                    <span>Uitloggen</span>
-                                </a>
-                            </li>
-                        </ul>
-                        <!-- End Profile Dropdown Items -->
-                    </li>
-                    <!-- End Profile Nav -->
-                </ul>
-            </nav>
-            <!-- End Icons Navigation -->
-        </header>
-        <!-- End Header -->
-
-        <!-- ======= Sidebar ======= -->
-        <aside id="sidebar" class="sidebar">
-            <ul class="sidebar-nav" id="sidebar-nav">
-                <li class="nav-item">
-                    <a class="nav-link collapsed" href="/">
-                        <i class="bi bi-grid"></i>
-                        <span>Dashboard</span>
-                    </a>
-                </li>
-                <!-- End Dashboard Nav -->
-
-                <% if(session.roles === "coordinator") { %>
-
-                <li class="nav-item">
-                    <a class="nav-link collapsed" href="user_overview">
-                        <i class="bi bi-people"></i>
-                        <span>Gebruikers</span>
-                    </a>
-                </li>
-
-                <li class="nav-item">
-                    <a class="nav-link collapsed" href="request_overview">
-                        <i class="bi bi-inboxes"></i>
-                        <span>Verzoeken</span>
-                    </a>
-                </li>
+            <% if(session.roles === "coordinator") { %>
 
                 <% } %> <% if(session.roles == "coordinator" || session.roles == "member") { %>
 
                     <li class="nav-item">
-                        <a class="nav-link collapsed" href="assignment_overview">
+                        <a class="nav-link collapsed" href="/assignment">
                             <i class="bi bi-archive"></i>
                             <span>Opdrachten</span>
                         </a>
@@ -165,7 +151,7 @@
                 <% } %> <% if(session.roles == "client") { %>
 
                     <li class="nav-item">
-                        <a class="nav-link collapsed" href="assignment_overview">
+                        <a class="nav-link collapsed" href="/assignment">
                             <i class="bi bi-archive"></i>
                             <span>Mijn opdrachten</span>
                         </a>
@@ -174,7 +160,7 @@
                 <% } %> <% if(session.roles == "coordinator" || session.roles == "client") { %>
 
                     <li class="nav-item">
-                        <a class="nav-link collapsed" href="assignment">
+                        <a class="nav-link collapsed" href="/assignment/create">
                             <i class="bi bi-person-rolodex"></i>
                             <span>Opdracht aanmaken</span>
                         </a>
@@ -184,7 +170,4 @@
             </ul>
         </aside>
         <!-- End Sidebar-->
-
-        <% } %>
-    </body>
-</html>
+    <% } %>

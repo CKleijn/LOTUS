@@ -1,4 +1,4 @@
-<%- include("header/header") %>
+<%- include("header/header") -%>
 
 <main id="main" class="main">
     <div class="pagetitle">
@@ -86,7 +86,7 @@
                 <div class="card">
                     <div class="card-body">
                         <h5 class="card-title">Lid aanmaken</h5>
-                        <form action="create_member" method="POST">
+                        <form action="/user/create" method="POST">
                             <div class="col-12">
                                 <label class="form-label">E-mailadres</label>
                                 <input type="text" id="form3Example3c" name="emailAddress" class="form-control" value="<% if(typeof oldValues !== "undefined"){%><%=oldValues.emailAddress%><%}%>"/>
