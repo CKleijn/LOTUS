@@ -74,7 +74,7 @@ exports.login = (req, res) => {
 
                     if (firstLogin === true) {
                         const encryptedEmail = cryptr.encrypt(emailAddress);
-                        res.redirect(`/user/create?t=${encryptedEmail}`);
+                        res.redirect(`/register/setup?t=${encryptedEmail}`);
                     } else {
                         User.findOneAndUpdate({ _id: user._id }, { lastLoginDate: Date.now() }, { new: true }, (err, currentUser) => {
                             if (err) throw err;
@@ -125,8 +125,6 @@ exports.login = (req, res) => {
 exports.setupMember = (req, res) => {
     const { firstName, lastName, password, email } = req.body;
     const decryptedMail = cryptr.decrypt(email);
-
-    console.log(req.body);
 
     const errors = {};
     const oldValues = {};
