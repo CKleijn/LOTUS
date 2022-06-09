@@ -14,11 +14,20 @@
         <div>
             <div class="row">
                 <% assignments.forEach(assignment => { %>
-                    <div class="col-lg-12">
+                    <div class="col-lg-6">
                         <div class="card">
                             <div class="card-body assignment_card">
                                 <h5 class="card-title"><%= assignment.amountOfLotusVictims + " LOTUSslachtoffers nodig in " + assignment.playgroundTown %></h5>
                             </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-6">
+                        <div class="card">
+                            <form action="/assignment/delete?id=<%=assignment.id%>" method="post">
+                                <div class="card-body assignment_card assignment_delete_btn">
+                                    <button class="btn btn-danger w-50">Verwijderen</button>
+                                </div>
+                            </form>
                         </div>
                     </div>
                     <div class="col-lg-6">
@@ -55,7 +64,7 @@
                         </div>
                         <div class="card">
                             <div class="card-body assignment_card">
-                                <h5 class="card-title"><%= "Overig " %></h5> <p><%="Aantal LOTUS slachtoffers: " + assignment.amountOfLotusVictims %> </p> <p> <%="Opmerkingen: " + assignment.comments %></p> <p><%="Status: " + assignment.isApproved %></p> 
+                                <h5 class="card-title"><%= "Overig " %></h5> <p><%="Aantal LOTUS slachtoffers: " + assignment.amountOfLotusVictims %> </p> <p> <%="Opmerkingen: " + assignment.comments %></p> 
                             </div>
                         </div>
                     </div>

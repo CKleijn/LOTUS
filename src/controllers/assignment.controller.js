@@ -7,7 +7,12 @@ exports.createAssignment = (req, res) => {
     // Get session
     const session = req.session;
     // Declare all variables out of req.body
-    const { firstName, lastName, emailAddress, street, houseNumber, houseNumberAddition, postalCode, town, billingEmailAddress, dateTime, playgroundStreet, playgroundHouseNumber, playgroundHouseNumberAddition, playgroundPostalCode, playgroundTown, makeUpStreet, makeUpHouseNumber, makeUpHouseNumberAddition, makeUpPostalCode, makeUpTown, amountOfLotusVictims, comments, isApproved, requestId } = req.body;
+
+    const { firstName, lastName, emailAddress, street, houseNumber, houseNumberAddition, postalCode, town, billingEmailAddress, 
+            dateTime, playgroundStreet, playgroundHouseNumber, playgroundHouseNumberAddition, playgroundPostalCode, playgroundTown, 
+            makeUpStreet, makeUpHouseNumber, makeUpHouseNumberAddition, makeUpPostalCode, makeUpTown, amountOfLotusVictims, 
+            comments, isApproved, requestId, checkedOrNotProfile, checkedOrNotPlayground, checkedOrNotMakeUp } = req.body;
+  
     // Create new assignment object
     const assignment = new Assignment({
         firstName: firstName,
@@ -177,18 +182,20 @@ exports.createAssignment = (req, res) => {
             } else {
                 errors.oldValues.comments = req.body.comments;
             }
+
             // Show the errors on the assignment page
-            res.render("assignment", { pageName: "Formulier", session: req.session.user, ...errors });
+            res.render("assignment", { pageName: "Formulier", session: req.session.user, ...errors, checkedOrNotProfile, checkedOrNotPlayground, checkedOrNotMakeUp });
         } else {
             (async () => {
                 const objectId = savedAssignment._id;
                 // Create a request
                 const request = await createRequest(req, res, objectId, "createAssignment");
                 // Update assignment
-                await Assignment.findOneAndUpdate({ _id: request.assignmentId }, { $set: { requestId: request._id } }, { upsert: true });
+
+                await Assignment.findOneAndUpdate({ _id: request.assignmentId }, {$set: { requestId: request._id }});
                 // Redirect to the dashboard
-                res.redirect("/");
-            })();
+                res.redirect("/assignment");
+            })()
         }
     });
 };
@@ -212,17 +219,20 @@ exports.getAllAssignments = (req, res) => {
         return `${date}/${month}/${year}`;
     }
 
-    if (req.session.user.roles == "coordinator") {
-        Assignment.find({ isApproved: true }, function (err, results) {
-            results.forEach((result) => {
+
+    if (req.session.user.roles == "coordinator" || req.session.user.roles == "member") {
+        Assignment.find({ isApproved: true }, function(err, results) {
+            results.forEach(result => {
                 result.dateTime = format(new Date(result.dateTime));
             });
             res.render("assignment_overview", { pageName: "Opdrachten", session: req.session.user, assignments: results });
         });
     } else if (req.session.user.roles == "client") {
-        let resultsFiltered = [];
 
-        Assignment.find(async function (err, results) {
+        let resultsFiltered = []
+        
+        Assignment.find(async function(err, results) {
+
             for (let result of results) {
                 if (result.emailAddress == req.session.user.emailAddress) {
                     let request = await Request.find({ _id: result.requestId }).exec();
@@ -238,6 +248,7 @@ exports.getAllAssignments = (req, res) => {
             }
             res.render("assignment_overview", { pageName: "Opdrachten", session: req.session.user, assignments: resultsFiltered });
         });
+
     } else if (req.session.user.roles == "member") {
         Assignment.find({ isApproved: true }, function (err, results) {
             results.forEach((result) => {
@@ -263,9 +274,17 @@ exports.getAssignmentDetailPage = (req, res) => {
         return `${date}/${month}/${year}`;
     }
 
-    //Removed "isApproved: true" filter for testing
-    Assignment.find({ _id: req.query.id }, function (err, results) {
-        console.log(results);
+
+    Assignment.find({_id: req.query.id}, function(err, results) {
         res.render("assignment_detail", { pageName: "Detailpagina", session: req.session.user, assignments: results });
     });
-};
+}
+
+exports.deleteAssignment = (req, res) => {
+    Assignment.deleteOne({_id: req.query.id}, function(err, results) {
+        Request.deleteOne({assignmentId: req.query.id}, function(err, results) {
+            res.redirect("/assignment")
+        })
+    })
+}
+
