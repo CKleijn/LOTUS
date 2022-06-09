@@ -2,8 +2,8 @@ const { getAllValidMembers, getAllValidClients, getAllInvitedMembers } = require
 const Assignment = require("../models/assignment.model");
 
 exports.getHomepage = (req, res) => {
-    if (req.session.user.roles == "coordinator") {
-        Assignment.find(function (err, assignments) {
+    if (req.session.user.roles == "coordinator" || req.session.user.roles == "member") {
+        Assignment.find({ isApproved: true }, function (err, assignments) {
             res.render("dashboard", { pageName: "Dashboard", session: req.session.user, assignments_amount: assignments.length });
         });
     } else if (req.session.user.roles == "client") {
@@ -11,25 +11,13 @@ exports.getHomepage = (req, res) => {
             let assignmentsFiltered = [];
 
             assignments.forEach((assignment) => {
-                if (assignment.emailAddress == req.session.user.emailAddress) {
+                if (assignment.emailAddress == req.session.user.emailAddress && assignment.isApproved == true) {
                     assignmentsFiltered.push(assignment);
                 }
             });
 
             res.render("dashboard", { pageName: "Dashboard", session: req.session.user, assignments_amount: assignmentsFiltered.length });
-        });
-    } else if (req.session.user.roles == "member") {
-        Assignment.find(function (err, assignments) {
-            let assignmentsFiltered = [];
-
-            assignments.forEach(assignment => {
-                if (assignment.isApproved == true) {
-                    assignmentsFiltered.push(assignment)
-                }
-            });
-
-            res.render("dashboard", { pageName: "Dashboard", session: req.session.user, assignments_amount: assignmentsFiltered.length });
-        });
+        }); 
     }
 };
 
