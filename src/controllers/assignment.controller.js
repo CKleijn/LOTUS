@@ -214,7 +214,7 @@ exports.getAllAssignments = (req, res) => {
     }
 
     if (req.session.user.roles == "coordinator") {
-        Assignment.find({ isApproved: true }, function(err, results) {
+        Assignment.find(function(err, results) {
             results.forEach(result => {
                 result.dateTime = format(new Date(result.dateTime));
             });
