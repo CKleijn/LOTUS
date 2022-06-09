@@ -2,11 +2,22 @@
 
 <main id="main" class="main">
     <div class="pagetitle">
-        <h1>Opdrachten</h1>
+
+        <% if (session.roles == "coordinator" || session.roles == "member") { %>
+            <h1>Opdrachten</h1>
+        <% } else if (session.roles == "client") { %>
+            <h1>Mijn opdrachten</h1>
+        <% } %>
+        
         <nav>
             <ol class="breadcrumb">
                 <li class="breadcrumb-item"><a href="/">Dashboard</a></li>
-                <li class="breadcrumb-item active">Opdrachten</li>
+
+                <% if (session.roles == "coordinator" || session.roles == "member") { %>
+                    <li class="breadcrumb-item active">Opdrachten</li>
+                <% } else if (session.roles == "client") { %>
+                    <li class="breadcrumb-item active">Mijn opdrachten</li>
+                <% } %>
             </ol>
         </nav>
     </div>
