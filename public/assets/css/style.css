@@ -748,6 +748,10 @@ h6 {
     color: #212529;
 }
 
+.dashboard .request_card_text {
+    color: #212529;
+}
+
 /* Activity */
 .dashboard .activity {
     font-size: 14px;

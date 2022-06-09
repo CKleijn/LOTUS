@@ -50,6 +50,28 @@
       
                     </div>
                 </div>
+                <% if (session.roles == "coordinator") { %>
+                    <div class="col-lg-3">
+                        <div class="card info-card sales-card">
+        
+                        <a href="/request_overview">
+                        <div class="card-body">
+                            <h5 class="card-title">Verzoeken</h5>
+                            <div class="d-flex align-items-center">
+                                <div class="card-icon rounded-circle d-flex align-items-center justify-content-center">
+                                    <i class="bi bi-inboxes"></i>
+                                </div>
+                                <div class="ps-3">
+                                    <% let request_card_text = ""; if (request_amount > 1 || request_amount == 0) {request_card_text = request_amount + " verzoeken" } else {request_card_text = request_amount + " verzoek"} %>
+                                    <p class="request_card_text"><%= request_card_text %></p>
+                                </div>
+                            </div>
+                        </div>
+                        </a>
+        
+                        </div>
+                    </div>
+                <% } %>
             </div>
         </div>
     </section>
