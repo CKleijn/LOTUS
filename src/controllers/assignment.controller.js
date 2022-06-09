@@ -7,10 +7,7 @@ exports.createAssignment = (req, res) => {
     // Get session
     const session = req.session;
     // Declare all variables out of req.body
-    const { firstName, lastName, emailAddress, street, houseNumber, houseNumberAddition, postalCode, town, billingEmailAddress, 
-            dateTime, playgroundStreet, playgroundHouseNumber, playgroundHouseNumberAddition, playgroundPostalCode, playgroundTown, 
-            makeUpStreet, makeUpHouseNumber, makeUpHouseNumberAddition, makeUpPostalCode, makeUpTown, amountOfLotusVictims, 
-            comments, isApproved, requestId } = req.body;
+    const { firstName, lastName, emailAddress, street, houseNumber, houseNumberAddition, postalCode, town, billingEmailAddress, dateTime, playgroundStreet, playgroundHouseNumber, playgroundHouseNumberAddition, playgroundPostalCode, playgroundTown, makeUpStreet, makeUpHouseNumber, makeUpHouseNumberAddition, makeUpPostalCode, makeUpTown, amountOfLotusVictims, comments, isApproved, requestId } = req.body;
     // Create new assignment object
     const assignment = new Assignment({
         firstName: firstName,
@@ -43,7 +40,7 @@ exports.createAssignment = (req, res) => {
         assignment.isApproved = true;
     }
     // Save assignment object in database and show errors if they exists
-    assignment.save(function(err, savedAssignment) {
+    assignment.save(function (err, savedAssignment) {
         if (err) {
             const errors = {};
             const oldValues = {};
@@ -183,15 +180,15 @@ exports.createAssignment = (req, res) => {
             // Show the errors on the assignment page
             res.render("assignment", { pageName: "Formulier", session: req.session.user, ...errors });
         } else {
-            (async() => {
+            (async () => {
                 const objectId = savedAssignment._id;
                 // Create a request
-                const request = await createRequest(req, res, objectId);
+                const request = await createRequest(req, res, objectId, "createAssignment");
                 // Update assignment
-                await Assignment.findOneAndUpdate({ _id: request.assignmentId }, {$set: { requestId: request._id }}, { upsert:true });
+                await Assignment.findOneAndUpdate({ _id: request.assignmentId }, { $set: { requestId: request._id } }, { upsert: true });
                 // Redirect to the dashboard
                 res.redirect("/");
-            })()
+            })();
         }
     });
 };
@@ -203,33 +200,29 @@ exports.getAssignmentPage = (req, res) => {
 exports.getAllAssignments = (req, res) => {
     function format(inputDate) {
         let date, month, year;
-      
+
         date = inputDate.getDate();
         month = inputDate.getMonth() + 1;
         year = inputDate.getFullYear();
-      
-        date = date
-            .toString()
-            .padStart(2, '0');
-    
-        month = month
-            .toString()
-            .padStart(2, '0');
-      
+
+        date = date.toString().padStart(2, "0");
+
+        month = month.toString().padStart(2, "0");
+
         return `${date}/${month}/${year}`;
     }
 
     if (req.session.user.roles == "coordinator") {
-        Assignment.find({ isApproved: true }, function(err, results) {
-            results.forEach(result => {
+        Assignment.find({ isApproved: true }, function (err, results) {
+            results.forEach((result) => {
                 result.dateTime = format(new Date(result.dateTime));
             });
             res.render("assignment_overview", { pageName: "Opdrachten", session: req.session.user, assignments: results });
-        })
+        });
     } else if (req.session.user.roles == "client") {
-        let resultsFiltered = []
+        let resultsFiltered = [];
 
-        Assignment.find(async function(err, results) {
+        Assignment.find(async function (err, results) {
             for (let result of results) {
                 if (result.emailAddress == req.session.user.emailAddress) {
                     let request = await Request.find({ _id: result.requestId }).exec();
@@ -237,46 +230,42 @@ exports.getAllAssignments = (req, res) => {
 
                     result = {
                         ...result._doc,
-                        "status": request[0].status,
-                    }
+                        status: request[0].status,
+                    };
 
                     resultsFiltered.push(result);
                 }
-            };
+            }
             res.render("assignment_overview", { pageName: "Opdrachten", session: req.session.user, assignments: resultsFiltered });
         });
     } else if (req.session.user.roles == "member") {
-        Assignment.find({ isApproved: true }, function(err, results) {
-            results.forEach(result => {
+        Assignment.find({ isApproved: true }, function (err, results) {
+            results.forEach((result) => {
                 result.dateTime = format(new Date(result.dateTime));
             });
             res.render("assignment_overview", { pageName: "Opdrachten", session: req.session.user, assignments: results });
         });
     }
-}
+};
 
-exports.getAssignmentDetailPage = (req, res) => { 
+exports.getAssignmentDetailPage = (req, res) => {
     function format(inputDate) {
         let date, month, year;
-      
+
         date = inputDate.getDate();
         month = inputDate.getMonth() + 1;
         year = inputDate.getFullYear();
-      
-        date = date
-            .toString()
-            .padStart(2, '0');
-    
-        month = month
-            .toString()
-            .padStart(2, '0');
-      
+
+        date = date.toString().padStart(2, "0");
+
+        month = month.toString().padStart(2, "0");
+
         return `${date}/${month}/${year}`;
     }
 
     //Removed "isApproved: true" filter for testing
-    Assignment.find({_id: req.query.id}, function(err, results) {
+    Assignment.find({ _id: req.query.id }, function (err, results) {
         console.log(results);
         res.render("assignment_detail", { pageName: "Detailpagina", session: req.session.user, assignments: results });
     });
-}
+};
