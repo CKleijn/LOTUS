@@ -213,8 +213,8 @@ exports.getAllAssignments = (req, res) => {
         return `${date}/${month}/${year}`;
     }
 
-    if (req.session.user.roles == "coordinator") {
-        Assignment.find(function(err, results) {
+    if (req.session.user.roles == "coordinator" || req.session.user.roles == "member") {
+        Assignment.find({ isApproved: true }, function(err, results) {
             results.forEach(result => {
                 result.dateTime = format(new Date(result.dateTime));
             });
@@ -226,20 +226,13 @@ exports.getAllAssignments = (req, res) => {
         Assignment.find(function(err, results) {
             results.forEach(result => {
 
-                if (result.emailAddress == req.session.user.emailAddress) {
+                if (result.emailAddress == req.session.user.emailAddress && result.isApproved == true) {
                     result.dateTime = format(new Date(result.dateTime));
 
                     resultsFiltered.push(result)
                 }
             });
             res.render("assignment_overview", { pageName: "Opdrachten", session: req.session.user, assignments: resultsFiltered });
-        });
-    } else if (req.session.user.roles == "member") {
-        Assignment.find({ isApproved: true }, function(err, results) {
-            results.forEach(result => {
-                result.dateTime = format(new Date(result.dateTime));
-            });
-            res.render("assignment_overview", { pageName: "Opdrachten", session: req.session.user, assignments: results });
         });
     }
 }
@@ -263,8 +256,7 @@ exports.getAssignmentDetailPage = (req, res) => {
         return `${date}/${month}/${year}`;
     }
 
-    //Removed "isApproved: true" filter for testing
-    Assignment.find({_id: req.query.id}, function(err, results) {
+    Assignment.find({isApproved: true, _id: req.query.id}, function(err, results) {
         console.log(results);
         res.render("assignment_detail", { pageName: "Detailpagina", session: req.session.user, assignments: results });
     });
