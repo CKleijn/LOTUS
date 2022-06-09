@@ -184,16 +184,14 @@ exports.createAssignment = (req, res) => {
             res.render("assignment", { pageName: "Formulier", session: req.session.user, ...errors, checkedOrNotProfile, checkedOrNotPlayground, checkedOrNotMakeUp });
         } else {
             (async () => {
-                const objectId = savedAssignment._id;
-
-                // Create a request when client makes assignment
-                if (session.user.roles === "coordinator") {
-                    await createRequest(req, res, objectId, "createAssignment");
+                if (session.user.roles === "client") {
+                    const objectId = savedAssignment._id;
+                    // Create a request
+                    const request = await createRequest(req, res, objectId, "createAssignment");
+                    // Update assignment
+                    await Assignment.findOneAndUpdate({ _id: request.assignmentId }, { $set: { requestId: request._id } });
                 }
-
-                // Update assignment
-                await Assignment.findOneAndUpdate({ _id: request.assignmentId }, { $set: { requestId: request._id } });
-                // Redirect to the dashboard
+                // Redirect to the overview
                 res.redirect("/assignment");
             })();
         }
