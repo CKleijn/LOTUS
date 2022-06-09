@@ -19,7 +19,7 @@ exports.getHomepage = (req, res) => {
             let assignmentsFiltered = [];
 
             assignments.forEach((assignment) => {
-                if (assignment.emailAddress == req.session.user.emailAddress && assignment.isApproved == true) {
+                if (assignment.emailAddress == req.session.user.emailAddress) {
                     assignmentsFiltered.push(assignment);
                 }
             });
