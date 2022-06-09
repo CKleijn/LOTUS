@@ -219,7 +219,7 @@ exports.getAllAssignments = (req, res) => {
         return `${date}/${month}/${year}`;
     }
 
-    if (req.session.user.roles == "coordinator") {
+    if (req.session.user.roles == "coordinator" || req.session.user.roles == "member") {
         Assignment.find({ isApproved: true }, function(err, results) {
             results.forEach(result => {
                 result.dateTime = format(new Date(result.dateTime));
@@ -228,7 +228,7 @@ exports.getAllAssignments = (req, res) => {
         })
     } else if (req.session.user.roles == "client") {
         let resultsFiltered = []
-
+        
         Assignment.find(async function(err, results) {
             for (let result of results) {
                 if (result.emailAddress == req.session.user.emailAddress) {
@@ -244,13 +244,6 @@ exports.getAllAssignments = (req, res) => {
                 }
             };
             res.render("assignment_overview", { pageName: "Opdrachten", session: req.session.user, assignments: resultsFiltered });
-        });
-    } else if (req.session.user.roles == "member") {
-        Assignment.find({ isApproved: true }, function(err, results) {
-            results.forEach(result => {
-                result.dateTime = format(new Date(result.dateTime));
-            });
-            res.render("assignment_overview", { pageName: "Opdrachten", session: req.session.user, assignments: results });
         });
     }
 }
@@ -274,8 +267,7 @@ exports.getAssignmentDetailPage = (req, res) => {
         return `${date}/${month}/${year}`;
     }
 
-    //Removed "isApproved: true" filter for testing
-    Assignment.find({_id: req.query.id}, function(err, results) {
+    Assignment.find({isApproved: true, _id: req.query.id}, function(err, results) {
         console.log(results);
         res.render("assignment_detail", { pageName: "Detailpagina", session: req.session.user, assignments: results });
     });
