@@ -14,18 +14,50 @@
         <div>
             <div class="row">
                 <% assignments.forEach(assignment => { %>
+                    <div class="col-lg-12">
+                        <div class="card">
+                            <div class="card-body assignment_card">
+                                <h5 class="card-title"><%= assignment.amountOfLotusVictims + " LOTUSslachtoffers nodig in " + assignment.playgroundTown %></h5>
+                            </div>
+                        </div>
+                    </div>
                     <div class="col-lg-6">
+                        <div class="card">
+                            <div class="card-body assignment_card">
+                                <h5 class="card-title"><%= "Opdracht info " %></h5> <p><%="Voornaam: " + assignment.firstName %> </p> <p> <%="Achternaam: " + assignment.lastName %></p> <p><%="Email adres: " + assignment.emailAddress %></p>  <p><%= "Straat: " + assignment.street%></p> 
+                                <p><%="Huisnummer: " + assignment.houseNumber %> </p> <p> <%="Huisnummer toevoeging: " + assignment.houseNumberAddition %></p> <p><%="Postcode: " + assignment.postalCode %></p>  <p><%= "Plaats: " + assignment.town%></p> 
+                            </div>
+                        </div>
+                        <div class="card">
+                            <div class="card-body assignment_card">
+                                <h5 class="card-title"><%= "Speelplaats " %></h5> <p><%="Speel plaats: " + assignment.playgroundTown %> </p> <p> <%="Speel plaats huisnummer: " + assignment.playgroundHouseNumber %></p> <p><%="Speel plaats huisnummer toevoeging: " + assignment.playgroundHouseNumberAddition%></p>  <p><%= "Speel plaats straat: " + assignment.playgroundStreet%></p> <p> <%="Speel plaats postcode: " + assignment.playgroundPostalCode %></p> 
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-6">
+                        <% if (assignment.makeUpStreet || assignment.makeUpHouseNumber || assignment.makeUpHouseNumberAddition || assignment.makeUpPostalCode || assignment.makeUpTown) { %>
                             <div class="card">
                                 <div class="card-body assignment_card">
-                                    <h5 class="card-title"><%= assignment.amountOfLotusVictims + " LOTUSslachtoffers nodig in " + assignment.playgroundTown %></h5>
-                                    <h5><%= "Opdracht info " %></h5> <p><%="Voornaam: " + assignment.firstName %> </p> <p> <%="Achternaam: " + assignment.lastName %></p> <p><%="Email adres: " + assignment.emailAddress %></p>  <p><%= "Straat: " + assignment.street%></p> 
-                                    <p><%="Huisnummer: " + assignment.houseNumber %> </p> <p> <%="Huisnummer toevoeging: " + assignment.houseNumberAddition %></p> <p><%="Postcode: " + assignment.postalCode %></p>  <p><%= "Plaats: " + assignment.town%></p> 
-                                    <h5><%= "Factuur " %></h5> <p><%="Factuur emailadres: " + assignment.billingEmailAddress %> </p> <p> <%="Datum/tijd: " + assignment.dateTime %></p>
-                                    <p><%= "Speelplaats " %></p> <p><%="Speel plaats: " + assignment.playgroundTown %> </p> <p> <%="Speel plaats huisnummer: " + assignment.playgroundHouseNumber %></p> <p><%="Speel plaats huisnummer toevoeging: " + assignment.playgroundHouseNumberAddition%></p>  <p><%= "Speel plaats straat: " + assignment.playgroundStreet%></p> <p> <%="Speel plaats postcode: " + assignment.playgroundPostalCode %></p> 
-                                    <h5><%= "Grimeer Adres " %></h5> <p><%="Grimeer straat: " + assignment.makeUpStreet %> </p> <p> <%="Grimeer huisnummer: " + assignment.makeUpHouseNumber %></p> <p><%="Grimeer huisnummer toevoeging: " + assignment.makeUpHouseNumberAddition %></p>  <p><%= "Grimeer postcode: " + assignment.makeUpPostalCode%></p>  <p><%= "Grimeer plaats: " + assignment.makeUpTown%></p> 
-                                    <h5><%= "Overig " %></h5> <p><%="Aantal LOTUS slachtoffers: " + assignment.amountOfLotusVictims %> </p> <p> <%="Opmerkingen: " + assignment.comments %></p> <p><%="Status: " + assignment.isApproved %></p>
+                                    <h5 class="card-title"><%= "Grimeer Adres " %></h5>
+                                    <% if (assignment.makeUpStreet) { %> <p><%= "Grimeer straat: " + assignment.makeUpStreet %></p> <% } %>
+                                    <% if (assignment.makeUpHouseNumber) { %> <p><%= "Grimeer huisnummer: " + assignment.makeUpHouseNumber %></p> <% } %>
+                                    <% if (assignment.makeUpHouseNumberAddition) { %> <p><%= "Grimeer huisnummer toevoeging: " + assignment.makeUpHouseNumberAddition %></p> <% } %>
+                                    <% if (assignment.postalCode) { %> <p><%= "Grimeer postcode: " + assignment.postalCode %></p> <% } %>
+                                    <% if (assignment.makeUpTown) { %> <p><%= "Grimeer plaats: " + assignment.makeUpTown %></p> <% } %>
                                 </div>
                             </div>
+                        <% } %>
+
+                        <div class="card">
+                            <div class="card-body assignment_card">
+                                <h5 class="card-title"><%= "Factuur " %></h5> <p><%="Factuur emailadres: " + assignment.billingEmailAddress %> </p> <p> <%="Datum/tijd: " + assignment.dateTime %></p>
+                            </div>
+                        </div>
+                        <div class="card">
+                            <div class="card-body assignment_card">
+                                <h5 class="card-title"><%= "Overig " %></h5> <p><%="Aantal LOTUS slachtoffers: " + assignment.amountOfLotusVictims %> </p> <p> <%="Opmerkingen: " + assignment.comments %></p> <p><%="Status: " + assignment.isApproved %></p> 
+                            </div>
+                        </div>
                     </div>
                 <% }); %>
             </div>

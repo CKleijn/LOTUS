@@ -263,9 +263,8 @@ exports.getAssignmentDetailPage = (req, res) => {
         return `${date}/${month}/${year}`;
     }
 
-    
-
-    Assignment.find({ isApproved: true , _id: req.query.id}, function(err, results) {
+    //Removed "isApproved: true" filter for testing
+    Assignment.find({_id: req.query.id}, function(err, results) {
         console.log(results);
         res.render("assignment_detail", { pageName: "Detailpagina", session: req.session.user, assignments: results });
     });

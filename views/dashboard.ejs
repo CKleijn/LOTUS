@@ -32,8 +32,13 @@
       
                     <a href="/assignment_overview">
                       <div class="card-body">
-                        <h5 class="card-title">Opdrachten</h5>
-      
+
+                        <% if (session.roles == "coordinator" || session.roles == "member") { %>
+                            <h5 class="card-title">Opdrachten</h5>
+                        <% } else if (session.roles == "client") { %>
+                            <h5 class="card-title">Mijn opdrachten</h5>
+                        <% } %>
+
                         <div class="d-flex align-items-center">
                           <div class="card-icon rounded-circle d-flex align-items-center justify-content-center">
                             <i class="bi bi-archive"></i>

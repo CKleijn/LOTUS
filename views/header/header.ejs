@@ -153,24 +153,33 @@
                     </a>
                 </li>
 
+                <% } %> <% if(session.roles == "coordinator" || session.roles == "member") { %>
+
+                    <li class="nav-item">
+                        <a class="nav-link collapsed" href="assignment_overview">
+                            <i class="bi bi-archive"></i>
+                            <span>Opdrachten</span>
+                        </a>
+                    </li>
+    
+                <% } %> <% if(session.roles == "client") { %>
+
+                    <li class="nav-item">
+                        <a class="nav-link collapsed" href="assignment_overview">
+                            <i class="bi bi-archive"></i>
+                            <span>Mijn opdrachten</span>
+                        </a>
+                    </li>
+
                 <% } %> <% if(session.roles == "coordinator" || session.roles == "client") { %>
 
-                <li class="nav-item">
-                    <a class="nav-link collapsed" href="assignment">
-                        <i class="bi bi-person-rolodex"></i>
-                        <span>Opdracht aanmaken</span>
-                    </a>
-                </li>
+                    <li class="nav-item">
+                        <a class="nav-link collapsed" href="assignment">
+                            <i class="bi bi-person-rolodex"></i>
+                            <span>Opdracht aanmaken</span>
+                        </a>
+                    </li>
                 
-                <% } %> <% if(session.roles == "coordinator" || session.roles == "client" || session.roles == "member") { %>
-
-                <li class="nav-item">
-                    <a class="nav-link collapsed" href="assignment_overview">
-                        <i class="bi bi-archive"></i>
-                        <span>Opdrachten</span>
-                    </a>
-                </li>
-
                 <% } %>
             </ul>
         </aside>
