@@ -5,6 +5,9 @@ const requestSchema = new mongoose.Schema({
     userId: {
         type: ObjectId,
     },
+    assignmentId: {
+        type: ObjectId,
+    },
     requestDate: {
         type: Date,
         default: Date.now,
@@ -14,9 +17,11 @@ const requestSchema = new mongoose.Schema({
         enum: ["Afgewezen", "In behandeling", "Goedgekeurd"],
         default: "In behandeling",
     },
-    assignmentId: {
-        type: ObjectId,
-    }
+    type: {
+        required: true,
+        type: String,
+        enum: ["createAssignment", "enrollment"],
+    },
 });
 // Create a Request model
 module.exports = mongoose.model("Request", requestSchema);

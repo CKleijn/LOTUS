@@ -136,10 +136,8 @@
                 </a>
             </li>
             <!-- End Dashboard Nav -->
-
-            <% if(session.roles === "coordinator") { %>
-
-                <% } %> <% if(session.roles == "coordinator" || session.roles == "member") { %>
+                
+                <% if(session.roles == "coordinator" || session.roles == "member") { %>
 
                     <li class="nav-item">
                         <a class="nav-link collapsed" href="/assignment">
@@ -163,6 +161,17 @@
                         <a class="nav-link collapsed" href="/assignment/create">
                             <i class="bi bi-person-rolodex"></i>
                             <span>Opdracht aanmaken</span>
+                        </a>
+                    </li>
+                
+                <% } %>
+
+                 <% if(session.roles == "coordinator") { %>
+
+                    <li class="nav-item">
+                        <a class="nav-link collapsed" href="/request">
+                            <i class="bi bi-inboxes"></i>
+                            <span>Verzoeken</span>
                         </a>
                     </li>
                 
