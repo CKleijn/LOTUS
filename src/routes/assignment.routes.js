@@ -9,6 +9,8 @@ router.get("/assignment", isLoggedIn, assignmentController.getAllAssignments);
 
 router.post("/assignment", isLoggedIn, assignmentController.createAssignment);
 
+router.post("/assignment/delete", isLoggedIn, assignmentController.deleteAssignment)
+
 router.get("/assignment/detail", isLoggedIn, assignmentController.getAssignmentDetailPage);
 
 module.exports = router;
