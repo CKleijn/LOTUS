@@ -253,6 +253,11 @@ h6 {
     color: #212529;
 }
 
+.assignment_delete_btn {
+    text-align: center;
+    padding: 20px 0 26.6px 0;
+}
+
 /* Alerts */
 .alert-heading {
     font-weight: 500;

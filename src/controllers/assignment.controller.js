@@ -271,3 +271,11 @@ exports.getAssignmentDetailPage = (req, res) => {
         res.render("assignment_detail", { pageName: "Detailpagina", session: req.session.user, assignments: results });
     });
 }
+
+exports.deleteAssignment = (req, res) => {
+    Assignment.deleteOne({_id: req.query.id}, function(err, results) {
+        Request.deleteOne({assignmentId: req.query.id}, function(err, results) {
+            res.redirect("/assignment")
+        })
+    })
+}
