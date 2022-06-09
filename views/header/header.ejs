@@ -139,41 +139,35 @@
 
             <% if(session.roles === "coordinator") { %>
 
-            <li class="nav-item">
-                <a class="nav-link collapsed" href="/user/overview">
-                    <i class="bi bi-people"></i>
-                    <span>Gebruikers</span>
-                </a>
-            </li>
+                <% } %> <% if(session.roles == "coordinator" || session.roles == "member") { %>
 
-            <li class="nav-item">
-                <a class="nav-link collapsed" href="/request/overview">
-                    <i class="bi bi-inboxes"></i>
-                    <span>Verzoeken</span>
-                </a>
-            </li>
+                    <li class="nav-item">
+                        <a class="nav-link collapsed" href="/assignment">
+                            <i class="bi bi-archive"></i>
+                            <span>Opdrachten</span>
+                        </a>
+                    </li>
+    
+                <% } %> <% if(session.roles == "client") { %>
 
-            <% } %> <% if(session.roles == "coordinator" || session.roles == "client") { %>
+                    <li class="nav-item">
+                        <a class="nav-link collapsed" href="/assignment">
+                            <i class="bi bi-archive"></i>
+                            <span>Mijn opdrachten</span>
+                        </a>
+                    </li>
 
-            <li class="nav-item">
-                <a class="nav-link collapsed" href="/assignment/create">
-                    <i class="bi bi-person-rolodex"></i>
-                    <span>Opdracht aanmaken</span>
-                </a>
-            </li>
+                <% } %> <% if(session.roles == "coordinator" || session.roles == "client") { %>
 
-            <% } %> <% if(session.roles == "coordinator" || session.roles == "client" || session.roles == "member") { %>
-
-            <li class="nav-item">
-                <a class="nav-link collapsed" href="/assignment">
-                    <i class="bi bi-archive"></i>
-                    <span>Opdrachten</span>
-                </a>
-            </li>
-
-            <% } %>
-        </ul>
-    </aside>
-    <!-- End Sidebar-->
-
+                    <li class="nav-item">
+                        <a class="nav-link collapsed" href="/assignment/create">
+                            <i class="bi bi-person-rolodex"></i>
+                            <span>Opdracht aanmaken</span>
+                        </a>
+                    </li>
+                
+                <% } %>
+            </ul>
+        </aside>
+        <!-- End Sidebar-->
     <% } %>

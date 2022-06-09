@@ -2,11 +2,22 @@
 
 <main id="main" class="main">
     <div class="pagetitle">
-        <h1>Opdrachten</h1>
+
+        <% if (session.roles == "coordinator" || session.roles == "member") { %>
+            <h1>Opdrachten</h1>
+        <% } else if (session.roles == "client") { %>
+            <h1>Mijn opdrachten</h1>
+        <% } %>
+        
         <nav>
             <ol class="breadcrumb">
                 <li class="breadcrumb-item"><a href="/">Dashboard</a></li>
-                <li class="breadcrumb-item active">Opdrachten</li>
+
+                <% if (session.roles == "coordinator" || session.roles == "member") { %>
+                    <li class="breadcrumb-item active">Opdrachten</li>
+                <% } else if (session.roles == "client") { %>
+                    <li class="breadcrumb-item active">Mijn opdrachten</li>
+                <% } %>
             </ol>
         </nav>
     </div>
@@ -47,16 +58,18 @@
                     </div>
                 </div>
                 <% } else if (session.roles == "client") { %>
-                <div>
-                    <div class="row">
-                        <% assignments.forEach(assignment => { %>
-                        <div class="col-lg-6">
-                            <a href="/">
-                                <div class="card">
-                                    <div class="card-body assignment_card">
-                                        <h5 class="card-title"><%= assignment.amountOfLotusVictims + " LOTUSslachtoffers nodig in " + assignment.playgroundTown %></h5>
-                                        <%= "Opdracht in " + assignment.playgroundHouseNumber + " " + assignment.playgroundStreet + " " + assignment.playgroundTown + ", " + assignment.playgroundPostalCode %>
-                                    </div>
+                    <div>
+                        <div class="row">
+                            <% assignments.forEach(assignment => { %>
+                                <div class="col-lg-6">
+                                    <a href="assignment_detail?id=<%=assignment._id%>">
+                                        <div class="card">
+                                            <div class="card-body assignment_card">
+                                            <h5 class="card-title"><%= assignment.amountOfLotusVictims + " LOTUSslachtoffers nodig in " + assignment.playgroundTown %></h5>
+                                                <%= "Opdracht in " + assignment.playgroundHouseNumber + " " + assignment.playgroundStreet + " " + assignment.playgroundTown + ", " + assignment.playgroundPostalCode %> 
+                                            </div>
+                                        </div>
+                                    </a>
                                 </div>
                             </a>
                         </div>
