@@ -18,8 +18,18 @@ exports.getHomepage = (req, res) => {
 
             res.render("dashboard", { pageName: "Dashboard", session: req.session.user, assignments_amount: assignmentsFiltered.length });
         });
-    } else {
-        res.render("dashboard", { pageName: "Dashboard", session: req.session.user });
+    } else if (req.session.user.roles == "member") {
+        Assignment.find(function (err, assignments) {
+            let assignmentsFiltered = [];
+
+            assignments.forEach(assignment => {
+                if (assignment.isApproved == true) {
+                    assignmentsFiltered.push(assignment)
+                }
+            });
+
+            res.render("dashboard", { pageName: "Dashboard", session: req.session.user, assignments_amount: assignmentsFiltered.length });
+        });
     }
 };
 
