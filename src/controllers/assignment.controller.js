@@ -288,12 +288,17 @@ exports.getAssignmentDetailPage = (req, res) => {
     });
 };
 
-exports.deleteAssignment = (req, res) => {
-    Assignment.deleteOne({ _id: req.query.id }, function (err, results) {
-        Request.deleteOne({ assignmentId: req.query.id }, function (err, results) {
-            res.redirect("/assignment");
-        });
-    });
+exports.deleteAssignment = async (req, res) => {
+    if (req.session.user.roles === "coordinator") {
+        await Assignment.deleteOne({ _id: req.query.id });
+        await Request.deleteOne({ assignmentId: req.query.id });
+        res.redirect("/assignment");
+    }
+
+    if (req.session.user.roles === "client") {
+        await createRequest(req, res, req.query.id, "deleteAssignment");
+        res.redirect("/assignment");
+    }
 };
 
 exports.enrollAssignment = (req, res) => {

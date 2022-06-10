@@ -20,7 +20,7 @@ const requestSchema = new mongoose.Schema({
     type: {
         required: true,
         type: String,
-        enum: ["createAssignment", "enrollment", "cancelEnrollment"],
+        enum: ["createAssignment", "enrollment", "cancelEnrollment", "deleteAssignment"],
     },
 });
 // Create a Request model
