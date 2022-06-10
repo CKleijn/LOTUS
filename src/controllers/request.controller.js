@@ -1,7 +1,9 @@
 const mongoose = require("../../database/dbconnection");
 const Request = require("../models/request.model");
-const User = require("../models/user.model");
+const { userModel } = require("../models/user.model");
 const Assignment = require("../models/assignment.model");
+
+const User = userModel;
 
 exports.createRequest = async (req, res, objectId, type) => {
     // Get session
@@ -45,6 +47,11 @@ async function parseRequest(results) {
         const user = await User.find({ _id: result.userId });
         const assignment = await Assignment.find({ _id: result.assignmentId });
         const requestDate = await format(new Date(result.requestDate));
+        const participations = await Request.find({ userId: result.userId, type: "enrollment", status: "Goedgekeurd" }).exec();
+        const canceledParticipations = await Request.find({ userId: result.userId, type: "cancelEnrollment", status: "Goedgekeurd" }).exec();
+
+        user[0].participations = participations.length - canceledParticipations.length;
+
         result = {
             ...result._doc,
             requestDate: requestDate,
@@ -66,12 +73,34 @@ exports.approveRequest = async (req, res) => {
         await Request.findOneAndUpdate({ _id: requestId }, { $set: { status: "Goedgekeurd" } });
         res.redirect("/request");
     }
+
+    if (requestType === "enrollment") {
+        await Assignment.findOneAndUpdate({ _id: assignmentId }, { $push: { participatingLotusVictims: req.session.user } });
+        await Request.findOneAndUpdate({ _id: requestId }, { $set: { status: "Goedgekeurd" } });
+        res.redirect("/request");
+    }
+
+    if (requestType === "cancelEnrollment") {
+        await Assignment.updateOne({ _id: assignmentId }, { $pull: { participatingLotusVictims: { emailAddress: req.session.user.emailAddress } } });
+        await Request.findOneAndUpdate({ _id: requestId }, { $set: { status: "Goedgekeurd" } });
+        res.redirect("/request");
+    }
 };
 
 exports.declineRequest = async (req, res) => {
     const { requestType, requestId, assignmentId } = req.body;
 
     if (requestType === "createAssignment") {
+        await Request.findOneAndUpdate({ _id: requestId }, { $set: { status: "Afgewezen" } });
+        res.redirect("/request");
+    }
+
+    if (requestType === "enrollment") {
+        await Request.findOneAndUpdate({ _id: requestId }, { $set: { status: "Afgewezen" } });
+        res.redirect("/request");
+    }
+
+    if (requestType === "cancelEnrollment") {
         await Request.findOneAndUpdate({ _id: requestId }, { $set: { status: "Afgewezen" } });
         res.redirect("/request");
     }
