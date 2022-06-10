@@ -181,7 +181,7 @@ exports.createAssignment = (req, res) => {
             }
 
             // Show the errors on the assignment page
-            res.render("assignment", { pageName: "Formulier", session: req.session.user, ...errors, checkedOrNotProfile, checkedOrNotPlayground, checkedOrNotMakeUp });
+            res.render("assignment", { pageName: "Formulier", session: req.session.user, ...errors, checkedOrNotProfile, checkedOrNotPlayground, checkedOrNotMakeUp, url: req.session.originalUrl });
         } else {
             (async () => {
                 if (session.user.roles === "client") {
@@ -198,8 +198,29 @@ exports.createAssignment = (req, res) => {
     });
 };
 
+exports.updateAssignment = (req, res) => {
+
+    const assignmentId = req.assignmentId;
+
+    console.log(req.body);
+}
+
 exports.getAssignmentPage = (req, res) => {
-    res.render("assignment", { pageName: "Formulier", session: req.session.user });
+    req.session.originalUrl = req.originalUrl
+    res.render("assignment", { pageName: "Formulier", session: req.session.user, url: req.session.originalUrl, assignmentId: req.query.id });
+};
+
+exports.getAssignmentUpdatePage = async (req, res) => {
+    const assignmentId = req.query.assignmentId
+
+    req.assignmentId = assignmentId;
+
+    let assignment = await Assignment.find({ _id: assignmentId })
+
+    assignment = assignment[0]
+
+    req.session.originalUrl = req.originalUrl
+    res.render("assignment", { pageName: "Formulier", session: req.session.user, url: req.session.originalUrl, assignmentId: req.query.id, assignment });
 };
 
 exports.getAllAssignments = (req, res) => {
