@@ -1,5 +1,7 @@
 const mongoose = require("../../database/dbconnection");
 const ObjectId = mongoose.Schema.Types.ObjectId;
+const { userSchema } = require("./user.model");
+
 // Create assignmentSchema with all fields
 exports.assignmentSchema = new mongoose.Schema({
     firstName: {
@@ -12,9 +14,8 @@ exports.assignmentSchema = new mongoose.Schema({
     },
     emailAddress: {
         type: String,
-        unique: false,
         validate: {
-            validator: function(v) {
+            validator: function (v) {
                 return /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(v);
             },
             message: `Gebruik een geldig e-mailadres zoals j.doe@gmail.com!`,
@@ -36,7 +37,7 @@ exports.assignmentSchema = new mongoose.Schema({
     postalCode: {
         type: String,
         validate: {
-            validator: function(v) {
+            validator: function (v) {
                 return /^[1-9][0-9]{3} ?(?!sa|sd|ss)[a-z]{2}$/i.test(v);
             },
             message: `Gebruik een geldig postcode zoals 2973FD!`,
@@ -51,7 +52,7 @@ exports.assignmentSchema = new mongoose.Schema({
     billingEmailAddress: {
         type: String,
         validate: {
-            validator: function(v) {
+            validator: function (v) {
                 return /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(v);
             },
             message: `Gebruik een geldig e-mailadres zoals j.doe@gmail.com!`,
@@ -77,7 +78,7 @@ exports.assignmentSchema = new mongoose.Schema({
     playgroundPostalCode: {
         type: String,
         validate: {
-            validator: function(v) {
+            validator: function (v) {
                 return /^[1-9][0-9]{3} ?(?!sa|sd|ss)[a-z]{2}$/i.test(v);
             },
             message: `Gebruik een geldig postcode zoals 2973FD!`,
@@ -101,8 +102,8 @@ exports.assignmentSchema = new mongoose.Schema({
     makeUpPostalCode: {
         type: String,
         validate: {
-            validator: function(v) {
-                if(v == "") {
+            validator: function (v) {
+                if (v == "") {
                     return true;
                 } else {
                     return /^[1-9][0-9]{3} ?(?!sa|sd|ss)[a-z]{2}$/i.test(v);
@@ -116,7 +117,7 @@ exports.assignmentSchema = new mongoose.Schema({
     },
     amountOfLotusVictims: {
         type: Number,
-        min: [1,"Aantal LOTUS slachtoffers moet minimaal 1 zijn!"],
+        min: [1, "Aantal LOTUS slachtoffers moet minimaal 1 zijn!"],
         required: [true, "Aantal LOTUS slachtoffers is verplicht!"],
     },
     comments: {
@@ -124,11 +125,13 @@ exports.assignmentSchema = new mongoose.Schema({
     },
     isApproved: {
         type: Boolean,
-        default: false
+        default: false,
     },
     requestId: {
         type: ObjectId,
     },
+    participatingLotusVictims: [userSchema],
 });
+
 // Create a Assignment model
 exports.assignmentModel = mongoose.model("Assignment", exports.assignmentSchema);

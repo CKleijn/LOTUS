@@ -2,8 +2,10 @@ const bcrypt = require("bcrypt");
 const mongoose = require("./../../database/dbconnection");
 const { sendMemberInviteMail } = require("./../controllers/mail.controller");
 const userController = require("./../controllers/user.controller");
-const User = require("./../models/user.model");
+const { userModel } = require("./../models/user.model");
 const passGenerator = require("generate-password");
+
+const User = userModel;
 
 // Functionality for creating an user
 exports.createUser = (req, res) => {
