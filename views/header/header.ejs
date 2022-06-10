@@ -173,6 +173,15 @@
                             <span>Mijn opdrachten</span>
                         </a>
                     </li>
+                
+                <% } %> <% if(session.roles == "member") { %>
+
+                    <li class="nav-item">
+                        <a class="nav-link collapsed" href="/member/assignment">
+                            <i class="bi bi-archive"></i>
+                            <span>Mijn opdrachten</span>
+                        </a>
+                    </li>
 
                 <% } %> <% if(session.roles == "coordinator" || session.roles == "client") { %>
 
