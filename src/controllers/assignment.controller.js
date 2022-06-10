@@ -218,11 +218,33 @@ exports.getAllAssignments = (req, res) => {
     }
 
     if (req.session.user.roles == "coordinator" || req.session.user.roles == "member") {
-        Assignment.find({ isApproved: true }, function (err, results) {
-            results.forEach((result) => {
-                result.dateTime = format(new Date(result.dateTime));
-            });
-            res.render("assignment_overview", { pageName: "Opdrachten", session: req.session.user, assignments: results });
+        let resultsFiltered = [];
+
+        Assignment.find({ isApproved: true }, async function (err, results) {
+            for (let result of results) {
+                    let enrolledRequest = await Request.find({ assignmentId: result._id, userId: req.session.user.userId, type: "enrollment", status: "In behandeling" }).exec();
+                    let enrolledApprovedRequest = await Request.find({ assignmentId: result._id, userId: req.session.user.userId, type: "enrollment", status: "Goedgekeurd" }).exec();
+                    result.dateTime = format(new Date(result.dateTime));
+                    if(enrolledRequest.length > 0) {
+                        result = {
+                            ...result._doc,
+                            status: "Ingeschreven"
+                        };
+                    } else if(enrolledApprovedRequest.length > 0) {
+                        result = {
+                            ...result._doc,
+                            status: "Ingeschreven voltooid"
+                        };
+                    } else {
+                        result = {
+                            ...result._doc,
+                            status: "Niet ingeschreven"
+                        };
+                    }
+
+                    resultsFiltered.push(result);
+            }
+            res.render("assignment_overview", { pageName: "Opdrachten", session: req.session.user, assignments: resultsFiltered });
         });
     } else if (req.session.user.roles == "client") {
         let resultsFiltered = [];
@@ -272,4 +294,52 @@ exports.deleteAssignment = (req, res) => {
             res.redirect("/assignment");
         });
     });
+};
+
+exports.enrollAssignment = (req, res) => {
+    // Get session
+    const session = req.session;
+    // Get req body
+    const { requestType, assignmentId } = req.body;
+    // Create request
+    const request = new Request({
+        userId: session.user.userId,
+        assignmentId: assignmentId,
+        type: requestType,
+    });
+    // Save request
+    request.save();
+    // Redirect
+    res.redirect("/assignment");
+};
+
+exports.cancelEnrollment = (req, res) => {
+    // Get session
+    const session = req.session;
+    // Get req body
+    const { requestType, assignmentId, status } = req.body;
+    if(status == "Ingeschreven") {
+        Request.deleteOne({ requestType: "enrollment", assignmentId: assignmentId, userId: session.user.userId }, function (err, results) {
+            Assignment.findOneAndUpdate({ assignmentId: assignmentId }, { status: "Niet ingeschreven" });
+            res.redirect("/assignment");
+        });
+    } else {
+        Request.find({ assignmentId: assignmentId, userId: session.user.userId, type: requestType }, function (err, results) {
+            if(results.length == 0) {
+                // Create request
+                const request = new Request({
+                    userId: session.user.userId,
+                    assignmentId: assignmentId,
+                    type: requestType,
+                });
+                // Save request
+                request.save();
+                // Redirect
+                res.redirect("/assignment");
+            } else {
+                // Redirect
+                res.redirect("/assignment");
+            }
+        });
+    }
 };

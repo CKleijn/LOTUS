@@ -48,7 +48,40 @@
                                             <br>
                                             <b>Datum:</b> <%= request.requestDate %> 
                                         </p>
-
+                                    <% } else if(request.type === "enrollment") { %> 
+                                        <h5 class="card-title"><i class="bi bi-pencil"></i> <%= request.user.firstName + " wilt zich inschrijven" %></h5>
+                                        <p>
+                                            <b>Naam:</b> <%= request.user.firstName + " " + request.user.lastName %>
+                                            <br>
+                                            <b>E-mailadres:</b> <%= request.user.emailAddress %> 
+                                            <br>
+                                            <b>Rol:</b> <%= role %>  
+                                            <br>
+                                            <br>
+                                            <b>Type:</b> Inschrijven 
+                                            <br>
+                                            <b>Datum:</b> <%= request.requestDate %> 
+                                            <br>
+                                            <br>
+                                            <b>Opdracht:</b> <%= request.assignment.playgroundHouseNumber + request.assignment.playgroundHouseNumberAddition + " " + request.assignment.playgroundStreet + " " + request.assignment.playgroundTown + ", " + request.assignment.playgroundPostalCode %> 
+                                        </p>
+                                    <% } else if(request.type === "cancelEnrollment") { %> 
+                                        <h5 class="card-title"><i class="bi bi-pencil"></i> <%= request.user.firstName + " wilt zich uitschrijven" %></h5>
+                                        <p>
+                                            <b>Naam:</b> <%= request.user.firstName + " " + request.user.lastName %>
+                                            <br>
+                                            <b>E-mailadres:</b> <%= request.user.emailAddress %> 
+                                            <br>
+                                            <b>Rol:</b> <%= role %>  
+                                            <br>
+                                            <br>
+                                            <b>Type:</b> Uitschrijven 
+                                            <br>
+                                            <b>Datum:</b> <%= request.requestDate %> 
+                                            <br>
+                                            <br>
+                                            <b>Opdracht:</b> <%= request.assignment.playgroundHouseNumber + request.assignment.playgroundHouseNumberAddition + " " + request.assignment.playgroundStreet + " " + request.assignment.playgroundTown + ", " + request.assignment.playgroundPostalCode %> 
+                                        </p>
                                     <% } else {%>
                                         <p>pas request_overview.ejs aan</p>
                                     <% } %>
@@ -66,7 +99,7 @@
                          <% } %>
                           <div class="modal-content">
                             <div class="modal-header">
-                              <h5 class="modal-title"><%= "Opdracht van " + request.user.firstName + " beoordelen" %></h5>
+                              <h5 class="modal-title"><%= "Verzoek van " + request.user.firstName + " beoordelen" %></h5>
                               <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                             </div>
                             <div class="modal-body">
@@ -160,6 +193,36 @@
                                             <b>Opmerkingen:</b> <%= a.comments %> 
                                         <% } %> 
 
+                                <% } else if(request.type === "enrollment" || request.type === "cancelEnrollment") { %> 
+                                    <h6>Persoonlijke gegevens</h6>
+                                    <% const u = request.user %> 
+                                        <b>Voornaam:</b> <%= u.firstName %>
+                                        <br>
+                                        <b>Achternaam:</b> <%= u.lastName %>
+                                        <br>
+                                        <b>E-mailadres:</b> <%= u.emailAddress %> 
+                                        <br>
+                                        <b>Aantal opdrachten deelgenomen:</b> ? 
+
+                                        <hr>
+
+                                    <% const a = request.assignment %> 
+                                        <h6>Belangrijkste gegevens van de opdracht</h6>
+                                        <b>Straat:</b> <%= a.playgroundStreet %> 
+                                        <br>
+                                        <b>Huisnummer:</b> <%= a.playgroundHouseNumber %> 
+                                        <br>
+                                        <% if(a.playgroundHouseNumberAddition != "" ) { %> 
+                                            <b>Huisnummer toevoeging:</b> <%= a.playgroundHouseNumberAddition %> 
+                                            <br>
+                                        <% } %> 
+                                        <b>Plaats:</b> <%= a.playgroundTown %> 
+                                        <br>
+                                        <b>Postcode:</b> <%= a.playgroundPostalCode %> 
+                                        <br>
+                                        <b>Vind plaats op:</b> <%= new Date(a.dateTime).toLocaleString([], {year: 'numeric', month: 'numeric', day: 'numeric', hour: '2-digit', minute: '2-digit'})  %> 
+                                        <br>
+                                        <b>Aantal LOTUSslachtoffers ingeschreven:</b> 0/<%= a.amountOfLotusVictims %> 
                                 <% } %>
 
                             </div>
