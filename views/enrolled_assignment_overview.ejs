@@ -22,7 +22,7 @@
                                 <a href="#" data-bs-toggle="modal" data-bs-target="#assignment<%= assignment._id %>">
                                     <div class="card">
                                         <div class="card-body assignment_card">
-                                            <h5 class="card-title"><%= assignment.amountOfLotusVictims + " LOTUSslachtoffers nodig in " + assignment.playgroundTown %></h5>
+                                            <h5 class="card-title"><%= assignment.amountOfLotusVictims + " LOTUSslachtoffers nodig in " + assignment.playgroundTown %> <% if(assignment.cancelStatus == "Uitschrijfverzoek ingediend") { %><i class="bi bi-hourglass-split" style="float: right; font-size: 30px; color: #435df1;"></i><% } %></h5>
                                             <%= "Opdracht in " + assignment.playgroundHouseNumber + assignment.playgroundHouseNumberAddition + " " + assignment.playgroundStreet + " " + assignment.playgroundTown + ", " + assignment.playgroundPostalCode %>
                                         </div>
                                     </div>
@@ -128,14 +128,23 @@
                                     </div>
                                     <div class="modal-footer">
                                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuleren</button>
-                                        <% if(assignment.status == "Ingeschreven voltooid") { %>
-                                        <form action="/assignment/cancel" method="POST">
-                                            <input type="hidden" name="status" value="<%= assignment.status %>">
-                                            <input type="hidden" name="requestType" value="cancelEnrollment">
-                                            <input type="hidden" name="requestId" value="<%= a.requestId %>">
-                                            <input type="hidden" name="assignmentId" value="<%= a._id %>">
-                                            <button type="submit" class="btn btn-danger">Uitschrijven</button>
-                                        </form>
+                                        <% if(assignment.status == "Ingeschreven voltooid" && assignment.cancelStatus != "Uitschrijfverzoek ingediend") { %>
+                                            <form action="/assignment/cancel" method="POST">
+                                                <input type="hidden" name="status" value="<%= assignment.status %>">
+                                                <input type="hidden" name="requestType" value="cancelEnrollment">
+                                                <input type="hidden" name="requestId" value="<%= a.requestId %>">
+                                                <input type="hidden" name="assignmentId" value="<%= a._id %>">
+                                                <button type="submit" class="btn btn-danger">Uitschrijven</button>
+                                            </form>
+                                        <% } else { %> 
+                                            <form action="/assignment/cancel" method="POST">
+                                                <input type="hidden" name="status" value="<%= assignment.status %>">
+                                                <input type="hidden" name="cancelStatus" value="<%= assignment.cancelStatus %>">
+                                                <input type="hidden" name="requestType" value="cancelEnrollment">
+                                                <input type="hidden" name="requestId" value="<%= a.requestId %>">
+                                                <input type="hidden" name="assignmentId" value="<%= a._id %>">
+                                                <button type="submit" class="btn btn-danger">Annuleer uitschrijven</button>
+                                            </form>
                                         <% } %> 
                                     </div>
                                 </div>

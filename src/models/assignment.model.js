@@ -14,7 +14,6 @@ const assignmentSchema = new mongoose.Schema({
     },
     emailAddress: {
         type: String,
-        unique: false,
         validate: {
             validator: function (v) {
                 return /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(v);
