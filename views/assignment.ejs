@@ -26,6 +26,7 @@
                             <form action="/assignment" method="POST" class="row g-3 needs-validation" novalidate>
                         <% } else if (url.includes("/assignment/update")) { %>
                             <form action="/assignment/update" method="POST" class="row g-3 needs-validation" novalidate>
+                                <input type="hidden" name="assignmentId" value="<%= assignmentId %>">
                         <% } %>
                         
                             <div class="pt-4 pb-2">
@@ -144,7 +145,7 @@
                                         <% if(typeof assignment != "undefined") { %>
                                             <input type="number" name="playgroundHouseNumber" id="playgroundHouseNumber" class="form-control" min="0" placeholder="Speelplaats huisnummer *" value="<%=assignment.playgroundHouseNumber%>"/>
                                         <% } else { %>
-                                            <input type="text" name="playgroundStreet" id="playgroundStreet" class="form-control" placeholder="Speelplaats straat *" value="<% if(typeof oldValues != "undefined"){%><%=oldValues.playgroundStreet%><%}%>"/>
+                                            <input type="text" name="playgroundHouseNumber" id="playgroundHouseNumber" class="form-control" placeholder="Speelplaats huisnummer *" value="<% if(typeof oldValues != "undefined"){%><%=oldValues.playgroundHouseNumber%><%}%>"/>
                                         <% } %>
                                         
                                         <label class="form-label form-error"><% if(typeof playgroundHouseNumberErr != "undefined"){%><%=playgroundHouseNumberErr%><%}else{%>&nbsp;<%}%></label>
@@ -248,7 +249,10 @@
                                     </div>
                                     <div class="form-group">
                                         
-                                        <% if(typeof assignment != "undefined" && assignment.makeUpTown != "") { %>
+                                   
+                                        <% if(typeof oldValues != "undefined"){%><% console.log(oldValues.dateTime)%><%}%>
+
+                                        <% if(typeof assignment != "undefined" && assignment.dateTime != "") { %>
                                         <input type="datetime-local" name="dateTime" class="form-control" placeholder="Datum/tijd *" value="<%= assignment.dateTime%>"/>
                                         <% } else { %>
                                         <input type="datetime-local" name="dateTime" class="form-control" placeholder="Datum/tijd *" value="<% if(typeof oldValues != "undefined"){%><%=oldValues.dateTime%><%}%>"/>

@@ -1,7 +1,11 @@
 const mongoose = require("../../database/dbconnection");
 const Request = require("../models/request.model");
 const User = require("../models/user.model");
-const Assignment = require("../models/assignment.model");
+const {assignmentModel} = require("../models/assignment.model");
+
+const Assignment = assignmentModel;
+
+
 
 exports.createRequest = async (req, res, objectId, type) => {
     // Get session

@@ -1,5 +1,7 @@
 const mongoose = require("../../database/dbconnection");
 const ObjectId = mongoose.Schema.Types.ObjectId;
+const {assignmentSchema} = require("./assignment.model")
+
 // Create requestSchema with all fields
 const requestSchema = new mongoose.Schema({
     userId: {
@@ -22,6 +24,8 @@ const requestSchema = new mongoose.Schema({
         type: String,
         enum: ["createAssignment", "enrollment", "updateAssignment"],
     },
+    updatedAssignment: assignmentSchema
+
 });
 // Create a Request model
 module.exports = mongoose.model("Request", requestSchema);
