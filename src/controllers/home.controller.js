@@ -7,7 +7,7 @@ exports.getHomepage = (req, res) => {
         Assignment.find({ isApproved: true }, function (err, assignments) {
 
             if (req.session.user.roles == "coordinator") {
-                Request.find(function (err, requests) {
+                Request.find({ status: "In behandeling" }, function (err, requests) {
                     res.render("dashboard", { pageName: "Dashboard", session: req.session.user, assignments_amount: assignments.length, request_amount: requests.length });
                 })
             } else {

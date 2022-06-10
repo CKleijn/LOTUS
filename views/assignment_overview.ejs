@@ -34,7 +34,7 @@
                                         <div class="card">
                                             <div class="card-body assignment_card">
                                             <h5 class="card-title"><%= assignment.amountOfLotusVictims + " LOTUSslachtoffers nodig in " + assignment.playgroundTown %></h5>
-                                                <%= "Opdracht in " + assignment.playgroundHouseNumber + " " + assignment.playgroundStreet + " " + assignment.playgroundTown + ", " + assignment.playgroundPostalCode %><br> 
+                                            <%= "Opdracht in " + assignment.playgroundHouseNumber + assignment.playgroundHouseNumberAddition + " " + assignment.playgroundStreet + " " + assignment.playgroundTown + ", " + assignment.playgroundPostalCode %><br> 
                                             </div>
                                         </div>
                                     </a>
@@ -162,7 +162,7 @@
                                         <div class="card">
                                             <div class="card-body assignment_card">
                                             <h5 class="card-title"><%= assignment.amountOfLotusVictims + " LOTUSslachtoffers nodig in " + assignment.playgroundTown %></h5>
-                                                <%= "Opdracht in " + assignment.playgroundHouseNumber + " " + assignment.playgroundStreet + " " + assignment.playgroundTown + ", " + assignment.playgroundPostalCode %><br> 
+                                                <%= "Opdracht in " + assignment.playgroundHouseNumber + assignment.playgroundHouseNumberAddition + " " + assignment.playgroundStreet + " " + assignment.playgroundTown + ", " + assignment.playgroundPostalCode %><br> 
                                                 <% if (assignment.status == "In behandeling") { %>
                                                     <br><i class="bi bi-circle-fill" style="color: orange; font-size: 12px;"></i> <%= assignment.status %>
                                                 <% } else if (assignment.status == "Goedgekeurd") { %>
@@ -297,7 +297,7 @@
                                 <div class="card">
                                     <div class="card-body assignment_card">
                                         <h5 class="card-title"><%= assignment.amountOfLotusVictims + " LOTUSslachtoffers nodig in " + assignment.playgroundTown %></h5>
-                                        <%= "Opdracht in " + assignment.playgroundHouseNumber + " " + assignment.playgroundStreet + " " + assignment.playgroundTown + ", " + assignment.playgroundPostalCode %>
+                                        <%= "Opdracht in " + assignment.playgroundHouseNumber + assignment.playgroundHouseNumberAddition + " " + assignment.playgroundStreet + " " + assignment.playgroundTown + ", " + assignment.playgroundPostalCode %>
                                     </div>
                                 </div>
                             </a>
@@ -402,10 +402,22 @@
                                 </div>
                                 <div class="modal-footer">
                                   <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuleren</button>
+                                    <% if(assignment.status == "Ingeschreven" || assignment.status == "Ingeschreven voltooid") { %>
+                                    <form action="/assignment/cancel" method="POST">
+                                        <input type="hidden" name="status" value="<%= assignment.status %>">
+                                        <input type="hidden" name="requestType" value="cancelEnrollment">
+                                        <input type="hidden" name="requestId" value="<%= a.requestId %>">
+                                        <input type="hidden" name="assignmentId" value="<%= a._id %>">
+                                        <button type="submit" class="btn btn-danger">Uitschrijven</button>
+                                    </form>
+                                    <% } else {%> 
                                     <form action="/assignment/enroll" method="POST">
-
+                                        <input type="hidden" name="requestType" value="enrollment">
+                                        <input type="hidden" name="requestId" value="<%= a.requestId %>">
+                                        <input type="hidden" name="assignmentId" value="<%= a._id %>">
                                         <button type="submit" class="btn btn-success">Inschrijven</button>
                                     </form>
+                                    <% } %> 
                                 </div>
                               </div>
                             </div>
