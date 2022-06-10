@@ -243,14 +243,7 @@ exports.getAllAssignments = (req, res) => {
             }
             res.render("assignment_overview", { pageName: "Opdrachten", session: req.session.user, assignments: resultsFiltered });
         });
-    } else if (req.session.user.roles == "member") {
-        Assignment.find({ isApproved: true }, function (err, results) {
-            results.forEach((result) => {
-                result.dateTime = format(new Date(result.dateTime));
-            });
-            res.render("assignment_overview", { pageName: "Opdrachten", session: req.session.user, assignments: results });
-        });
-    }
+    } 
 };
 
 exports.getAssignmentDetailPage = (req, res) => {
