@@ -226,21 +226,21 @@ exports.getAllAssignments = (req, res) => {
                 let enrolledApprovedRequest = await Request.find({ assignmentId: result._id, userId: req.session.user.userId, type: "enrollment", status: "Goedgekeurd" }).exec();
                 result.dateTime = format(new Date(result.dateTime));
 
-                if(enrolledRequest.length > 0) {
+                if (enrolledRequest.length > 0) {
                     result = {
                         ...result._doc,
-                        status: "Ingeschreven"
+                        status: "Ingeschreven",
                     };
-                } else if(enrolledApprovedRequest.length > 0) {
+                } else if (enrolledApprovedRequest.length > 0) {
                     result = {
                         ...result._doc,
-                        status: "Ingeschreven voltooid"
+                        status: "Ingeschreven voltooid",
                     };
                 } else {
                     result = {
                         ...result._doc,
 
-                        status: "Niet ingeschreven"
+                        status: "Niet ingeschreven",
                     };
                 }
 
@@ -291,26 +291,26 @@ exports.getMemberAssignments = (req, res) => {
             for (let result of results) {
                 let enrolledApprovedRequest = await Request.find({ assignmentId: result._id, userId: req.session.user.userId, type: "enrollment", status: "Goedgekeurd" }).exec();
                 let cancelRequest = await Request.find({ assignmentId: result._id, userId: req.session.user.userId, type: "cancelEnrollment", status: "In behandeling" }).exec();
-                    result.dateTime = format(new Date(result.dateTime));
-                    if(enrolledApprovedRequest.length > 0 && cancelRequest.length > 0) {
-                        result = {
-                            ...result._doc,
-                            status: "Ingeschreven voltooid",
-                            cancelStatus: "Uitschrijfverzoek ingediend"
-                        };
-                        resultsFiltered.push(result);
-                    } else if(enrolledApprovedRequest.length > 0) {
-                        result = {
-                            ...result._doc,
-                            status: "Ingeschreven voltooid",
-                        };
-                        resultsFiltered.push(result);
-                    }
-                    console.log(result)
+                result.dateTime = format(new Date(result.dateTime));
+                if (enrolledApprovedRequest.length > 0 && cancelRequest.length > 0) {
+                    result = {
+                        ...result._doc,
+                        status: "Ingeschreven voltooid",
+                        cancelStatus: "Uitschrijfverzoek ingediend",
+                    };
+                    resultsFiltered.push(result);
+                } else if (enrolledApprovedRequest.length > 0) {
+                    result = {
+                        ...result._doc,
+                        status: "Ingeschreven voltooid",
+                    };
+                    resultsFiltered.push(result);
+                }
+                console.log(result);
             }
             res.render("enrolled_assignment_overview", { pageName: "Mijn opdrachten", session: req.session.user, assignments: resultsFiltered });
         });
-    } 
+    }
 };
 
 exports.getAssignmentDetailPage = (req, res) => {
@@ -322,7 +322,7 @@ exports.getAssignmentDetailPage = (req, res) => {
 exports.deleteAssignment = async (req, res) => {
     if (req.session.user.roles === "coordinator") {
         await Assignment.deleteOne({ _id: req.query.id });
-        await Request.deleteOne({ assignmentId: req.query.id });
+        await Request.deleteMany({ assignmentId: req.query.id });
         res.redirect("/assignment");
     }
 
@@ -360,7 +360,7 @@ exports.cancelEnrollment = (req, res) => {
             res.redirect("/assignment");
         });
     } else if (cancelStatus == "Uitschrijfverzoek ingediend") {
-        console.log("DEZE")
+        console.log("DEZE");
         Request.deleteOne({ requestType: "cancelEnrollment", assignmentId: assignmentId, userId: session.user.userId }, function (err, results) {
             res.redirect("/member/assignment");
         });
