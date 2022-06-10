@@ -181,7 +181,7 @@ exports.createAssignment = (req, res) => {
             }
 
             // Show the errors on the assignment page
-            res.render("assignment", { pageName: "Formulier", session: req.session.user, ...errors, checkedOrNotProfile, checkedOrNotPlayground, checkedOrNotMakeUp });
+            res.render("assignment", { pageName: "Opdracht aanmaken", session: req.session.user, ...errors, checkedOrNotProfile, checkedOrNotPlayground, checkedOrNotMakeUp });
         } else {
             (async () => {
                 if (session.user.roles === "client") {
@@ -199,7 +199,7 @@ exports.createAssignment = (req, res) => {
 };
 
 exports.getAssignmentPage = (req, res) => {
-    res.render("assignment", { pageName: "Formulier", session: req.session.user });
+    res.render("assignment", { pageName: "Opdracht aanmaken", session: req.session.user });
 };
 
 exports.getAllAssignments = (req, res) => {
@@ -222,27 +222,27 @@ exports.getAllAssignments = (req, res) => {
 
         Assignment.find({ isApproved: true }, async function (err, results) {
             for (let result of results) {
-                    let enrolledRequest = await Request.find({ assignmentId: result._id, userId: req.session.user.userId, type: "enrollment", status: "In behandeling" }).exec();
-                    let enrolledApprovedRequest = await Request.find({ assignmentId: result._id, userId: req.session.user.userId, type: "enrollment", status: "Goedgekeurd" }).exec();
-                    result.dateTime = format(new Date(result.dateTime));
-                    if(enrolledRequest.length > 0) {
-                        result = {
-                            ...result._doc,
-                            status: "Ingeschreven"
-                        };
-                    } else if(enrolledApprovedRequest.length > 0) {
-                        result = {
-                            ...result._doc,
-                            status: "Ingeschreven voltooid"
-                        };
-                    } else {
-                        result = {
-                            ...result._doc,
-                            status: "Niet ingeschreven"
-                        };
-                    }
+                let enrolledRequest = await Request.find({ assignmentId: result._id, userId: req.session.user.userId, type: "enrollment", status: "In behandeling" }).exec();
+                let enrolledApprovedRequest = await Request.find({ assignmentId: result._id, userId: req.session.user.userId, type: "enrollment", status: "Goedgekeurd" }).exec();
+                result.dateTime = format(new Date(result.dateTime));
+                if (enrolledRequest.length > 0) {
+                    result = {
+                        ...result._doc,
+                        status: "Ingeschreven",
+                    };
+                } else if (enrolledApprovedRequest.length > 0) {
+                    result = {
+                        ...result._doc,
+                        status: "Ingeschreven voltooid",
+                    };
+                } else {
+                    result = {
+                        ...result._doc,
+                        status: "Niet ingeschreven",
+                    };
+                }
 
-                    resultsFiltered.push(result);
+                resultsFiltered.push(result);
             }
             res.render("assignment_overview", { pageName: "Opdrachten", session: req.session.user, assignments: resultsFiltered });
         });
@@ -263,9 +263,9 @@ exports.getAllAssignments = (req, res) => {
                     resultsFiltered.push(result);
                 }
             }
-            res.render("assignment_overview", { pageName: "Opdrachten", session: req.session.user, assignments: resultsFiltered });
+            res.render("assignment_overview", { pageName: "Mijn opdrachten", session: req.session.user, assignments: resultsFiltered });
         });
-    } 
+    }
 };
 
 exports.getAssignmentDetailPage = (req, res) => {
@@ -318,14 +318,14 @@ exports.cancelEnrollment = (req, res) => {
     const session = req.session;
     // Get req body
     const { requestType, assignmentId, status } = req.body;
-    if(status == "Ingeschreven") {
+    if (status == "Ingeschreven") {
         Request.deleteOne({ requestType: "enrollment", assignmentId: assignmentId, userId: session.user.userId }, function (err, results) {
             Assignment.findOneAndUpdate({ assignmentId: assignmentId }, { status: "Niet ingeschreven" });
             res.redirect("/assignment");
         });
     } else {
         Request.find({ assignmentId: assignmentId, userId: session.user.userId, type: requestType }, function (err, results) {
-            if(results.length == 0) {
+            if (results.length == 0) {
                 // Create request
                 const request = new Request({
                     userId: session.user.userId,

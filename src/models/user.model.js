@@ -1,7 +1,7 @@
 const mongoose = require("./../../database/dbconnection");
 const bcrypt = require("bcrypt");
 // Create userSchema with all fields
-const userSchema = new mongoose.Schema({
+exports.userSchema = new mongoose.Schema({
     firstName: {
         type: String,
         required: [true, "Voornaam is verplicht!"],
@@ -70,10 +70,10 @@ const userSchema = new mongoose.Schema({
     },
 });
 // Hash password before saving user
-userSchema.pre("save", function () {
+exports.userSchema.pre("save", function () {
     let user = this;
     // Hash password if password isn't empty
     user.password = bcrypt.hashSync(user.password, bcrypt.genSaltSync());
 });
 // Create a User model
-module.exports = mongoose.model("User", userSchema);
+exports.userModel = mongoose.model("User", exports.userSchema);

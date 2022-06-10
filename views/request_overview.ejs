@@ -35,7 +35,7 @@
                                 <div class="card-body request_card">
 
                                     <% if(request.type === "createAssignment") { %> 
-                                        <h5 class="card-title"><i class="bi bi-pencil"></i> <%= request.user.firstName + " wilt een opdracht aanmaken" %></h5>
+                                        <h5 class="card-title"><i class="bi bi-file-text"></i> <%= request.user.firstName + " wilt een opdracht aanmaken" %></h5>
                                         <p>
                                             <b>Naam:</b> <%= request.user.firstName + " " + request.user.lastName %>
                                             <br>
@@ -49,7 +49,7 @@
                                             <b>Datum:</b> <%= request.requestDate %> 
                                         </p>
                                     <% } else if(request.type === "enrollment") { %> 
-                                        <h5 class="card-title"><i class="bi bi-pencil"></i> <%= request.user.firstName + " wilt zich inschrijven" %></h5>
+                                        <h5 class="card-title"><i class="bi bi-pencil-square"></i> <%= request.user.firstName + " wilt zich inschrijven" %></h5>
                                         <p>
                                             <b>Naam:</b> <%= request.user.firstName + " " + request.user.lastName %>
                                             <br>
@@ -66,7 +66,7 @@
                                             <b>Opdracht:</b> <%= request.assignment.playgroundHouseNumber + request.assignment.playgroundHouseNumberAddition + " " + request.assignment.playgroundStreet + " " + request.assignment.playgroundTown + ", " + request.assignment.playgroundPostalCode %> 
                                         </p>
                                     <% } else if(request.type === "cancelEnrollment") { %> 
-                                        <h5 class="card-title"><i class="bi bi-pencil"></i> <%= request.user.firstName + " wilt zich uitschrijven" %></h5>
+                                        <h5 class="card-title"><i class="bi bi-trash"></i> <%= request.user.firstName + " wilt zich uitschrijven" %></h5>
                                         <p>
                                             <b>Naam:</b> <%= request.user.firstName + " " + request.user.lastName %>
                                             <br>
@@ -202,7 +202,7 @@
                                         <br>
                                         <b>E-mailadres:</b> <%= u.emailAddress %> 
                                         <br>
-                                        <b>Aantal opdrachten deelgenomen:</b> ? 
+                                        <b>Aantal opdrachten deelgenomen:</b> <%= u.participations %>  
 
                                         <hr>
 
@@ -222,7 +222,7 @@
                                         <br>
                                         <b>Vind plaats op:</b> <%= new Date(a.dateTime).toLocaleString([], {year: 'numeric', month: 'numeric', day: 'numeric', hour: '2-digit', minute: '2-digit'})  %> 
                                         <br>
-                                        <b>Aantal LOTUSslachtoffers ingeschreven:</b> 0/<%= a.amountOfLotusVictims %> 
+                                        <b>Aantal LOTUSslachtoffers ingeschreven:</b> <%=a.participatingLotusVictims.length + "/" + a.amountOfLotusVictims %> 
                                 <% } %>
 
                             </div>
