@@ -222,27 +222,27 @@ exports.getAllAssignments = (req, res) => {
 
         Assignment.find({ isApproved: true }, async function (err, results) {
             for (let result of results) {
-                    let enrolledRequest = await Request.find({ assignmentId: result._id, userId: req.session.user.userId, type: "enrollment", status: "In behandeling" }).exec();
-                    let enrolledApprovedRequest = await Request.find({ assignmentId: result._id, userId: req.session.user.userId, type: "enrollment", status: "Goedgekeurd" }).exec();
-                    result.dateTime = format(new Date(result.dateTime));
-                    if(enrolledRequest.length > 0) {
-                        result = {
-                            ...result._doc,
-                            status: "Ingeschreven"
-                        };
-                    } else if(enrolledApprovedRequest.length > 0) {
-                        result = {
-                            ...result._doc,
-                            status: "Ingeschreven voltooid"
-                        };
-                    } else {
-                        result = {
-                            ...result._doc,
-                            status: "Niet ingeschreven"
-                        };
-                    }
+                let enrolledRequest = await Request.find({ assignmentId: result._id, userId: req.session.user.userId, type: "enrollment", status: "In behandeling" }).exec();
+                let enrolledApprovedRequest = await Request.find({ assignmentId: result._id, userId: req.session.user.userId, type: "enrollment", status: "Goedgekeurd" }).exec();
+                result.dateTime = format(new Date(result.dateTime));
+                if(enrolledRequest.length > 0) {
+                    result = {
+                        ...result._doc,
+                        status: "Ingeschreven"
+                    };
+                } else if(enrolledApprovedRequest.length > 0) {
+                    result = {
+                        ...result._doc,
+                        status: "Ingeschreven voltooid"
+                    };
+                } else {
+                    result = {
+                        ...result._doc,
+                        status: "Niet ingeschreven"
+                    };
+                }
 
-                    resultsFiltered.push(result);
+                resultsFiltered.push(result);
             }
             res.render("assignment_overview", { pageName: "Opdrachten", session: req.session.user, assignments: resultsFiltered });
         });
@@ -254,7 +254,6 @@ exports.getAllAssignments = (req, res) => {
                 if (result.emailAddress == req.session.user.emailAddress) {
                     let request = await Request.find({ _id: result.requestId }).exec();
                     result.dateTime = format(new Date(result.dateTime));
-
                     result = {
                         ...result._doc,
                         status: request[0].status,
@@ -268,7 +267,7 @@ exports.getAllAssignments = (req, res) => {
     } 
 };
 
-exports.getAssignmentDetailPage = (req, res) => {
+exports.getMemberAssignments = (req, res) => {
     function format(inputDate) {
         let date, month, year;
 
@@ -283,6 +282,28 @@ exports.getAssignmentDetailPage = (req, res) => {
         return `${date}/${month}/${year}`;
     }
 
+    if (req.session.user.roles == "member") {
+        let resultsFiltered = [];
+
+        Assignment.find({ isApproved: true }, async function (err, results) {
+            for (let result of results) {
+                let request = await Request.find({ assignmentId: result._id, userId: req.session.user.userId, type: "enrollment", status: "Goedgekeurd" }).exec();
+                    result.dateTime = format(new Date(result.dateTime));
+                    if(request.length > 0) {
+                        result = {
+                            ...result._doc,
+                            status: request[0].status,
+                        };
+                        resultsFiltered.push(result);
+                    }
+            }
+            console.log(resultsFiltered)
+            res.render("enrolled_assignment_overview", { pageName: "Mijn opdrachten", session: req.session.user, assignments: resultsFiltered });
+        });
+    } 
+};
+
+exports.getAssignmentDetailPage = (req, res) => {
     Assignment.find({ _id: req.query.id }, function (err, results) {
         res.render("assignment_detail", { pageName: "Detailpagina", session: req.session.user, assignments: results });
     });
