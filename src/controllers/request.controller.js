@@ -74,6 +74,12 @@ exports.approveRequest = async (req, res) => {
         res.redirect("/request");
     }
 
+    if (requestType === "deleteAssignment") {
+        await Assignment.deleteOne({ _id: assignmentId });
+        await Request.deleteMany({ assignmentId: assignmentId });
+        res.redirect("/request");
+    }
+
     if (requestType === "enrollment") {
         await Assignment.findOneAndUpdate({ _id: assignmentId }, { $push: { participatingLotusVictims: req.session.user } });
         await Request.findOneAndUpdate({ _id: requestId }, { $set: { status: "Goedgekeurd" } });
@@ -91,6 +97,11 @@ exports.declineRequest = async (req, res) => {
     const { requestType, requestId, assignmentId } = req.body;
 
     if (requestType === "createAssignment") {
+        await Request.findOneAndUpdate({ _id: requestId }, { $set: { status: "Afgewezen" } });
+        res.redirect("/request");
+    }
+
+    if (requestType === "deleteAssignment") {
         await Request.findOneAndUpdate({ _id: requestId }, { $set: { status: "Afgewezen" } });
         res.redirect("/request");
     }

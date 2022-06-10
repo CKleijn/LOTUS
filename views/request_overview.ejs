@@ -76,6 +76,21 @@
                                             <br>
                                             <b>Datum:</b> <%= request.requestDate %> 
                                         </p>
+
+                                        <% } else if(request.type === "deleteAssignment") { %> 
+                                            <h5 class="card-title"><i class="bi bi-trash"></i> <%= request.user.firstName + " wilt zijn opdracht verwijderen" %></h5>
+                                            <p>
+                                                <b>Naam:</b> <%= request.user.firstName + " " + request.user.lastName %>
+                                                <br>
+                                                <b>E-mailadres:</b> <%= request.user.emailAddress %> 
+                                                <br>
+                                                <b>Rol:</b> <%= role %>  
+                                                <br>
+                                                <br>
+                                                <b>Type:</b> Opdracht verwijderen 
+                                                <br>
+                                                <b>Datum:</b> <%= request.requestDate %> 
+                                            </p>
                                     <% } else {%>
                                         <p>pas request_overview.ejs aan</p>
                                     <% } %>
@@ -86,7 +101,7 @@
                     </div>
 
                     <div class="modal fade" id="request_<%= request._id %>" tabindex="-1">
-                        <% if(request.type === "createAssignment") { %>
+                        <% if(request.type === "createAssignment" || request.type === "deleteAssignment") { %>
                             <div class="modal-dialog modal-dialog-centered modal-lg modal-dialog-scrollable">
                          <% } else { %>
                             <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
@@ -96,6 +111,9 @@
                             <% let requestTypeModal = ""; switch(request.type) {
                                 case "createAssignment":
                                 requestTypeModal = "(Opdracht aanmaken)";
+                                break;
+                                case "deleteAssignment":
+                                requestTypeModal = "(Opdracht verwijderen)";
                                 break;
                                 case "cancelEnrollment":
                                 requestTypeModal = "(Uitschrijving)";
@@ -110,7 +128,7 @@
                             <div class="modal-body">
 
                                 
-                                <% if(request.type === "createAssignment") { %> 
+                                <% if(request.type === "createAssignment" || request.type === "deleteAssignment" ) { %> 
                                     <h6>Persoonlijke gegevens</h6>
 
                                     <% const a = request.assignment %> 
