@@ -3,7 +3,7 @@ const ObjectId = mongoose.Schema.Types.ObjectId;
 const { userSchema } = require("./user.model");
 
 // Create assignmentSchema with all fields
-const assignmentSchema = new mongoose.Schema({
+exports.assignmentSchema = new mongoose.Schema({
     firstName: {
         type: String,
         required: [true, "Voornaam is verplicht!"],
@@ -132,5 +132,6 @@ const assignmentSchema = new mongoose.Schema({
     },
     participatingLotusVictims: [userSchema],
 });
+
 // Create a Assignment model
-module.exports = mongoose.model("Assignment", assignmentSchema);
+exports.assignmentModel = mongoose.model("Assignment", exports.assignmentSchema);

@@ -1,6 +1,8 @@
 const { getAllValidMembers, getAllValidClients, getAllInvitedMembers } = require("./../controllers/user.controller");
-const Assignment = require("../models/assignment.model");
+const {assignmentModel} = require("../models/assignment.model");
 const Request = require("../models/request.model");
+
+const Assignment = assignmentModel;
 
 exports.getHomepage = (req, res) => {
     if (req.session.user.roles == "coordinator" || req.session.user.roles == "member") {
