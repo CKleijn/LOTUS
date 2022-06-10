@@ -355,8 +355,7 @@ exports.cancelEnrollment = (req, res) => {
             res.redirect("/assignment");
         });
     } else if (cancelStatus == "Uitschrijfverzoek ingediend") {
-        console.log("DEZE")
-        Request.deleteOne({ requestType: "cancelEnrollment", assignmentId: assignmentId, userId: session.user.userId }, function (err, results) {
+        Request.deleteOne({ requestType: "cancelEnrollment", assignmentId: assignmentId, userId: session.user.userId, status: "In behandeling" }, function (err, results) {
             res.redirect("/member/assignment");
         });
     } else {

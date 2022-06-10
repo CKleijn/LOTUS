@@ -12,7 +12,6 @@ exports.userSchema = new mongoose.Schema({
     },
     emailAddress: {
         type: String,
-        unique: true,
         validate: {
             validator: function (v) {
                 return /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(v);
