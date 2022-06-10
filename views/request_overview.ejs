@@ -61,9 +61,6 @@
                                             <b>Type:</b> Inschrijven 
                                             <br>
                                             <b>Datum:</b> <%= request.requestDate %> 
-                                            <br>
-                                            <br>
-                                            <b>Opdracht:</b> <%= request.assignment.playgroundHouseNumber + request.assignment.playgroundHouseNumberAddition + " " + request.assignment.playgroundStreet + " " + request.assignment.playgroundTown + ", " + request.assignment.playgroundPostalCode %> 
                                         </p>
                                     <% } else if(request.type === "cancelEnrollment") { %> 
                                         <h5 class="card-title"><i class="bi bi-trash"></i> <%= request.user.firstName + " wilt zich uitschrijven" %></h5>
@@ -78,9 +75,6 @@
                                             <b>Type:</b> Uitschrijven 
                                             <br>
                                             <b>Datum:</b> <%= request.requestDate %> 
-                                            <br>
-                                            <br>
-                                            <b>Opdracht:</b> <%= request.assignment.playgroundHouseNumber + request.assignment.playgroundHouseNumberAddition + " " + request.assignment.playgroundStreet + " " + request.assignment.playgroundTown + ", " + request.assignment.playgroundPostalCode %> 
                                         </p>
                                     <% } else {%>
                                         <p>pas request_overview.ejs aan</p>
@@ -99,7 +93,18 @@
                          <% } %>
                           <div class="modal-content">
                             <div class="modal-header">
-                              <h5 class="modal-title"><%= "Verzoek van " + request.user.firstName + " beoordelen" %></h5>
+                            <% let requestTypeModal = ""; switch(request.type) {
+                                case "createAssignment":
+                                requestTypeModal = "(Opdracht aanmaken)";
+                                break;
+                                case "cancelEnrollment":
+                                requestTypeModal = "(Uitschrijving)";
+                                break;
+                                case "enrollment":
+                                requestTypeModal = "(Inschrijving)";
+                                break;
+                            } %> 
+                              <h5 class="modal-title"><%= "Verzoek van " + request.user.firstName + " beoordelen " + requestTypeModal%></h5>
                               <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                             </div>
                             <div class="modal-body">

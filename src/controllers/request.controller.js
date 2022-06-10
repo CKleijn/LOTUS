@@ -47,9 +47,10 @@ async function parseRequest(results) {
         const user = await User.find({ _id: result.userId });
         const assignment = await Assignment.find({ _id: result.assignmentId });
         const requestDate = await format(new Date(result.requestDate));
-        const participatedAssignments = await Request.find({ userId: result.userId, type: "enrollment", status: "Goedgekeurd" }).exec();
+        const participations = await Request.find({ userId: result.userId, type: "enrollment", status: "Goedgekeurd" }).exec();
+        const canceledParticipations = await Request.find({ userId: result.userId, type: "cancelEnrollment", status: "Goedgekeurd" }).exec();
 
-        user[0].participations = participatedAssignments.length;
+        user[0].participations = participations.length - canceledParticipations.length;
 
         result = {
             ...result._doc,
@@ -80,7 +81,7 @@ exports.approveRequest = async (req, res) => {
     }
 
     if (requestType === "cancelEnrollment") {
-        // await Assignment.findOneAndUpdate({ _id: assignmentId }, { $push: { participatingLotusVictims: req.session.user } });
+        await Assignment.updateOne({ _id: assignmentId }, { $pull: { participatingLotusVictims: { emailAddress: req.session.user.emailAddress } } });
         await Request.findOneAndUpdate({ _id: requestId }, { $set: { status: "Goedgekeurd" } });
         res.redirect("/request");
     }
