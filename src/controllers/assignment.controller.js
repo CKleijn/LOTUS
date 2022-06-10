@@ -239,7 +239,6 @@ exports.getAllAssignments = (req, res) => {
                 } else {
                     result = {
                         ...result._doc,
-
                         status: "Niet ingeschreven",
                     };
                 }
@@ -306,7 +305,6 @@ exports.getMemberAssignments = (req, res) => {
                     };
                     resultsFiltered.push(result);
                 }
-                console.log(result);
             }
             res.render("enrolled_assignment_overview", { pageName: "Mijn opdrachten", session: req.session.user, assignments: resultsFiltered });
         });

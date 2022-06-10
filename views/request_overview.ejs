@@ -252,12 +252,14 @@
                             <div class="modal-footer">
                               <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuleren</button>
                                 <form action="/request/decline" method="POST">
+                                    <input type="hidden" name="userId" value="<%= request.userId %>">
                                     <input type="hidden" name="requestType" value="<%= request.type %>">
                                     <input type="hidden" name="requestId" value="<%= request._id %>">
                                     <input type="hidden" name="assignmentId" value="<%= request.assignment._id %>">
                                     <button type="submit" class="btn btn-danger">Afwijzen</button>
                                 </form>
                                 <form action="/request/approve" method="POST">
+                                    <input type="hidden" name="userId" value="<%= request.userId %>">
                                     <input type="hidden" name="requestType" value="<%= request.type %>">
                                     <input type="hidden" name="requestId" value="<%= request._id %>">
                                     <input type="hidden" name="assignmentId" value="<%= request.assignment._id %>">

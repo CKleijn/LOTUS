@@ -66,7 +66,7 @@ async function parseRequest(results) {
 }
 
 exports.approveRequest = async (req, res) => {
-    const { requestType, requestId, assignmentId } = req.body;
+    const { requestType, requestId, assignmentId, userId } = req.body;
 
     if (requestType === "createAssignment") {
         await Assignment.findOneAndUpdate({ _id: assignmentId }, { $set: { isApproved: true } });
@@ -89,6 +89,8 @@ exports.approveRequest = async (req, res) => {
     if (requestType === "cancelEnrollment") {
         await Assignment.updateOne({ _id: assignmentId }, { $pull: { participatingLotusVictims: { emailAddress: req.session.user.emailAddress } } });
         await Request.findOneAndUpdate({ _id: requestId }, { $set: { status: "Goedgekeurd" } });
+        await Request.deleteOne({ assignmentId: assignmentId, userId: userId, type: "enrollment", status: "Goedgekeurd" });
+        await Request.deleteOne({ assignmentId: assignmentId, userId: userId, type: "cancelEnrollment", status: "Goedgekeurd" });
         res.redirect("/request");
     }
 };
