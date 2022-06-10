@@ -225,20 +225,22 @@ exports.getAllAssignments = (req, res) => {
                 let enrolledRequest = await Request.find({ assignmentId: result._id, userId: req.session.user.userId, type: "enrollment", status: "In behandeling" }).exec();
                 let enrolledApprovedRequest = await Request.find({ assignmentId: result._id, userId: req.session.user.userId, type: "enrollment", status: "Goedgekeurd" }).exec();
                 result.dateTime = format(new Date(result.dateTime));
-                if (enrolledRequest.length > 0) {
+
+                if(enrolledRequest.length > 0) {
                     result = {
                         ...result._doc,
-                        status: "Ingeschreven",
+                        status: "Ingeschreven"
                     };
-                } else if (enrolledApprovedRequest.length > 0) {
+                } else if(enrolledApprovedRequest.length > 0) {
                     result = {
                         ...result._doc,
-                        status: "Ingeschreven voltooid",
+                        status: "Ingeschreven voltooid"
                     };
                 } else {
                     result = {
                         ...result._doc,
-                        status: "Niet ingeschreven",
+
+                        status: "Niet ingeschreven"
                     };
                 }
 
@@ -254,7 +256,6 @@ exports.getAllAssignments = (req, res) => {
                 if (result.emailAddress == req.session.user.emailAddress) {
                     let request = await Request.find({ _id: result.requestId }).exec();
                     result.dateTime = format(new Date(result.dateTime));
-
                     result = {
                         ...result._doc,
                         status: request[0].status,
@@ -268,7 +269,7 @@ exports.getAllAssignments = (req, res) => {
     }
 };
 
-exports.getAssignmentDetailPage = (req, res) => {
+exports.getMemberAssignments = (req, res) => {
     function format(inputDate) {
         let date, month, year;
 
@@ -283,6 +284,36 @@ exports.getAssignmentDetailPage = (req, res) => {
         return `${date}/${month}/${year}`;
     }
 
+    if (req.session.user.roles == "member") {
+        let resultsFiltered = [];
+
+        Assignment.find({ isApproved: true }, async function (err, results) {
+            for (let result of results) {
+                let enrolledApprovedRequest = await Request.find({ assignmentId: result._id, userId: req.session.user.userId, type: "enrollment", status: "Goedgekeurd" }).exec();
+                let cancelRequest = await Request.find({ assignmentId: result._id, userId: req.session.user.userId, type: "cancelEnrollment", status: "In behandeling" }).exec();
+                    result.dateTime = format(new Date(result.dateTime));
+                    if(enrolledApprovedRequest.length > 0 && cancelRequest.length > 0) {
+                        result = {
+                            ...result._doc,
+                            status: "Ingeschreven voltooid",
+                            cancelStatus: "Uitschrijfverzoek ingediend"
+                        };
+                        resultsFiltered.push(result);
+                    } else if(enrolledApprovedRequest.length > 0) {
+                        result = {
+                            ...result._doc,
+                            status: "Ingeschreven voltooid",
+                        };
+                        resultsFiltered.push(result);
+                    }
+                    console.log(result)
+            }
+            res.render("enrolled_assignment_overview", { pageName: "Mijn opdrachten", session: req.session.user, assignments: resultsFiltered });
+        });
+    } 
+};
+
+exports.getAssignmentDetailPage = (req, res) => {
     Assignment.find({ _id: req.query.id }, function (err, results) {
         res.render("assignment_detail", { pageName: "Detailpagina", session: req.session.user, assignments: results });
     });
@@ -322,11 +353,16 @@ exports.cancelEnrollment = (req, res) => {
     // Get session
     const session = req.session;
     // Get req body
-    const { requestType, assignmentId, status } = req.body;
+    const { requestType, assignmentId, status, cancelStatus } = req.body;
     if (status == "Ingeschreven") {
         Request.deleteOne({ requestType: "enrollment", assignmentId: assignmentId, userId: session.user.userId }, function (err, results) {
             Assignment.findOneAndUpdate({ assignmentId: assignmentId }, { status: "Niet ingeschreven" });
             res.redirect("/assignment");
+        });
+    } else if (cancelStatus == "Uitschrijfverzoek ingediend") {
+        console.log("DEZE")
+        Request.deleteOne({ requestType: "cancelEnrollment", assignmentId: assignmentId, userId: session.user.userId }, function (err, results) {
+            res.redirect("/member/assignment");
         });
     } else {
         Request.find({ assignmentId: assignmentId, userId: session.user.userId, type: requestType }, function (err, results) {
@@ -340,7 +376,7 @@ exports.cancelEnrollment = (req, res) => {
                 // Save request
                 request.save();
                 // Redirect
-                res.redirect("/assignment");
+                res.redirect("/member/assignment");
             } else {
                 // Redirect
                 res.redirect("/assignment");

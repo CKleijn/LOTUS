@@ -7,6 +7,8 @@ router.get("/assignment/create", isLoggedIn, assignmentController.getAssignmentP
 
 router.get("/assignment", isLoggedIn, assignmentController.getAllAssignments);
 
+router.get("/member/assignment", isLoggedIn, assignmentController.getMemberAssignments);
+
 router.post("/assignment", isLoggedIn, assignmentController.createAssignment);
 
 router.post("/assignment/delete", isLoggedIn, assignmentController.deleteAssignment)
