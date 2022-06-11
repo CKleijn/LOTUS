@@ -249,29 +249,7 @@ exports.getAllAssignments = (req, res) => {
 }
 
 exports.getAssignmentDetailPage = (req, res) => { 
-    function format(inputDate) {
-        let date, month, year;
-      
-        date = inputDate.getDate();
-        month = inputDate.getMonth() + 1;
-        year = inputDate.getFullYear();
-      
-        date = date
-            .toString()
-            .padStart(2, '0');
-    
-        month = month
-            .toString()
-            .padStart(2, '0');
-      
-        return `${date}/${month}/${year}`;
-    }
-
-    
-
     Assignment.find({ isApproved: true , _id: req.query.id}, function(err, results) {
-        console.log(results);
         res.render("assignment_detail", { pageName: "Detailpagina", session: req.session.user, assignments: results });
     });
-
 }
