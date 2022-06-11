@@ -62,37 +62,51 @@
                             <hr class="dropdown-divider" />
                         </li>
 
+                        <% let requests = [];
+                           let loopValue = "";
                         
-                        <% for( let i = session.requests.length - 1; i > session.requests.length - 4; i-- ) { %>
+                        if(session.requests.length >= 3) { 
+                            requests = session.requests.slice(-3);
+                            loopValue = requests.length - 4
+                        } else if(session.requests.length === 2) {
+                            requests = session.requests.slice(-2);
+                            loopValue = requests.length - 3
+                        } else if(session.requests.length === 1) {
+                            requests = session.requests.slice(-1);
+                            loopValue = requests.length - 2
+                        } %>
+
+                        <% for( let i = requests.length - 1; i > loopValue; i-- ) { %>
+
 
                             <% let requestTitle = "";
                             let requestMessage = ""; %> 
 
-                            <% switch(session.requests[i].type) { 
+                            <% switch(requests[i].type) { 
 
                                 case "createAssignment":   
                                     requestTitle = "Opdracht aanmaken"; 
-                                    requestMessage = session.requests[i].user.firstName + " wilt een opdracht aanmaken";
+                                    requestMessage = requests[i].user.firstName + " wilt een opdracht aanmaken";
  
                                     break; 
                                 case "updateAssignment": 
                                     requestTitle = "Opdracht Bewerken"; 
-                                    requestMessage = session.requests[i].user.firstName + " wilt een opdracht bewerken";
+                                    requestMessage = requests[i].user.firstName + " wilt een opdracht bewerken";
 
                                     break; 
                                 case "deleteAssignment": 
                                     requestTitle = "Opdracht verwijderen";
-                                    requestMessage = session.requests[i].user.firstName + " wilt een opdracht verwijderen";
+                                    requestMessage = requests[i].user.firstName + " wilt een opdracht verwijderen";
 
                                     break; 
                                 case "cancelEnrollment": 
                                     requestTitle = "Uitschrijving"; 
-                                    requestMessage = session.requests[i].user.firstName + " wilt zich uitschrijven voor een opdracht";
+                                    requestMessage = requests[i].user.firstName + " wilt zich uitschrijven voor een opdracht";
 
                                     break; 
                                 case "enrollment": 
                                     requestTitle = "Inschrijving"; 
-                                    requestMessage = session.requests[i].user.firstName + " wilt zich inschrijven voor een opdracht";
+                                    requestMessage = requests[i].user.firstName + " wilt zich inschrijven voor een opdracht";
                                     break;
           
                             } %>
@@ -100,11 +114,11 @@
                             <a href="/request">
                             <li class="notification-item">
                                 
-                                    <% if(session.requests[i].type === "enrollment" || session.requests[i].type === "createAssignment") { %>
+                                    <% if(requests[i].type === "enrollment" || requests[i].type === "createAssignment") { %>
                                         <i class="bi bi-info-circle text-primary"></i>
-                                    <% } else if(session.requests[i].type === "cancelEnrollment" || session.requests[i].type === "updateAssignment" ) { %>
+                                    <% } else if(requests[i].type === "cancelEnrollment" || requests[i].type === "updateAssignment" ) { %>
                                         <i class="bi bi-exclamation-circle text-warning"></i>
-                                    <% } else if(session.requests[i].type === "deleteAssignment") { %>
+                                    <% } else if(requests[i].type === "deleteAssignment") { %>
                                         <i class="bi bi-x-circle text-danger"></i>
                                     <% } %>
 
@@ -116,24 +130,27 @@
                                         <% const requestAge = msToTime(new Date().getTime() - new Date(session.requests[i].requestDate).getTime());
                                     
                                         function msToTime(duration) {
-                                            const seconds = Math.floor((duration / 1000) % 60);
                                             const minutes = Math.floor((duration / (1000 * 60)) % 60);
                                             const hours = Math.floor((duration / (1000 * 60 * 60)) % 24);
-    
-                                            if(minutes === 0 || minutes === 1) {
+                                            const days = Math.floor(duration / (24*60*60*1000));
+                                            
+                                            if(minutes === 0 && hours == 0 && days == 0 || minutes === 1 && hours == 0 && days == 0) {
                                                 return "1 minuut geleden";
-                                            } else if (hours == 0) {
+                                            } else if (hours == 0 && days == 0) {
                                                 return minutes + " minuten geleden"
-                                            } else if(hours > 24) {
-                                                return "Langer dan een dag geleden";
-                                            } else {
+                                            } else if(days === 0) {
                                                 return hours + " uur geleden"
+                                            } else if(days === 1) {
+                                                return "1 dag geleden"
+                                            } else {
+                                                return days + " dagen geleden"
                                             }
                                         } %> 
 
                                         <p><%= requestAge %></p>
                                     </div>
-                            
+                        
+
                             </li>
                         </a>
     
