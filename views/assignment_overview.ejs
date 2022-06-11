@@ -1,90 +1,450 @@
-<%- include("header/header") -%>
+<%- include("header/header") %>
 
 <main id="main" class="main">
     <div class="pagetitle">
-        <h1>Opdrachten</h1>
+
+        <% if (session.roles == "coordinator" || session.roles == "member") { %>
+            <h1>Opdrachten</h1>
+        <% } else if (session.roles == "client") { %>
+            <h1>Mijn opdrachten</h1>
+        <% } %>
+        
         <nav>
             <ol class="breadcrumb">
                 <li class="breadcrumb-item"><a href="/">Dashboard</a></li>
-                <li class="breadcrumb-item active">Opdrachten</li>
+
+                <% if (session.roles == "coordinator" || session.roles == "member") { %>
+                    <li class="breadcrumb-item active">Opdrachten</li>
+                <% } else if (session.roles == "client") { %>
+                    <li class="breadcrumb-item active">Mijn opdrachten</li>
+                <% } %>
             </ol>
         </nav>
     </div>
- 
+
     <section class="section">
         <div class="row">
             <div class="col-lg-12">
-
                 <% if (session.roles == "coordinator") { %>
-                <div class="card">
-                    <div class="card-body">
-                        <h5 class="card-title">Alle opdrachten</h5>
-                        <p>In één overzicht alle opdrachten kunnen zien? Dat kan doormiddel van deze tabel!</p>
-                        <table id="datatable" class="display nowrap" width="100%">
-                            <thead>
-                                <tr>
-                                    <th scope="col">Opdrachtgever</th>
-                                    <th scope="col">Speelplaats</th>
-                                    <th scope="col">Datum</th>
-                                    <th scope="col">Aantal LOTUS slachtoffers</th>
-                                    <th scope="col">Acties</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <% assignments.forEach(assignment => { %>
-                                    <tr>
-                                        <td><%= assignment.firstName %> <%= assignment.lastName %></td>
-                                        <td><%= assignment.playgroundStreet %> <%= assignment.playgroundHouseNumber %><%= assignment.playgroundHouseNumberAddition %>, <%= assignment.playgroundTown %></td>
-                                        <td><%= assignment.dateTime %></td>
-                                        <td><%= assignment.amountOfLotusVictims %></td>
-                                        <td>
-                                            <button type="button" class="btn btn-primary"><i class="bi bi-pencil"></i></button>
-                                            <button type="button" class="btn btn-danger"><i class="bi bi-trash"></i></button>
-                                        </td>
-                                    </tr>
-                                <% }); %>
-                            </tbody>
-                        </table>
+                    <div>
+                        <div class="row">
+                            <% assignments.forEach(assignment => { %>
+                                <div class="col-lg-6">
+                                    <a href="#" data-bs-toggle="modal" data-bs-target="#assignment<%= assignment._id %>">
+                                        <div class="card">
+                                            <div class="card-body assignment_card">
+                                            <h5 class="card-title"><%= assignment.amountOfLotusVictims + " LOTUSslachtoffers nodig in " + assignment.playgroundTown %></h5>
+                                            <%= "Opdracht in " + assignment.playgroundHouseNumber + assignment.playgroundHouseNumberAddition + " " + assignment.playgroundStreet + " " + assignment.playgroundTown + ", " + assignment.playgroundPostalCode %><br> 
+                                            </div>
+                                        </div>
+                                    </a>
+                                </div>
+
+                                <div class="modal fade" id="assignment<%= assignment._id %>" tabindex="-1">
+                                    <div class="modal-dialog modal-dialog-centered modal-lg modal-dialog-scrollable">
+                                      <div class="modal-content">
+                                        <div class="modal-header">
+                                          <h5 class="modal-title"><%= assignment.amountOfLotusVictims + " LOTUSslachtoffers nodig in " + assignment.playgroundTown %></h5>
+                                          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                        </div>
+                                        <div class="modal-body">
+            
+                                             <h6>Persoonlijke gegevens</h6>
+            
+                                                <% const a = assignment;%> 
+            
+                                                    <b>Voornaam:</b> <%= a.firstName %>
+                                                    <br>
+                                                    <b>Achternaam:</b> <%= a.lastName %>
+                                                    <br>
+                                                    <b>E-mailadres:</b> <%= a.emailAddress %> 
+                                                    <br>
+                                                    <b>Straat:</b> <%= a.street %> 
+                                                    <br>
+                                                    <b>Huisnummer:</b> <%= a.houseNumber %> 
+                                                    <br>
+                                                    <% if(a.houseNumberAddition != "" ) { %> 
+                                                        <b>Huisnummer toevoeging:</b> <%= a.houseNumberAddition %> 
+                                                        <br>
+                                                    <% } %> 
+                                                    <b>Plaats:</b> <%= a.town %> 
+                                                    <br>
+                                                    <b>Postcode:</b> <%= a.postalCode %> 
+                                                    <br>
+                                                    <br>
+            
+                                                    <h6>Speelplaats adres gegevens</h6>
+                                                    <b>Straat:</b> <%= a.playgroundStreet %> 
+                                                    <br>
+                                                    <b>Huisnummer:</b> <%= a.playgroundHouseNumber %> 
+                                                    <br>
+                                                    <% if(a.playgroundHouseNumberAddition != "" ) { %> 
+                                                        <b>Huisnummer toevoeging:</b> <%= a.playgroundHouseNumberAddition %> 
+                                                        <br>
+                                                    <% } %> 
+                                                    <b>Plaats:</b> <%= a.playgroundTown %> 
+                                                    <br>
+                                                    <b>Postcode:</b> <%= a.playgroundPostalCode %> 
+            
+                                                    <br>
+                                                    <br>
+            
+                                                    <% if(a.makeUpStreet != "" || a.makeUpHouseNumber != null || a.makeUpHouseNumberAddition != "" || a.makeUpTown != "" || a.makeUpPostalCode != "" ) { %>
+            
+                                                    <h6>Grimeer adres gegevens</h6>
+            
+                                                        <% if(a.makeUpStreet != "" ) { %> 
+                                                            <b>Straat:</b> <%= a.makeUpStreet %> 
+                                                            <br>
+                                                        <% } %> 
+            
+                                                        <% if(a.makeUpHouseNumber != null ) { %> 
+                                                            <b>Huisnummer:</b> <%= a.makeUpHouseNumber %> 
+                                                            <br>
+                                                        <% } %> 
+            
+                                                        <% if(a.makeUpHouseNumberAddition != "" ) { %> 
+                                                            <b>Huisnummer toevoeging:</b> <%= a.makeUpHouseNumberAddition %> 
+                                                            <br>
+                                                        <% } %> 
+            
+                                                        <% if(a.makeUpTown != "" ) { %> 
+                                                            <b>Plaats:</b> <%= a.makeUpTown %> 
+                                                            <br>
+                                                        <% } %> 
+            
+                                                        <% if(a.makeUpPostalCode != "" ) { %> 
+                                                            <b>Postcode:</b> <%= a.makeUpPostalCode %> 
+                                                            <br>
+                                                        <% } %> 
+            
+                                                    <br>
+                                                    <% } %> 
+            
+                                                    <h5>Factuurgegevens</h5>
+                                                    <b>E-mailadres:</b> <%= a.billingEmailAddress  %> 
+                                                    <br>
+                                                    <br>
+            
+                                                    <h6>Overige</h6>
+                                                    <b>Vind plaats op:</b> <%= a.dateTime %> 
+                                                    <br>
+                                                    <b>Benodigde LOTUSslachtoffers:</b> <%= a.amountOfLotusVictims %> 
+                                                    <br>
+                                                    <b>Aantal LOTUSslachtoffers ingeschreven:</b> <%=a.participatingLotusVictims.length + "/" + a.amountOfLotusVictims %> 
+                                                   
+                                                    <% if(a.comments != "" ) { %> 
+                                                        <br>
+                                                        <b>Opmerkingen:</b> <%= a.comments %> 
+                                                    <% } %> 
+            
+                                        </div>
+                                        <div class="modal-footer">
+                                          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuleren</button>
+                                            <form action="/assignment/update" method="GET">
+                                                <input type="hidden" name="assignmentId" value="<%= a._id %>">
+                                                <button type="submit" class="btn btn-primary">Bewerken</button>
+                                            </form>
+
+                                            <form action="/assignment/delete?id=<%= a._id %>" method="POST">
+                                                <button type="submit" class="btn btn-danger">Verwijderen</button>
+                                            </form>
+                                        </div>
+                                      </div>
+                                    </div>
+                                  </div>
+                            <% }); %>
+                        </div>
                     </div>
-                </div>
                 <% } else if (session.roles == "client") { %>
                     <div>
                         <div class="row">
                             <% assignments.forEach(assignment => { %>
                                 <div class="col-lg-6">
-                                    <a href="/">
+                                    <a href="#" data-bs-toggle="modal" data-bs-target="#assignment<%= assignment._id %>">
                                         <div class="card">
                                             <div class="card-body assignment_card">
-                                            <h5 class="card-title"><%= assignment.amountOfLotusVictims + " LOTUSslachtoffers nodig in " + assignment.playgroundTown %></h5>
-                                                <%= "Opdracht in " + assignment.playgroundHouseNumber + " " + assignment.playgroundStreet + " " + assignment.playgroundTown + ", " + assignment.playgroundPostalCode %> 
+                                            <h5 class="card-title"><%= assignment.amountOfLotusVictims + " LOTUSslachtoffers nodig in " + assignment.playgroundTown %> <% if(assignment.requestStatus == "Aangevraagd") { %><i class="bi bi-hourglass-split" style="float: right; font-size: 30px; color: #435df1;"></i><% } %></h5>
+                                                <%= "Opdracht in " + assignment.playgroundHouseNumber + assignment.playgroundHouseNumberAddition + " " + assignment.playgroundStreet + " " + assignment.playgroundTown + ", " + assignment.playgroundPostalCode %><br> 
+                                                <% if (assignment.status == "In behandeling") { %>
+                                                    <br><i class="bi bi-circle-fill" style="color: orange; font-size: 12px;"></i> <%= assignment.status %>
+                                                <% } else if (assignment.status == "Goedgekeurd") { %>
+                                                    <br><i class="bi bi-circle-fill" style="color: green; font-size: 12px;"></i> <%= assignment.status %>
+                                                <% } else if (assignment.status == "Afgewezen") { %>
+                                                    <br><i class="bi bi-circle-fill" style="color: red; font-size: 12px;"></i> <%= assignment.status %>
+                                                <% } %>
                                             </div>
                                         </div>
                                     </a>
                                 </div>
+
+                                <div class="modal fade" id="assignment<%= assignment._id %>" tabindex="-1">
+                                    <div class="modal-dialog modal-dialog-centered modal-lg modal-dialog-scrollable">
+                                      <div class="modal-content">
+                                        <div class="modal-header">
+                                          <h5 class="modal-title"><%= assignment.amountOfLotusVictims + " LOTUSslachtoffers nodig in " + assignment.playgroundTown %></h5>
+                                          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                        </div>
+                                        <div class="modal-body">
+            
+                                             <h6>Persoonlijke gegevens</h6>
+            
+                                                <% const a = assignment;%> 
+            
+                                                    <b>Voornaam:</b> <%= a.firstName %>
+                                                    <br>
+                                                    <b>Achternaam:</b> <%= a.lastName %>
+                                                    <br>
+                                                    <b>E-mailadres:</b> <%= a.emailAddress %> 
+                                                    <br>
+                                                    <b>Straat:</b> <%= a.street %> 
+                                                    <br>
+                                                    <b>Huisnummer:</b> <%= a.houseNumber %> 
+                                                    <br>
+                                                    <% if(a.houseNumberAddition != "" ) { %> 
+                                                        <b>Huisnummer toevoeging:</b> <%= a.houseNumberAddition %> 
+                                                        <br>
+                                                    <% } %> 
+                                                    <b>Plaats:</b> <%= a.town %> 
+                                                    <br>
+                                                    <b>Postcode:</b> <%= a.postalCode %> 
+                                                    <br>
+                                                    <br>
+            
+                                                    <h6>Speelplaats adres gegevens</h6>
+                                                    <b>Straat:</b> <%= a.playgroundStreet %> 
+                                                    <br>
+                                                    <b>Huisnummer:</b> <%= a.playgroundHouseNumber %> 
+                                                    <br>
+                                                    <% if(a.playgroundHouseNumberAddition != "" ) { %> 
+                                                        <b>Huisnummer toevoeging:</b> <%= a.playgroundHouseNumberAddition %> 
+                                                        <br>
+                                                    <% } %> 
+                                                    <b>Plaats:</b> <%= a.playgroundTown %> 
+                                                    <br>
+                                                    <b>Postcode:</b> <%= a.playgroundPostalCode %> 
+            
+                                                    <br>
+                                                    <br>
+            
+                                                    <% if(a.makeUpStreet != "" || a.makeUpHouseNumber != null || a.makeUpHouseNumberAddition != "" || a.makeUpTown != "" || a.makeUpPostalCode != "" ) { %>
+            
+                                                    <h6>Grimeer adres gegevens</h6>
+            
+                                                        <% if(a.makeUpStreet != "" ) { %> 
+                                                            <b>Straat:</b> <%= a.makeUpStreet %> 
+                                                            <br>
+                                                        <% } %> 
+            
+                                                        <% if(a.makeUpHouseNumber != null ) { %> 
+                                                            <b>Huisnummer:</b> <%= a.makeUpHouseNumber %> 
+                                                            <br>
+                                                        <% } %> 
+            
+                                                        <% if(a.makeUpHouseNumberAddition != "" ) { %> 
+                                                            <b>Huisnummer toevoeging:</b> <%= a.makeUpHouseNumberAddition %> 
+                                                            <br>
+                                                        <% } %> 
+            
+                                                        <% if(a.makeUpTown != "" ) { %> 
+                                                            <b>Plaats:</b> <%= a.makeUpTown %> 
+                                                            <br>
+                                                        <% } %> 
+            
+                                                        <% if(a.makeUpPostalCode != "" ) { %> 
+                                                            <b>Postcode:</b> <%= a.makeUpPostalCode %> 
+                                                            <br>
+                                                        <% } %> 
+            
+                                                    <br>
+                                                    <% } %> 
+            
+                                                    <h5>Factuurgegevens</h5>
+                                                    <b>E-mailadres:</b> <%= a.billingEmailAddress  %> 
+                                                    <br>
+                                                    <br>
+            
+                                                    <h6>Overige</h6>
+                                                    <b>Vind plaats op:</b> <%= a.dateTime %> 
+                                                    <br>
+                                                    <b>Benodigde LOTUSslachtoffers:</b> <%= a.amountOfLotusVictims %> 
+                                                    <br>
+                                                    <b>Aantal LOTUSslachtoffers ingeschreven:</b> <%=a.participatingLotusVictims.length + "/" + a.amountOfLotusVictims %> 
+                                                   
+                                                    <% if(a.comments != "" ) { %> 
+                                                        <br>
+                                                        <b>Opmerkingen:</b> <%= a.comments %> 
+                                                    <% } %> 
+                                        </div>
+                                        <div class="modal-footer">
+                                          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuleren</button>
+                                            <form action="/assignment/update" method="GET">
+                                                <input type="hidden" name="assignmentId" value="<%= a._id %>">
+                                                <button type="submit" class="btn btn-primary">Bewerken</button>
+                                            </form>
+
+                                            <form action="/assignment/delete?id=<%= a._id %>" method="POST">
+                                                <button type="submit" class="btn btn-danger">Verwijderen</button>
+                                            </form>
+                                        </div>
+                                      </div>
+                                    </div>
+                                  </div>
                             <% }); %>
                         </div>
                     </div>
                 <% } else if (session.roles == "member") { %>
-                    <div>
-                        <div class="row">
-                            <% assignments.forEach(assignment => { %>
-                                <div class="col-lg-6">
-                                    <a href="assignment_detail?id=<%=assignment._id%>">
-                                        <div class="card">
-                                            <div class="card-body assignment_card">
-                                            <h5 class="card-title"><%= assignment.amountOfLotusVictims + " LOTUSslachtoffers nodig in " + assignment.playgroundTown %></h5>
-                                                <%= "Opdracht in " + assignment.playgroundHouseNumber + " " + assignment.playgroundStreet + " " + assignment.playgroundTown + ", " + assignment.playgroundPostalCode %> 
-                                            </div>
+                <div>
+                    <div class="row">
+                    <% if(assignments.length > 0) { %>
+                        <% assignments.forEach(assignment => { %>
+                            <div class="col-lg-6">
+                                <a href="#" data-bs-toggle="modal" data-bs-target="#assignment<%= assignment._id %>">
+                                    <div class="card">
+                                        <div class="card-body assignment_card">
+                                            <h5 class="card-title"><%= assignment.amountOfLotusVictims + " LOTUSslachtoffers nodig in " + assignment.playgroundTown %> <% if(assignment.status == "Ingeschreven") { %><i class="bi bi-hourglass-split" style="float: right; font-size: 30px; color: #435df1;"></i><% } %></h5>
+                                            <%= "Opdracht in " + assignment.playgroundHouseNumber + assignment.playgroundHouseNumberAddition + " " + assignment.playgroundStreet + " " + assignment.playgroundTown + ", " + assignment.playgroundPostalCode %>
                                         </div>
-                                    </a>
+                                    </div>
+                                </a>
+                            </div>
+
+                            <div class="modal fade" id="assignment<%= assignment._id %>" tabindex="-1">
+                                <div class="modal-dialog modal-dialog-centered modal-lg modal-dialog-scrollable">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                    <h5 class="modal-title"><%= assignment.amountOfLotusVictims + " LOTUSslachtoffers nodig in " + assignment.playgroundTown %></h5>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                    </div>
+                                    <div class="modal-body">
+        
+                                        <h6>Persoonlijke gegevens</h6>
+        
+                                            <% const a = assignment %> 
+        
+                                                <b>Voornaam:</b> <%= a.firstName %>
+                                                <br>
+                                                <b>Achternaam:</b> <%= a.lastName %>
+                                                <br>
+                                                <b>E-mailadres:</b> <%= a.emailAddress %> 
+                                                <br>
+                                                <b>Straat:</b> <%= a.street %> 
+                                                <br>
+                                                <b>Huisnummer:</b> <%= a.houseNumber %> 
+                                                <br>
+                                                <% if(a.houseNumberAddition != "" ) { %> 
+                                                    <b>Huisnummer toevoeging:</b> <%= a.houseNumberAddition %> 
+                                                    <br>
+                                                <% } %> 
+                                                <b>Plaats:</b> <%= a.town %> 
+                                                <br>
+                                                <b>Postcode:</b> <%= a.postalCode %> 
+                                                <br>
+                                                <br>
+        
+                                                <h6>Speelplaats adres gegevens</h6>
+                                                <b>Straat:</b> <%= a.playgroundStreet %> 
+                                                <br>
+                                                <b>Huisnummer:</b> <%= a.playgroundHouseNumber %> 
+                                                <br>
+                                                <% if(a.playgroundHouseNumberAddition != "" ) { %> 
+                                                    <b>Huisnummer toevoeging:</b> <%= a.playgroundHouseNumberAddition %> 
+                                                    <br>
+                                                <% } %> 
+                                                <b>Plaats:</b> <%= a.playgroundTown %> 
+                                                <br>
+                                                <b>Postcode:</b> <%= a.playgroundPostalCode %> 
+        
+                                                <br>
+                                                <br>
+        
+                                                <% if(a.makeUpStreet != "" || a.makeUpHouseNumber != null || a.makeUpHouseNumberAddition != "" || a.makeUpTown != "" || a.makeUpPostalCode != "" ) { %>
+        
+                                                <h6>Grimeer adres gegevens</h6>
+        
+                                                    <% if(a.makeUpStreet != "" ) { %> 
+                                                        <b>Straat:</b> <%= a.makeUpStreet %> 
+                                                        <br>
+                                                    <% } %> 
+        
+                                                    <% if(a.makeUpHouseNumber != null ) { %> 
+                                                        <b>Huisnummer:</b> <%= a.makeUpHouseNumber %> 
+                                                        <br>
+                                                    <% } %> 
+        
+                                                    <% if(a.makeUpHouseNumberAddition != "" ) { %> 
+                                                        <b>Huisnummer toevoeging:</b> <%= a.makeUpHouseNumberAddition %> 
+                                                        <br>
+                                                    <% } %> 
+        
+                                                    <% if(a.makeUpTown != "" ) { %> 
+                                                        <b>Plaats:</b> <%= a.makeUpTown %> 
+                                                        <br>
+                                                    <% } %> 
+        
+                                                    <% if(a.makeUpPostalCode != "" ) { %> 
+                                                        <b>Postcode:</b> <%= a.makeUpPostalCode %> 
+                                                        <br>
+                                                    <% } %> 
+        
+                                                <br>
+                                                <% } %> 
+        
+                                                <h6>Factuurgegevens</h6>
+                                                <b>E-mailadres:</b> <%= a.billingEmailAddress  %> 
+                                                <br>
+                                                <br>
+        
+                                                <h6>Overige</h6>
+                                                <b>Vind plaats op:</b> <%= a.dateTime %> 
+                                                <br>
+                                                <b>Benodigde LOTUSslachtoffers:</b> <%= a.amountOfLotusVictims %> 
+                                            
+                                                <% if(a.comments != "" ) { %> 
+                                                    <br>
+                                                    <b>Opmerkingen:</b> <%= a.comments %> 
+                                                <% } %> 
+        
+                                    </div>
+                                    <div class="modal-footer">
+                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuleren</button>
+                                        <% if(assignment.status == "Ingeschreven") { %>
+                                        <form action="/assignment/cancel" method="POST">
+                                            <input type="hidden" name="status" value="<%= assignment.status %>">
+                                            <input type="hidden" name="requestType" value="cancelEnrollment">
+                                            <input type="hidden" name="requestId" value="<%= a.requestId %>">
+                                            <input type="hidden" name="assignmentId" value="<%= a._id %>">
+                                            <button type="submit" class="btn btn-danger">Annuleer inschrijven</button>
+                                        </form>
+                                        <% } else {%> 
+                                        <form action="/assignment/enroll" method="POST">
+                                            <input type="hidden" name="requestType" value="enrollment">
+                                            <input type="hidden" name="requestId" value="<%= a.requestId %>">
+                                            <input type="hidden" name="assignmentId" value="<%= a._id %>">
+                                            <button type="submit" class="btn btn-success">Inschrijven</button>
+                                        </form>
+                                        <% } %> 
+                                    </div>
                                 </div>
-                            <% }); %>
-                        </div>
+                                </div>
+                            </div>
+                        <% }); %>
+                        <% } else { %> 
+                            <div class="col-lg-6">
+                                <div class="card">
+                                    <div class="card-body">
+                                        <h5 class="card-title">Er zijn momenteel geen openstaande opdrachten</h5>
+                                        <p class="card-text">Hou de applicatie in de gaten voor nieuwe opdrachten!</p>
+                                    </div>
+                                </div>
+                            </div>
+                        <% } %> 
                     </div>
+                </div>
                 <% } %>
             </div>
         </div>
     </section>
 </main>
-   
-<%- include("footer/footer") -%>
+
+<%- include("footer/footer") %>

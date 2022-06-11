@@ -249,8 +249,14 @@ h6 {
     background-color: rgba(255, 255, 255, 0.6);
 }
 
-.assignment_card {
+.assignment_card,
+.request_card {
     color: #212529;
+}
+
+.assignment_delete_btn {
+    text-align: center;
+    padding: 20px 0 26.6px 0;
 }
 
 /* Alerts */
@@ -744,6 +750,14 @@ h6 {
     background: #ffecdf;
 }
 
+.dashboard .assignment_card_text {
+    color: #212529;
+}
+
+.dashboard .request_card_text {
+    color: #212529;
+}
+
 /* Activity */
 .dashboard .activity {
     font-size: 14px;
@@ -904,6 +918,18 @@ form i {
     margin-top: 10px;
     margin-bottom: 20px;
     height: 12px;
+}
+
+/*--------------------------------------------------------------
+# Requests
+--------------------------------------------------------------*/
+
+.oldRequestValue {
+    color: red;
+}
+
+.newRequestValue {
+    color: green;
 }
 
 /*--------------------------------------------------------------

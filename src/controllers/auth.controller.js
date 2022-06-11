@@ -1,8 +1,10 @@
-const User = require("./../models/user.model");
+const { userModel } = require("./../models/user.model");
 const bcrypt = require("bcrypt");
 const Cryptr = require("cryptr");
 const { update } = require("./../models/user.model");
 const cryptr = new Cryptr(process.env.EMAIL_SETUP_HASH);
+
+const User = userModel;
 
 exports.isLoggedIn = (req, res, next) => {
     const session = req.session;
@@ -74,7 +76,7 @@ exports.login = (req, res) => {
 
                     if (firstLogin === true) {
                         const encryptedEmail = cryptr.encrypt(emailAddress);
-                        res.redirect(`/member_setup?t=${encryptedEmail}`);
+                        res.redirect(`/register/setup?t=${encryptedEmail}`);
                     } else {
                         User.findOneAndUpdate({ _id: user._id }, { lastLoginDate: Date.now() }, { new: true }, (err, currentUser) => {
                             if (err) throw err;

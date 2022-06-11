@@ -1,13 +1,42 @@
-const { getAllValidUsers } = require("./../controllers/user.controller");
+const { getAllValidMembers, getAllValidClients, getAllInvitedMembers } = require("./../controllers/user.controller");
+const {assignmentModel} = require("../models/assignment.model");
+const Request = require("../models/request.model");
+
+const Assignment = assignmentModel;
 
 exports.getHomepage = (req, res) => {
-    res.render("dashboard", { pageName: "Dashboard", session: req.session.user });
+    if (req.session.user.roles == "coordinator" || req.session.user.roles == "member") {
+        Assignment.find({ isApproved: true }, function (err, assignments) {
+
+            if (req.session.user.roles == "coordinator") {
+                Request.find({ status: "In behandeling" }, function (err, requests) {
+                    res.render("dashboard", { pageName: "Dashboard", session: req.session.user, assignments_amount: assignments.length, request_amount: requests.length });
+                })
+            } else {
+                res.render("dashboard", { pageName: "Dashboard", session: req.session.user, assignments_amount: assignments.length, request_amount: null });
+            }
+        });
+    } else if (req.session.user.roles == "client") {
+        Assignment.find(function (err, assignments) {
+            let assignmentsFiltered = [];
+
+            assignments.forEach((assignment) => {
+                if (assignment.emailAddress == req.session.user.emailAddress) {
+                    assignmentsFiltered.push(assignment);
+                }
+            });
+
+            res.render("dashboard", { pageName: "Dashboard", session: req.session.user, assignments_amount: assignmentsFiltered.length, request_amount: null });
+        }); 
+    }
 };
 
 exports.getUserOverview = (req, res) => {
     (async () => {
-        const allUsers = await getAllValidUsers();
-        return res.render("user_overview", { pageName: "Gebruikers", session: req.session.user, allUsers });
+        const allMembers = await getAllValidMembers();
+        const allClients = await getAllValidClients();
+        const allInvitedMembers = await getAllInvitedMembers();
+        return res.render("user_overview", { pageName: "Gebruikers", session: req.session.user, allMembers, allClients, allInvitedMembers });
     })();
 };
 

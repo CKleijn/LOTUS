@@ -1,15 +1,18 @@
 const mongoose = require("../../database/dbconnection");
-const Assignment = require("../models/assignment.model");
+const { assignmentModel } = require("../models/assignment.model");
+const Request = require("../models/request.model");
 const { createRequest } = require("./request.controller");
+
+const Assignment = assignmentModel;
+
 // Functionality for creating an assignment
 exports.createAssignment = (req, res) => {
     // Get session
     const session = req.session;
     // Declare all variables out of req.body
-    const { firstName, lastName, emailAddress, street, houseNumber, houseNumberAddition, postalCode, town, billingEmailAddress, 
-            dateTime, playgroundStreet, playgroundHouseNumber, playgroundHouseNumberAddition, playgroundPostalCode, playgroundTown, 
-            makeUpStreet, makeUpHouseNumber, makeUpHouseNumberAddition, makeUpPostalCode, makeUpTown, amountOfLotusVictims, 
-            comments, isApproved } = req.body;
+
+    const { firstName, lastName, emailAddress, street, houseNumber, houseNumberAddition, postalCode, town, billingEmailAddress, dateTime, playgroundStreet, playgroundHouseNumber, playgroundHouseNumberAddition, playgroundPostalCode, playgroundTown, makeUpStreet, makeUpHouseNumber, makeUpHouseNumberAddition, makeUpPostalCode, makeUpTown, amountOfLotusVictims, comments, isApproved, requestId, checkedOrNotProfile, checkedOrNotPlayground, checkedOrNotMakeUp } = req.body;
+
     // Create new assignment object
     const assignment = new Assignment({
         firstName: firstName,
@@ -35,221 +38,535 @@ exports.createAssignment = (req, res) => {
         amountOfLotusVictims: amountOfLotusVictims,
         comments: comments,
         isApproved: isApproved,
+        requestId: requestId,
     });
     // Check if coordinator is trying to make an assignment
     if (session.user.roles === "coordinator") {
         assignment.isApproved = true;
     }
     // Save assignment object in database and show errors if they exists
-    assignment.save(function(err, savedAssignment) {
+    assignment.save(function (err, savedAssignment) {
         if (err) {
             const errors = {};
             const oldValues = {};
             errors.oldValues = oldValues;
 
-            if (err.errors.firstName) {
+            if (typeof err.errors.firstName != "undefined") {
                 errors.firstNameErr = err.errors.firstName.properties.message;
             } else {
                 errors.oldValues.firstName = req.body.firstName;
             }
 
-            if (err.errors.lastName) {
+            if (typeof err.errors.lastName != "undefined") {
                 errors.lastNameErr = err.errors.lastName.properties.message;
             } else {
                 errors.oldValues.lastName = req.body.lastName;
             }
 
-            if (err.errors.emailAddress) {
+            if (typeof err.errors.emailAddress != "undefined") {
                 errors.emailAddressErr = err.errors.emailAddress.properties.message;
             } else {
                 errors.oldValues.emailAddress = req.body.emailAddress;
             }
 
-            if (err.errors.street) {
+            if (typeof err.errors.street != "undefined") {
                 errors.streetErr = err.errors.street.properties.message;
             } else {
                 errors.oldValues.street = req.body.street;
             }
 
-            if (err.errors.houseNumber) {
+            if (typeof err.errors.houseNumber != "undefined") {
                 errors.houseNumberErr = err.errors.houseNumber.properties.message;
             } else {
                 errors.oldValues.houseNumber = req.body.houseNumber;
             }
 
-            if (err.errors.houseNumberAddition) {
+            if (typeof err.errors.houseNumberAddition != "undefined") {
                 errors.houseNumberAdditionErr = err.errors.houseNumberAddition.properties.message;
             } else {
                 errors.oldValues.houseNumberAddition = req.body.houseNumberAddition;
             }
 
-            if (err.errors.postalCode) {
+            if (typeof err.errors.postalCode != "undefined") {
                 errors.postalCodeErr = err.errors.postalCode.properties.message;
             } else {
                 errors.oldValues.postalCode = req.body.postalCode;
             }
 
-            if (err.errors.town) {
+            if (typeof err.errors.town != "undefined") {
                 errors.townErr = err.errors.town.properties.message;
             } else {
                 errors.oldValues.town = req.body.town;
             }
 
-            if (err.errors.billingEmailAddress) {
+            if (typeof err.errors.billingEmailAddress != "undefined") {
                 errors.billingEmailAddressErr = err.errors.billingEmailAddress.properties.message;
             } else {
                 errors.oldValues.billingEmailAddress = req.body.billingEmailAddress;
             }
 
-            if (err.errors.dateTime) {
+            if (typeof err.errors.dateTime != "undefined") {
                 errors.dateTimeErr = err.errors.dateTime.properties.message;
             } else {
                 errors.oldValues.dateTime = req.body.dateTime;
             }
 
-            if (err.errors.playgroundStreet) {
+            if (typeof err.errors.playgroundStreet != "undefined") {
                 errors.playgroundStreetErr = err.errors.playgroundStreet.properties.message;
             } else {
                 errors.oldValues.playgroundStreet = req.body.playgroundStreet;
             }
 
-            if (err.errors.playgroundHouseNumber) {
+            if (typeof err.errors.playgroundHouseNumber != "undefined") {
                 errors.playgroundHouseNumberErr = err.errors.playgroundHouseNumber.properties.message;
             } else {
                 errors.oldValues.playgroundHouseNumber = req.body.playgroundHouseNumber;
             }
 
-            if (err.errors.playgroundHouseNumberAddition) {
+            if (typeof err.errors.playgroundHouseNumberAddition != "undefined") {
                 errors.playgroundHouseNumberAdditionErr = err.errors.playgroundHouseNumberAddition.properties.message;
             } else {
                 errors.oldValues.playgroundHouseNumberAddition = req.body.playgroundHouseNumberAddition;
             }
 
-            if (err.errors.playgroundPostalCode) {
+            if (typeof err.errors.playgroundPostalCode != "undefined") {
                 errors.playgroundPostalCodeErr = err.errors.playgroundPostalCode.properties.message;
             } else {
                 errors.oldValues.playgroundPostalCode = req.body.playgroundPostalCode;
             }
 
-            if (err.errors.playgroundTown) {
+            if (typeof err.errors.playgroundTown != "undefined") {
                 errors.playgroundTownErr = err.errors.playgroundTown.properties.message;
             } else {
                 errors.oldValues.playgroundTown = req.body.playgroundTown;
             }
 
-            if (err.errors.makeUpStreet) {
+            if (typeof err.errors.makeUpStreet != "undefined") {
                 errors.makeUpStreetErr = err.errors.makeUpStreet.properties.message;
             } else {
                 errors.oldValues.makeUpStreet = req.body.makeUpStreet;
             }
 
-            if (err.errors.makeUpHouseNumber) {
+            if (typeof err.errors.makeUpHouseNumber != "undefined") {
                 errors.makeUpHouseNumberErr = err.errors.makeUpHouseNumber.properties.message;
             } else {
                 errors.oldValues.makeUpHouseNumber = req.body.makeUpHouseNumber;
             }
 
-            if (err.errors.makeUpHouseNumberAddition) {
+            if (typeof err.errors.makeUpHouseNumberAddition != "undefined") {
                 errors.makeUpHouseNumberAdditionErr = err.errors.makeUpHouseNumberAddition.properties.message;
             } else {
                 errors.oldValues.makeUpHouseNumberAddition = req.body.makeUpHouseNumberAddition;
             }
 
-            if (err.errors.makeUpPostalCode) {
+            if (typeof err.errors.makeUpPostalCode != "undefined") {
                 errors.makeUpPostalCodeErr = err.errors.makeUpPostalCode.properties.message;
             } else {
                 errors.oldValues.makeUpPostalCode = req.body.makeUpPostalCode;
             }
 
-            if (err.errors.makeUpTown) {
+            if (typeof err.errors.makeUpTown != "undefined") {
                 errors.makeUpTownErr = err.errors.makeUpTown.properties.message;
             } else {
                 errors.oldValues.makeUpTown = req.body.makeUpTown;
             }
 
-            if (err.errors.amountOfLotusVictims) {
+            if (typeof err.errors.amountOfLotusVictims != "undefined") {
                 errors.amountOfLotusVictimsErr = err.errors.amountOfLotusVictims.properties.message;
             } else {
                 errors.oldValues.amountOfLotusVictims = req.body.amountOfLotusVictims;
             }
 
-            if (err.errors.comments) {
+            if (typeof err.errors.comments != "undefined") {
                 errors.commentsErr = err.errors.comments.properties.message;
             } else {
                 errors.oldValues.comments = req.body.comments;
             }
+
             // Show the errors on the assignment page
-            res.render("assignment", { pageName: "Formulier", session: req.session.user, ...errors });
+            res.render("assignment", { pageName: "Opdracht aanmaken", session: req.session.user, ...errors, checkedOrNotProfile, checkedOrNotPlayground, checkedOrNotMakeUp, url: req.session.originalUrl });
         } else {
-            const objectId = savedAssignment._id;
-            // Create a request
-            createRequest(req, res, objectId);
-            // Redirect to the dashboard
-            res.redirect("/");
+            (async () => {
+                if (session.user.roles === "client") {
+                    const objectId = savedAssignment._id;
+                    // Create a request
+                    const request = await createRequest(req, res, objectId, "createAssignment");
+                    // Update assignment
+                    await Assignment.findOneAndUpdate({ _id: request.assignmentId }, { $set: { requestId: request._id } });
+                }
+                // Redirect to the overview
+                res.redirect("/assignment");
+            })();
         }
     });
 };
 
+exports.updateAssignment = async (req, res) => {
+    const assignmentId = req.body.assignmentId;
+
+    const { firstName, lastName, emailAddress, street, houseNumber, houseNumberAddition, postalCode, town, billingEmailAddress, dateTime, playgroundStreet, playgroundHouseNumber, playgroundHouseNumberAddition, playgroundPostalCode, playgroundTown, makeUpStreet, makeUpHouseNumber, makeUpHouseNumberAddition, makeUpPostalCode, makeUpTown, amountOfLotusVictims, comments, isApproved, requestId, checkedOrNotProfile, checkedOrNotPlayground, checkedOrNotMakeUp } = req.body;
+    const errors = {};
+    const oldValues = {};
+    errors.oldValues = oldValues;
+
+    if (!firstName || firstName.length === 0) {
+        errors.firstNameErr = "Voornaam is verplicht!";
+    } else {
+        oldValues.firstName = firstName;
+    }
+
+    if (!lastName || lastName.length === 0) {
+        errors.lastNameErr = "Achternaam is verplicht!";
+    } else {
+        oldValues.lastName = lastName;
+    }
+
+    const emailRegex = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
+
+    if (!emailAddress || emailAddress.length === 0) {
+        errors.emailAddressErr = "E-mailadres is verplicht!";
+    } else if (!emailRegex.test(emailAddress)) {
+        errors.emailAddressErr = "Gebruik een geldig e-mailadres zoals j.doe@gmail.com!";
+    } else {
+        oldValues.emailAddress = emailAddress;
+    }
+
+    if (!street || street.length === 0) {
+        errors.streetErr = "Straat is verplicht!";
+    } else {
+        oldValues.street = street;
+    }
+
+    if (!houseNumber || houseNumber.length === 0) {
+        errors.houseNumberErr = "Huisnummer is verplicht!";
+    } else if (isNaN(houseNumber)) {
+        errors.houseNumberErr = "Huisnummer moet een getal zijn!";
+    } else {
+        oldValues.houseNumber = houseNumber;
+    }
+
+    oldValues.houseNumberAddition = houseNumberAddition;
+
+    const postalCodeRegex = /^[1-9][0-9]{3} ?(?!sa|sd|ss)[a-z]{2}$/i;
+
+    if (!postalCode || postalCode.length === 0) {
+        errors.postalCodeErr = "Huisnummer is verplicht!";
+    } else if (!postalCodeRegex.test(postalCode)) {
+        errors.postalCodeErr = "Gebruik een geldig postcode zoals 2973FD!";
+    } else {
+        oldValues.postalCode = postalCode;
+    }
+
+    if (!town || town.length === 0) {
+        errors.townErr = "Plaats is verplicht!";
+    } else {
+        oldValues.town = town;
+    }
+
+    //playground
+    if (!playgroundStreet || playgroundStreet.length === 0) {
+        errors.playgroundStreetErr = "Speelplaats straat is verplicht!";
+    } else {
+        oldValues.playgroundStreet = playgroundStreet;
+    }
+
+    if (!playgroundHouseNumber || playgroundHouseNumber.length === 0) {
+        errors.playgroundHouseNumber = "Speelplaats huisnummer is verplicht!";
+    } else if (isNaN(playgroundHouseNumber)) {
+        errors.playgroundHouseNumber = "Speelplaats huisnummer moet een getal zijn!";
+    } else {
+        oldValues.playgroundHouseNumber = playgroundHouseNumber;
+    }
+
+    oldValues.playgroundHouseNumberAddition = playgroundHouseNumberAddition;
+
+    if (!playgroundPostalCode || playgroundPostalCode.length === 0) {
+        errors.playgroundPostalCode = "Speelplaats postcode is verplicht!";
+    } else if (!postalCodeRegex.test(playgroundPostalCode)) {
+        errors.playgroundPostalCodeErr = "Gebruik een geldig postcode zoals 2973FD!";
+    } else {
+        oldValues.playgroundPostalCode = playgroundPostalCode;
+    }
+
+    if (!playgroundTown || playgroundTown.length === 0) {
+        errors.playgroundTownErr = "Speelplaats plaats is verplicht!";
+    } else {
+        oldValues.playgroundTown = playgroundTown;
+    }
+
+    //makeup
+    oldValues.makeUpStreet = makeUpStreet;
+    oldValues.makeUpHouseNumber = makeUpHouseNumber;
+    oldValues.makeUpHouseNumberAddition = makeUpHouseNumberAddition;
+    oldValues.makeUpPostalCode = makeUpPostalCode;
+    oldValues.makeUpTown = makeUpTown;
+
+    //overige
+
+    if (!dateTime || dateTime.length === 0) {
+        errors.dateTimeErr = "Datum en tijd is verplicht!";
+    } else {
+        oldValues.dateTime = dateTime;
+    }
+
+    if (!amountOfLotusVictims || amountOfLotusVictims.length === 0) {
+        errors.amountOfLotusVictimsErr = "Aantal LOTUS slachtoffers is verplicht!";
+    } else if (isNaN(amountOfLotusVictims)) {
+        errors.amountOfLotusVictimsErr = "Aantal LOTUS slachtoffers moet een getal zijn!";
+    } else {
+        oldValues.amountOfLotusVictims = amountOfLotusVictims;
+    }
+
+    oldValues.comments = comments;
+
+    //factuur
+    if (!billingEmailAddress || billingEmailAddress.length === 0) {
+        errors.billingEmailAddressErr = "E-mailadres is verplicht!";
+    } else if (!emailRegex.test(billingEmailAddress)) {
+        errors.billingEmailAddressErr = "Gebruik een geldig e-mailadres zoals j.doe@gmail.com!";
+    } else {
+        oldValues.billingEmailAddress = billingEmailAddress;
+    }
+
+    if (
+        typeof errors.firstNameErr != "undefined" ||
+        typeof errors.lastNameErr != "undefined" ||
+        typeof errors.emailAddressErr != "undefined" ||
+        typeof errors.streetErr != "undefined" ||
+        typeof errors.houseNumberErr != "undefined" ||
+        typeof errors.postalCodeErr != "undefined" ||
+        typeof errors.townErr != "undefined" ||
+        typeof errors.playgroundStreetErr != "undefined" ||
+        typeof errors.playgroundHouseNumberErr != "undefined" ||
+        typeof errors.playgroundPostalCodeErr != "undefined" ||
+        typeof errors.playgroundTownErr != "undefined" ||
+        typeof errors.dateTimeErr != "undefined" ||
+        typeof errors.amountOfLotusVictimsErr != "undefined" ||
+        typeof errors.billingEmailAddressErr != "undefined"
+    ) {
+        res.render("assignment", { pageName: "Formulier", session: req.session.user, ...errors, checkedOrNotProfile, checkedOrNotPlayground, checkedOrNotMakeUp, url: req.session.originalUrl, assignmentId });
+    } else {
+        (async () => {
+            if (req.session.user.roles === "coordinator") {
+                await Assignment.findOneAndUpdate({ _id: assignmentId }, { ...req.body });
+                res.redirect("/assignment");
+            } else {
+                const request = await new Request({
+                    userId: req.session.user.userId,
+                    assignmentId: assignmentId.toString(),
+                    type: "updateAssignment",
+                    updatedAssignment: { ...req.body },
+                });
+                // Save request
+                request.save();
+
+                res.redirect("/assignment");
+            }
+        })();
+    }
+};
+
 exports.getAssignmentPage = (req, res) => {
-    res.render("assignment", { pageName: "Formulier", session: req.session.user });
+    req.session.originalUrl = req.originalUrl;
+    res.render("assignment", { pageName: "Formulier", session: req.session.user, url: req.session.originalUrl, assignmentId: req.query.id });
+};
+
+exports.getAssignmentUpdatePage = async (req, res) => {
+    const assignmentId = req.query.assignmentId;
+
+    let assignment = await Assignment.find({ _id: assignmentId });
+
+    assignment = assignment[0];
+
+    req.session.originalUrl = req.originalUrl;
+    res.render("assignment", { pageName: "Opdracht aanmaken", session: req.session.user, url: req.session.originalUrl, assignmentId: assignmentId, assignment });
 };
 
 exports.getAllAssignments = (req, res) => {
     function format(inputDate) {
         let date, month, year;
-      
+
         date = inputDate.getDate();
         month = inputDate.getMonth() + 1;
         year = inputDate.getFullYear();
-      
-        date = date
-            .toString()
-            .padStart(2, '0');
-    
-        month = month
-            .toString()
-            .padStart(2, '0');
-      
+
+        date = date.toString().padStart(2, "0");
+
+        month = month.toString().padStart(2, "0");
+
         return `${date}/${month}/${year}`;
     }
 
-    if (req.session.user.roles == "coordinator") {
-        Assignment.find({ isApproved: true }, function(err, results) {
-            results.forEach(result => {
+    if (req.session.user.roles == "coordinator" || req.session.user.roles == "member") {
+        let resultsFiltered = [];
+
+        Assignment.find({ isApproved: true }, async function (err, results) {
+            for (let result of results) {
+                let enrolledRequest = await Request.find({ assignmentId: result._id, userId: req.session.user.userId, type: "enrollment", status: "In behandeling" }).exec();
+                let enrolledApprovedRequest = await Request.find({ assignmentId: result._id, userId: req.session.user.userId, type: "enrollment", status: "Goedgekeurd" }).exec();
                 result.dateTime = format(new Date(result.dateTime));
-            });
-            res.render("assignment_overview", { pageName: "Opdrachten", session: req.session.user, assignments: results });
-        })
-    } else if (req.session.user.roles == "client") {
-        let resultsFiltered = []
 
-        Assignment.find(function(err, results) {
-            results.forEach(result => {
-
-                if (result.emailAddress == req.session.user.emailAddress) {
-                    result.dateTime = format(new Date(result.dateTime));
-
-                    resultsFiltered.push(result)
+                if (enrolledRequest.length > 0) {
+                    result = {
+                        ...result._doc,
+                        status: "Ingeschreven",
+                    };
+                    resultsFiltered.push(result);
+                } else if (enrolledApprovedRequest.length > 0) {
+                    result = {
+                        ...result._doc,
+                        status: "Ingeschreven voltooid",
+                    };
+                } else {
+                    result = {
+                        ...result._doc,
+                        status: "Niet ingeschreven",
+                    };
+                    resultsFiltered.push(result);
                 }
-            });
+            }
             res.render("assignment_overview", { pageName: "Opdrachten", session: req.session.user, assignments: resultsFiltered });
         });
-    } else if (req.session.user.roles == "member") {
-        Assignment.find({ isApproved: true }, function(err, results) {
-            results.forEach(result => {
+    } else if (req.session.user.roles == "client") {
+        let resultsFiltered = [];
 
+        Assignment.find(async function (err, results) {
+            for (let result of results) {
                 if (result.emailAddress == req.session.user.emailAddress) {
+                    let request = await Request.find({ _id: result.requestId }).exec();
+                    let updatedAssignmentRequest = await Request.find({ assignmentId: result._id, userId: req.session.user.userId, type: "updateAssignment", status: "In behandeling" }).exec();
                     result.dateTime = format(new Date(result.dateTime));
+                    if (updatedAssignmentRequest.length > 0) {
+                        result = {
+                            ...result._doc,
+                            status: request[0].status,
+                            requestStatus: "Aangevraagd"
+                        };
+                    } else {
+                        result = {
+                            ...result._doc,
+                            status: request[0].status,
+                        };
+                    }
+
+                    resultsFiltered.push(result);
                 }
-            });
-            res.render("assignment_overview", { pageName: "Opdrachten", session: req.session.user, assignments: results });
+            }
+            res.render("assignment_overview", { pageName: "Mijn opdrachten", session: req.session.user, assignments: resultsFiltered });
         });
     }
+};
 
-}
+exports.getMemberAssignments = (req, res) => {
+    function format(inputDate) {
+        let date, month, year;
 
-exports.getAssignmentDetailPage = (req, res) => { 
-    Assignment.find({ isApproved: true , _id: req.query.id}, function(err, results) {
+        date = inputDate.getDate();
+        month = inputDate.getMonth() + 1;
+        year = inputDate.getFullYear();
+
+        date = date.toString().padStart(2, "0");
+
+        month = month.toString().padStart(2, "0");
+
+        return `${date}/${month}/${year}`;
+    }
+
+    if (req.session.user.roles == "member") {
+        let resultsFiltered = [];
+
+        Assignment.find({ isApproved: true }, async function (err, results) {
+            for (let result of results) {
+                let enrolledApprovedRequest = await Request.find({ assignmentId: result._id, userId: req.session.user.userId, type: "enrollment", status: "Goedgekeurd" }).exec();
+                let cancelRequest = await Request.find({ assignmentId: result._id, userId: req.session.user.userId, type: "cancelEnrollment", status: "In behandeling" }).exec();
+                result.dateTime = format(new Date(result.dateTime));
+                if (enrolledApprovedRequest.length > 0 && cancelRequest.length > 0) {
+                    result = {
+                        ...result._doc,
+                        status: "Ingeschreven voltooid",
+                        cancelStatus: "Uitschrijfverzoek ingediend",
+                    };
+                    resultsFiltered.push(result);
+                } else if (enrolledApprovedRequest.length > 0) {
+                    result = {
+                        ...result._doc,
+                        status: "Ingeschreven voltooid",
+                    };
+                    resultsFiltered.push(result);
+                }
+            }
+            res.render("enrolled_assignment_overview", { pageName: "Mijn opdrachten", session: req.session.user, assignments: resultsFiltered });
+        });
+    }
+};
+
+exports.getAssignmentDetailPage = (req, res) => {
+    Assignment.find({ _id: req.query.id }, function (err, results) {
         res.render("assignment_detail", { pageName: "Detailpagina", session: req.session.user, assignments: results });
     });
-}
+};
+
+exports.deleteAssignment = async (req, res) => {
+    if (req.session.user.roles === "coordinator") {
+        await Assignment.deleteOne({ _id: req.query.id });
+        await Request.deleteMany({ assignmentId: req.query.id });
+        res.redirect("/assignment");
+    }
+
+    if (req.session.user.roles === "client") {
+        await createRequest(req, res, req.query.id, "deleteAssignment");
+        res.redirect("/assignment");
+    }
+};
+
+exports.enrollAssignment = (req, res) => {
+    // Get session
+    const session = req.session;
+    // Get req body
+    const { requestType, assignmentId } = req.body;
+    // Create request
+    const request = new Request({
+        userId: session.user.userId,
+        assignmentId: assignmentId,
+        type: requestType,
+    });
+    // Save request
+    request.save();
+    // Redirect
+    res.redirect("/assignment");
+};
+
+exports.cancelEnrollment = (req, res) => {
+    // Get session
+    const session = req.session;
+    // Get req body
+    const { requestType, assignmentId, status, cancelStatus } = req.body;
+    if (status == "Ingeschreven") {
+        Request.deleteOne({ requestType: "enrollment", assignmentId: assignmentId, userId: session.user.userId }, function (err, results) {
+            Assignment.findOneAndUpdate({ assignmentId: assignmentId }, { status: "Niet ingeschreven" });
+            res.redirect("/assignment");
+        });
+    } else if (cancelStatus == "Uitschrijfverzoek ingediend") {
+        Request.deleteOne({ requestType: "cancelEnrollment", assignmentId: assignmentId, userId: session.user.userId, status: "In behandeling" }, function (err, results) {
+            res.redirect("/member/assignment");
+        });
+    } else {
+        Request.find({ assignmentId: assignmentId, userId: session.user.userId, type: requestType }, function (err, results) {
+            if (results.length == 0) {
+                // Create request
+                const request = new Request({
+                    userId: session.user.userId,
+                    assignmentId: assignmentId,
+                    type: requestType,
+                });
+                // Save request
+                request.save();
+                // Redirect
+                res.redirect("/member/assignment");
+            } else {
+                // Redirect
+                res.redirect("/assignment");
+            }
+        });
+    }
+};

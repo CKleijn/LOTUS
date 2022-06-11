@@ -1,4 +1,4 @@
-<%- include("header/header") %>
+<%- include("header/header") -%>
 
 <main id="main" class="main">
     <div class="pagetitle">
@@ -17,26 +17,31 @@
             <!-- Left side columns -->
             <div class="col-lg-8">
                 <div class="row">
-                    <!-- Recent Sales -->
                     <div class="col-12">
                         <div class="card">
                             <div class="card-body">
-                                <h5 class="card-title">Alle gebruikers</h5>
-                                <table id="datatable" class="display nowrap" width="100%">
+                                <h5 class="card-title">Alle opdrachtgevers</h5>
+                                <table class="display nowrap datatable" width="100%">
                                     <thead>
                                         <tr>
                                             <th scope="col">Naam</th>
                                             <th scope="col">E-mailadres</th>
-                                            <th scope="col">Rol</th>
+                                            <th scope="col">Straat</th>
+                                            <th scope="col">Huisnummer</th>
+                                            <th scope="col">Plaats</th>
+                                            <th scope="col">Postcode</th>
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        <% allUsers.forEach(user => { %>
+                                        <% allClients.forEach(user => { %>
                                         <tr>
                                             <td><%=user.firstName + " " + user.lastName%></td>
                                             <% let role = ""; switch(user.roles[0]) { case "coordinator": role = "Coördinator"; break; case "client" : role = "Opdrachtgever"; break; case "member": role = "LOTUSslachtoffer"; break; } %>
                                             <td><%=user.emailAddress%></td>
-                                            <td><%= role %></td>
+                                            <td><%=user.street%></td>
+                                            <td><%=user.houseNumber + " " + user.houseNumberAddition%></td>
+                                            <td><%=user.town%></td>
+                                            <td><%=user.postalCode%></td>
                                         </tr>
                                         <% }) %>
                                     </tbody>
@@ -44,6 +49,32 @@
                             </div>
                         </div>
                     </div>
+
+                    <div class="col-12">
+                        <div class="card">
+                            <div class="card-body">
+                                <h5 class="card-title">Alle leden</h5>
+                                <table class="display nowrap datatable" width="100%">
+                                    <thead>
+                                        <tr>
+                                            <th scope="col">Naam</th>
+                                            <th scope="col">E-mailadres</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <% allMembers.forEach(user => { %>
+                                        <tr>
+                                            <td><%=user.firstName + " " + user.lastName%></td>
+                                            <% let role = ""; switch(user.roles[0]) { case "coordinator": role = "Coördinator"; break; case "client" : role = "Opdrachtgever"; break; case "member": role = "LOTUSslachtoffer"; break; } %>
+                                            <td><%=user.emailAddress%></td>
+                                        </tr>
+                                        <% }) %>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+
                     <!-- End Recent Sales -->
                 </div>
             </div>
@@ -55,7 +86,7 @@
                 <div class="card">
                     <div class="card-body">
                         <h5 class="card-title">Lid aanmaken</h5>
-                        <form action="create_member" method="POST">
+                        <form action="/user/create" method="POST">
                             <div class="col-12">
                                 <label class="form-label">E-mailadres</label>
                                 <input type="text" id="form3Example3c" name="emailAddress" class="form-control" value="<% if(typeof oldValues !== "undefined"){%><%=oldValues.emailAddress%><%}%>"/>
@@ -68,8 +99,30 @@
                         </form>
                     </div>
                 </div>
+
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">Uitgenodigde leden</h5>
+
+                        <table class="display nowrap datatable" width="100%">
+                            <thead>
+                                <tr>
+                                    <th scope="col">E-mailadres</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <% allInvitedMembers.forEach(user => { %>
+                                <tr>
+                                    <td><%=user.emailAddress%></td>
+                                </tr>
+                                <% }); %>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
                 <!-- End Recent Activity -->
             </div>
+
             <!-- End Right side columns -->
         </div>
     </section>
