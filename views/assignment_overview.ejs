@@ -285,11 +285,19 @@
                                                 <button type="submit" class="btn btn-primary">Bewerken</button>
                                             </form>
                                             <% } %> 
-
-
-                                            <form action="/assignment/delete?id=<%= a._id %>" method="POST">
-                                                <button type="submit" class="btn btn-danger">Verwijderen</button>
-                                            </form>
+                                            <% console.log(a) %>
+                                            <% if(a.requestStatus == "Aangevraagd") { %>
+                                                <form action="/assignment/delete?id=<%= a._id %>" method="POST">
+                                                    <input type="hidden" name="status" value="<%= a.status %>">
+                                                    <input type="hidden" name="cancelStatus" value="<%= a.cancelStatus %>">
+                                                    <button type="submit" class="btn btn-danger">Annuleer verwijderen</button>
+                                                </form>
+                                            <% } else {%> 
+                                                <form action="/assignment/delete?id=<%= a._id %>" method="POST">
+                                                    <input type="hidden" name="status" value="<%= a.status %>">
+                                                    <button type="submit" class="btn btn-danger">Verwijderen</button>
+                                                </form>
+                                            <% } %> 
                                         </div>
                                       </div>
                                     </div>
