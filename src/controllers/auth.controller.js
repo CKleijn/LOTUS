@@ -102,32 +102,38 @@ exports.login = (req, res) => {
                                 };
                                 return res.redirect("/");
                             } else if (currentUser.roles[0] == "coordinator") {
-                                session.user = {
-                                    userId: currentUser._id,
-                                    firstName: currentUser.firstName,
-                                    lastName: currentUser.lastName,
-                                    emailAddress: currentUser.emailAddress,
-                                    roles: currentUser.roles[0],
-                                    createdDate: currentUser.createdDate,
-                                    lastLoginDate: currentUser.lastLoginDate,
-                                };
                                 (async () => {
+                                    session.user = {
+                                        userId: currentUser._id,
+                                        firstName: currentUser.firstName,
+                                        lastName: currentUser.lastName,
+                                        emailAddress: currentUser.emailAddress,
+                                        roles: currentUser.roles[0],
+                                        createdDate: currentUser.createdDate,
+                                        lastLoginDate: currentUser.lastLoginDate,
+                                    };
+
                                     let requests = await Request.find({ status: "In behandeling" });
                                     let parsedRequests = [];
 
-                                    for (let i = 0; i < requests.length; i++) {
-                                        let user = await User.find({ _id: requests[i].userId }, { _id: 0, firstName: 1 });
+                                    if (requests.length === 0) {
+                                        session.requests = parsedRequests;
+                                        return res.redirect("/");
+                                    } else {
+                                        for (let i = 0; i < requests.length; i++) {
+                                            let user = await User.find({ _id: requests[i].userId }, { _id: 0, firstName: 1 });
 
-                                        const request = {
-                                            ...requests[i]._doc,
-                                            user: user[0],
-                                        };
+                                            const request = {
+                                                ...requests[i]._doc,
+                                                user: user[0],
+                                            };
 
-                                        parsedRequests.push(request);
+                                            parsedRequests.push(request);
 
-                                        if (parsedRequests.length === requests.length) {
-                                            session.requests = parsedRequests;
-                                            return res.redirect("/");
+                                            if (parsedRequests.length === requests.length || requests.length === 0) {
+                                                session.requests = parsedRequests;
+                                                return res.redirect("/");
+                                            }
                                         }
                                     }
                                 })();
