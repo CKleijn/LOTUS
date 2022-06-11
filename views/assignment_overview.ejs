@@ -28,6 +28,7 @@
                 <% if (session.roles == "coordinator") { %>
                     <div>
                         <div class="row">
+                            <% if(assignments.length > 0) { %>
                             <% assignments.forEach(assignment => { %>
                                 <div class="col-lg-6">
                                     <a href="#" data-bs-toggle="modal" data-bs-target="#assignment<%= assignment._id %>">
@@ -132,12 +133,27 @@
                                                     <b>Benodigde LOTUSslachtoffers:</b> <%= a.amountOfLotusVictims %> 
                                                     <br>
                                                     <b>Aantal LOTUSslachtoffers ingeschreven:</b> <%=a.participatingLotusVictims.length + "/" + a.amountOfLotusVictims %> 
-                                                   
+
                                                     <% if(a.comments != "" ) { %> 
                                                         <br>
                                                         <b>Opmerkingen:</b> <%= a.comments %> 
                                                     <% } %> 
-            
+
+                                                    <% console.log(a.participatingLotusVictims.length) %> 
+
+                                                    <% if(a.participatingLotusVictims.length !== 0) { %> 
+                                                        <br>
+                                                        <br>
+                                                        <h6>Ingeschreven leden</h6>
+                                                        <% a.participatingLotusVictims.forEach(victim => { %>
+                                                            <p style="display: inline-block;"><b>Naam:</b> <%= victim.firstName + " " + victim.lastName %>                                                         
+                                                                <form action="/assignment/member/delete?victimId=<%= victim._id %>&assignmentId=<%= a._id %>" method="POST">
+                                                                    <button type="submit" class="btn btn-danger">Verwijderen</button>
+                                                                </form>   
+                                                            </p>
+        
+                                                        <% }); %> 
+                                                    <% } %> 
                                         </div>
                                         <div class="modal-footer">
                                           <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuleren</button>
@@ -154,11 +170,22 @@
                                     </div>
                                   </div>
                             <% }); %>
+                            <% } else { %> 
+                                <div class="col-lg-6">
+                                    <div class="card">
+                                        <div class="card-body">
+                                            <h5 class="card-title">Er zijn momenteel geen openstaande opdrachten</h5>
+                                            <p class="card-text">Hou de applicatie in de gaten voor nieuwe opdrachten!</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            <% } %> 
                         </div>
                     </div>
                 <% } else if (session.roles == "client") { %>
                     <div>
                         <div class="row">
+                            <% if(assignments.length > 0) { %>
                             <% assignments.forEach(assignment => { %>
                                 <div class="col-lg-6">
                                     <a href="#" data-bs-toggle="modal" data-bs-target="#assignment<%= assignment._id %>">
@@ -278,19 +305,40 @@
                                         </div>
                                         <div class="modal-footer">
                                           <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuleren</button>
+                                            <% if(a.status != "Afgewezen") { %> 
                                             <form action="/assignment/update" method="GET">
                                                 <input type="hidden" name="assignmentId" value="<%= a._id %>">
+                                                <input type="hidden" name="assignmentStatus" value="<%= a.status %>">
                                                 <button type="submit" class="btn btn-primary">Bewerken</button>
                                             </form>
-
-                                            <form action="/assignment/delete?id=<%= a._id %>" method="POST">
-                                                <button type="submit" class="btn btn-danger">Verwijderen</button>
-                                            </form>
+                                            <% } %> 
+                                            <% if(a.requestStatus == "Aangevraagd") { %>
+                                                <form action="/assignment/delete?id=<%= a._id %>" method="POST">
+                                                    <input type="hidden" name="status" value="<%= a.status %>">
+                                                    <input type="hidden" name="cancelStatus" value="<%= a.cancelStatus %>">
+                                                    <button type="submit" class="btn btn-danger">Annuleer verwijderen</button>
+                                                </form>
+                                            <% } else {%> 
+                                                <form action="/assignment/delete?id=<%= a._id %>" method="POST">
+                                                    <input type="hidden" name="status" value="<%= a.status %>">
+                                                    <button type="submit" class="btn btn-danger">Verwijderen</button>
+                                                </form>
+                                            <% } %> 
                                         </div>
                                       </div>
                                     </div>
                                   </div>
                             <% }); %>
+                            <% } else { %> 
+                                <div class="col-lg-6">
+                                    <div class="card">
+                                        <div class="card-body">
+                                            <h5 class="card-title">Je hebt momenteel geen opdrachten</h5>
+                                            <p class="card-text">Maak een nieuwe opdracht aan!</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            <% } %> 
                         </div>
                     </div>
                 <% } else if (session.roles == "member") { %>

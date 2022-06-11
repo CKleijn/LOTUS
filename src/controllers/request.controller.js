@@ -114,13 +114,18 @@ exports.approveRequest = async (req, res) => {
     }
 
     if (requestType === "enrollment") {
-        await Assignment.findOneAndUpdate({ _id: assignmentId }, { $push: { participatingLotusVictims: req.session.user } });
+        let user = await User.find({_id: userId});
+        user = user[0];
+
+        console.log(user);
+
+        await Assignment.findOneAndUpdate({ _id: assignmentId }, { $push: { participatingLotusVictims: user } });
         await Request.findOneAndUpdate({ _id: requestId }, { $set: { status: "Goedgekeurd" } });
         res.redirect("/request");
     }
 
     if (requestType === "cancelEnrollment") {
-        await Assignment.updateOne({ _id: assignmentId }, { $pull: { participatingLotusVictims: { emailAddress: req.session.user.emailAddress } } });
+        await Assignment.updateOne({ _id: assignmentId }, { $pull: { participatingLotusVictims: { _id: userId } } });
         await Request.findOneAndUpdate({ _id: requestId }, { $set: { status: "Goedgekeurd" } });
         await Request.deleteOne({ assignmentId: assignmentId, userId: userId, type: "enrollment", status: "Goedgekeurd" });
         await Request.deleteOne({ assignmentId: assignmentId, userId: userId, type: "cancelEnrollment", status: "Goedgekeurd" });

@@ -23,5 +23,7 @@ router.post("/assignment/enroll", isLoggedIn, assignmentController.enrollAssignm
 
 router.post("/assignment/cancel", isLoggedIn, assignmentController.cancelEnrollment);
 
+router.post("/assignment/member/delete", isLoggedIn, assignmentController.deleteMemberFromAssignment);
+
 module.exports = router;
  

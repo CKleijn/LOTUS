@@ -1,9 +1,11 @@
 const mongoose = require("../../database/dbconnection");
 const { assignmentModel } = require("../models/assignment.model");
+const { userModel } = require("../models/user.model");
 const Request = require("../models/request.model");
 const { createRequest } = require("./request.controller");
 
 const Assignment = assignmentModel;
+const User = userModel
 
 // Functionality for creating an assignment
 exports.createAssignment = (req, res) => {
@@ -204,7 +206,9 @@ exports.createAssignment = (req, res) => {
 exports.updateAssignment = async (req, res) => {
     const assignmentId = req.body.assignmentId;
 
-    const { firstName, lastName, emailAddress, street, houseNumber, houseNumberAddition, postalCode, town, billingEmailAddress, dateTime, playgroundStreet, playgroundHouseNumber, playgroundHouseNumberAddition, playgroundPostalCode, playgroundTown, makeUpStreet, makeUpHouseNumber, makeUpHouseNumberAddition, makeUpPostalCode, makeUpTown, amountOfLotusVictims, comments, isApproved, requestId, checkedOrNotProfile, checkedOrNotPlayground, checkedOrNotMakeUp } = req.body;
+    const { assignmentStatus, firstName, lastName, emailAddress, street, houseNumber, houseNumberAddition, postalCode, town, billingEmailAddress, dateTime, playgroundStreet, playgroundHouseNumber, playgroundHouseNumberAddition, playgroundPostalCode, playgroundTown, makeUpStreet, makeUpHouseNumber, makeUpHouseNumberAddition, makeUpPostalCode, makeUpTown, amountOfLotusVictims, comments } = req.body;
+    const assignment = { firstName, lastName, emailAddress, street, houseNumber, houseNumberAddition, postalCode, town, billingEmailAddress, dateTime, playgroundStreet, playgroundHouseNumber, playgroundHouseNumberAddition, playgroundPostalCode, playgroundTown, makeUpStreet, makeUpHouseNumber, makeUpHouseNumberAddition, makeUpPostalCode, makeUpTown, amountOfLotusVictims, comments };
+
     const errors = {};
     const oldValues = {};
     errors.oldValues = oldValues;
@@ -344,11 +348,11 @@ exports.updateAssignment = async (req, res) => {
         typeof errors.amountOfLotusVictimsErr != "undefined" ||
         typeof errors.billingEmailAddressErr != "undefined"
     ) {
-        res.render("assignment", { pageName: "Formulier", session: req.session.user, ...errors, checkedOrNotProfile, checkedOrNotPlayground, checkedOrNotMakeUp, url: req.session.originalUrl, assignmentId });
+        res.render("assignment", { pageName: "Formulier", session: req.session.user, ...errors, url: req.session.originalUrl, assignmentId, assignmentStatus });
     } else {
         (async () => {
-            if (req.session.user.roles === "coordinator") {
-                await Assignment.findOneAndUpdate({ _id: assignmentId }, { ...req.body });
+            if (req.session.user.roles === "coordinator" || assignmentStatus === "In behandeling") {
+                await Assignment.findOneAndUpdate({ _id: assignmentId }, { ...assignment });
                 res.redirect("/assignment");
             } else {
                 const request = await new Request({
@@ -373,13 +377,14 @@ exports.getAssignmentPage = (req, res) => {
 
 exports.getAssignmentUpdatePage = async (req, res) => {
     const assignmentId = req.query.assignmentId;
+    const assignmentStatus = req.query.assignmentStatus;
 
     let assignment = await Assignment.find({ _id: assignmentId });
 
     assignment = assignment[0];
 
     req.session.originalUrl = req.originalUrl;
-    res.render("assignment", { pageName: "Opdracht aanmaken", session: req.session.user, url: req.session.originalUrl, assignmentId: assignmentId, assignment });
+    res.render("assignment", { pageName: "Opdracht aanmaken", session: req.session.user, url: req.session.originalUrl, assignmentId: assignmentId, assignment, assignmentStatus });
 };
 
 exports.getAllAssignments = (req, res) => {
@@ -435,8 +440,16 @@ exports.getAllAssignments = (req, res) => {
                 if (result.emailAddress == req.session.user.emailAddress) {
                     let request = await Request.find({ _id: result.requestId }).exec();
                     let updatedAssignmentRequest = await Request.find({ assignmentId: result._id, userId: req.session.user.userId, type: "updateAssignment", status: "In behandeling" }).exec();
+                    let cancelRequest = await Request.find({ assignmentId: result._id, userId: req.session.user.userId, type: "deleteAssignment", status: "In behandeling" }).exec();
                     result.dateTime = format(new Date(result.dateTime));
-                    if (updatedAssignmentRequest.length > 0) {
+                    if (cancelRequest.length > 0) {
+                        result = {
+                            ...result._doc,
+                            status: request[0].status,
+                            requestStatus: "Aangevraagd",
+                            cancelStatus: "Verwijderverzoek ingediend",
+                        };
+                    } else if (updatedAssignmentRequest.length > 0) {
                         result = {
                             ...result._doc,
                             status: request[0].status,
@@ -448,7 +461,6 @@ exports.getAllAssignments = (req, res) => {
                             status: request[0].status,
                         };
                     }
-
                     resultsFiltered.push(result);
                 }
             }
@@ -507,14 +519,26 @@ exports.getAssignmentDetailPage = (req, res) => {
 };
 
 exports.deleteAssignment = async (req, res) => {
-    if (req.session.user.roles === "coordinator") {
+    // Get session
+    const session = req.session;
+    // Get req body
+    const { status, cancelStatus } = req.body;
+
+    if (session.user.roles === "coordinator") {
         await Assignment.deleteOne({ _id: req.query.id });
         await Request.deleteMany({ assignmentId: req.query.id });
         res.redirect("/assignment");
     }
 
-    if (req.session.user.roles === "client") {
-        await createRequest(req, res, req.query.id, "deleteAssignment");
+    if (session.user.roles === "client") {
+        if(status == "Afgewezen" || status == "In behandeling") {
+            await Assignment.deleteOne({ _id: req.query.id });
+            await Request.deleteMany({ assignmentId: req.query.id });
+        } else if (cancelStatus == "Verwijderverzoek ingediend") {
+            await Request.deleteOne({ requestType: "deleteAssignment", assignmentId: req.query.id, status: "In behandeling" });
+        } else {
+            await createRequest(req, res, req.query.id, "deleteAssignment");
+        }
         res.redirect("/assignment");
     }
 };
@@ -570,3 +594,13 @@ exports.cancelEnrollment = (req, res) => {
         });
     }
 };
+
+exports.deleteMemberFromAssignment = async (req, res) => {
+    const victimId = req.query.victimId
+    const assignmentId = req.query.assignmentId
+
+    await Request.deleteMany({userId: victimId, assignmentId: assignmentId});
+    await Assignment.updateOne({_id: assignmentId}, {$pull: {participatingLotusVictims: {_id: victimId}}})
+
+    res.redirect("/assignment");
+}
