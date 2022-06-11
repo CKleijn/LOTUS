@@ -1,9 +1,11 @@
 const mongoose = require("../../database/dbconnection");
 const { assignmentModel } = require("../models/assignment.model");
+const { userModel } = require("../models/user.model");
 const Request = require("../models/request.model");
 const { createRequest } = require("./request.controller");
 
 const Assignment = assignmentModel;
+const User = userModel
 
 // Functionality for creating an assignment
 exports.createAssignment = (req, res) => {
@@ -570,3 +572,13 @@ exports.cancelEnrollment = (req, res) => {
         });
     }
 };
+
+exports.deleteMemberFromAssignment = async (req, res) => {
+    const victimId = req.query.victimId
+    const assignmentId = req.query.assignmentId
+
+    await Request.deleteMany({userId: victimId, assignmentId: assignmentId});
+    await Assignment.updateOne({_id: assignmentId}, {$pull: {participatingLotusVictims: {_id: victimId}}})
+
+    res.redirect("/assignment");
+}
