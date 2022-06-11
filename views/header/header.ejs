@@ -145,21 +145,26 @@
                 </a>
             </li>
             <!-- End Dashboard Nav -->
+
+            <% if(session.roles == "coordinator" ) { %>
+
+                <li class="nav-item">
+
+                    <% if(pageName === "Gebruikers") { %> 
+                        <a class="nav-link" href="/assignment">
+                    <% } else {  %> 
+                        <a class="nav-link collapsed" href="/user">
+                    <% } %> 
+
+                        <i class="bi bi-people"></i>
+                        <span>Gebruikers</span>
+                    </a>
+                </li>
+
+                <% } %>
+
                 
                 <% if(session.roles == "coordinator" || session.roles == "member") { %>
-
-                    <li class="nav-item">
-
-                        <% if(pageName === "Gebruikers") { %> 
-                            <a class="nav-link" href="/assignment">
-                        <% } else {  %> 
-                            <a class="nav-link collapsed" href="/user">
-                        <% } %> 
-
-                            <i class="bi bi-people"></i>
-                            <span>Gebruikers</span>
-                        </a>
-                    </li>
 
                     <li class="nav-item">
 
