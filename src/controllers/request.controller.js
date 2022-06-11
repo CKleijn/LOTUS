@@ -23,7 +23,7 @@ exports.createRequest = async (req, res, objectId, type) => {
 exports.getAllRequests = async (req, res) => {
     const requests = await Request.find({ status: "In behandeling" });
     const parsedRequests = await parseRequest(requests);
-    return res.render("request_overview", { pageName: "Verzoeken", session: req.session.user, requests: parsedRequests });
+    return res.render("request_overview", { pageName: "Verzoeken", session: req.session, requests: parsedRequests });
 };
 
 async function parseRequest(results) {
