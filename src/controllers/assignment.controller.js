@@ -440,8 +440,16 @@ exports.getAllAssignments = (req, res) => {
                 if (result.emailAddress == req.session.user.emailAddress) {
                     let request = await Request.find({ _id: result.requestId }).exec();
                     let updatedAssignmentRequest = await Request.find({ assignmentId: result._id, userId: req.session.user.userId, type: "updateAssignment", status: "In behandeling" }).exec();
+                    let cancelRequest = await Request.find({ assignmentId: result._id, userId: req.session.user.userId, type: "deleteAssignment", status: "In behandeling" }).exec();
                     result.dateTime = format(new Date(result.dateTime));
-                    if (updatedAssignmentRequest.length > 0) {
+                    if (cancelRequest.length > 0) {
+                        result = {
+                            ...result._doc,
+                            status: request[0].status,
+                            requestStatus: "Aangevraagd",
+                            cancelStatus: "Verwijderverzoek ingediend",
+                        };
+                    } else if (updatedAssignmentRequest.length > 0) {
                         result = {
                             ...result._doc,
                             status: request[0].status,
@@ -453,7 +461,6 @@ exports.getAllAssignments = (req, res) => {
                             status: request[0].status,
                         };
                     }
-
                     resultsFiltered.push(result);
                 }
             }
@@ -512,14 +519,26 @@ exports.getAssignmentDetailPage = (req, res) => {
 };
 
 exports.deleteAssignment = async (req, res) => {
-    if (req.session.user.roles === "coordinator") {
+    // Get session
+    const session = req.session;
+    // Get req body
+    const { status, cancelStatus } = req.body;
+
+    if (session.user.roles === "coordinator") {
         await Assignment.deleteOne({ _id: req.query.id });
         await Request.deleteMany({ assignmentId: req.query.id });
         res.redirect("/assignment");
     }
 
-    if (req.session.user.roles === "client") {
-        await createRequest(req, res, req.query.id, "deleteAssignment");
+    if (session.user.roles === "client") {
+        if(status == "Afgewezen" || status == "In behandeling") {
+            await Assignment.deleteOne({ _id: req.query.id });
+            await Request.deleteMany({ assignmentId: req.query.id });
+        } else if (cancelStatus == "Verwijderverzoek ingediend") {
+            await Request.deleteOne({ requestType: "deleteAssignment", assignmentId: req.query.id, status: "In behandeling" });
+        } else {
+            await createRequest(req, res, req.query.id, "deleteAssignment");
+        }
         res.redirect("/assignment");
     }
 };
