@@ -1,7 +1,6 @@
 const mongoose = require("../../database/dbconnection");
 const Request = require("../models/request.model");
-const User = require("../models/user.model");
-const {assignmentModel} = require("../models/assignment.model");
+const { assignmentModel } = require("../models/assignment.model");
 const Assignment = assignmentModel;
 const { userModel } = require("../models/user.model");
 const User = userModel;
@@ -75,6 +74,39 @@ exports.approveRequest = async (req, res) => {
         res.redirect("/request");
     }
 
+    if (requestType === "updateAssignment") {
+        const { firstName, lastName, emailAddress, street, houseNumber, houseNumberAddition, postalCode, town, billingEmailAddress, dateTime, playgroundStreet, playgroundHouseNumber, playgroundHouseNumberAddition, playgroundPostalCode, playgroundTown, makeUpStreet, makeUpHouseNumber, makeUpHouseNumberAddition, makeUpPostalCode, makeUpTown, amountOfLotusVictims, comments } = req.body;
+
+        const updatedAssignment = {
+            firstName,
+            lastName,
+            emailAddress,
+            street,
+            houseNumber,
+            houseNumberAddition,
+            postalCode,
+            town,
+            billingEmailAddress,
+            dateTime,
+            playgroundStreet,
+            playgroundHouseNumber,
+            playgroundHouseNumberAddition,
+            playgroundPostalCode,
+            playgroundTown,
+            makeUpStreet,
+            makeUpHouseNumber,
+            makeUpHouseNumberAddition,
+            makeUpPostalCode,
+            makeUpTown,
+            amountOfLotusVictims,
+            comments,
+        };
+
+        await Assignment.findOneAndUpdate({ _id: assignmentId }, { $set: { ...updatedAssignment } });
+        await Request.findOneAndUpdate({ _id: requestId }, { $set: { status: "Goedgekeurd" } });
+        res.redirect("/request");
+    }
+
     if (requestType === "deleteAssignment") {
         await Assignment.deleteOne({ _id: assignmentId });
         await Request.deleteMany({ assignmentId: assignmentId });
@@ -97,9 +129,14 @@ exports.approveRequest = async (req, res) => {
 };
 
 exports.declineRequest = async (req, res) => {
-    const { requestType, requestId, assignmentId } = req.body;
+    const { requestType, requestId, assignmentId, userId } = req.body;
 
     if (requestType === "createAssignment") {
+        await Request.findOneAndUpdate({ _id: requestId }, { $set: { status: "Afgewezen" } });
+        res.redirect("/request");
+    }
+
+    if (requestType === "updateAssignment") {
         await Request.findOneAndUpdate({ _id: requestId }, { $set: { status: "Afgewezen" } });
         res.redirect("/request");
     }
@@ -111,11 +148,13 @@ exports.declineRequest = async (req, res) => {
 
     if (requestType === "enrollment") {
         await Request.findOneAndUpdate({ _id: requestId }, { $set: { status: "Afgewezen" } });
+        await Request.deleteOne({ assignmentId: assignmentId, userId: userId, type: "enrollment", status: "Afgewezen" });
         res.redirect("/request");
     }
 
     if (requestType === "cancelEnrollment") {
         await Request.findOneAndUpdate({ _id: requestId }, { $set: { status: "Afgewezen" } });
+        await Request.deleteOne({ assignmentId: assignmentId, userId: userId, type: "cancelEnrollment", status: "Afgewezen" });
         res.redirect("/request");
     }
 };
