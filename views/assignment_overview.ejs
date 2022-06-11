@@ -144,6 +144,9 @@
                                                         <br>
                                                         <h6>Ingeschreven leden</h6>
                                                         <% a.participatingLotusVictims.forEach(victim => { %>
+
+                                                            
+
                                                             <p style="display: inline-block;"><b>Naam:</b> <%= victim.firstName + " " + victim.lastName %>                                                         
                                                                 <form action="/assignment/member/delete?victimId=<%= victim._id %>&assignmentId=<%= a._id %>" method="POST">
                                                                     <button type="submit" class="btn btn-danger">Verwijderen</button>
