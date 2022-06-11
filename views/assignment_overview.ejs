@@ -139,8 +139,6 @@
                                                         <b>Opmerkingen:</b> <%= a.comments %> 
                                                     <% } %> 
 
-                                                    <% console.log(a.participatingLotusVictims.length) %> 
-
                                                     <% if(a.participatingLotusVictims.length !== 0) { %> 
                                                         <br>
                                                         <br>
@@ -447,6 +445,8 @@
                                                 <b>Vind plaats op:</b> <%= a.dateTime %> 
                                                 <br>
                                                 <b>Benodigde LOTUSslachtoffers:</b> <%= a.amountOfLotusVictims %> 
+                                                <br>
+                                                <b>Aantal LOTUSslachtoffers ingeschreven:</b> <%=a.participatingLotusVictims.length + "/" + a.amountOfLotusVictims %> 
                                             
                                                 <% if(a.comments != "" ) { %> 
                                                     <br>

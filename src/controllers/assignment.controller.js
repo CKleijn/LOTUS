@@ -5,7 +5,7 @@ const Request = require("../models/request.model");
 const { createRequest } = require("./request.controller");
 
 const Assignment = assignmentModel;
-const User = userModel
+const User = userModel;
 
 // Functionality for creating an assignment
 exports.createAssignment = (req, res) => {
@@ -389,20 +389,10 @@ exports.getAssignmentUpdatePage = async (req, res) => {
 
 exports.getAllAssignments = (req, res) => {
     function format(inputDate) {
-        let date, month, year;
-
-        date = inputDate.getDate();
-        month = inputDate.getMonth() + 1;
-        year = inputDate.getFullYear();
-
-        date = date.toString().padStart(2, "0");
-
-        month = month.toString().padStart(2, "0");
-
-        return `${date}/${month}/${year}`;
+        return new Date(inputDate).toLocaleString([], { year: "numeric", month: "numeric", day: "numeric", hour: "2-digit", minute: "2-digit" });
     }
 
-    if (req.session.user.roles == "coordinator" || req.session.user.roles == "member") {
+    if (req.session.user.roles == "coordinator") {
         let resultsFiltered = [];
 
         Assignment.find({ isApproved: true }, async function (err, results) {
@@ -432,6 +422,45 @@ exports.getAllAssignments = (req, res) => {
             }
             res.render("assignment_overview", { pageName: "Opdrachten", session: req.session.user, assignments: resultsFiltered });
         });
+    } else if (req.session.user.roles == "member") {
+        let resultsFiltered = [];
+
+        Assignment.find(
+            {
+                isApproved: true,
+                dateTime: { $gte: new Date().toISOString() },
+                $where: function () {
+                    return this.participatingLotusVictims.length !== this.amountOfLotusVictims;
+                },
+            },
+            async (err, results) => {
+                for (let result of results) {
+                    let enrolledRequest = await Request.find({ assignmentId: result._id, userId: req.session.user.userId, type: "enrollment", status: "In behandeling" }).exec();
+                    let enrolledApprovedRequest = await Request.find({ assignmentId: result._id, userId: req.session.user.userId, type: "enrollment", status: "Goedgekeurd" }).exec();
+                    result.dateTime = format(new Date(result.dateTime));
+
+                    if (enrolledRequest.length > 0) {
+                        result = {
+                            ...result._doc,
+                            status: "Ingeschreven",
+                        };
+                        resultsFiltered.push(result);
+                    } else if (enrolledApprovedRequest.length > 0) {
+                        result = {
+                            ...result._doc,
+                            status: "Ingeschreven voltooid",
+                        };
+                    } else {
+                        result = {
+                            ...result._doc,
+                            status: "Niet ingeschreven",
+                        };
+                        resultsFiltered.push(result);
+                    }
+                }
+                res.render("assignment_overview", { pageName: "Opdrachten", session: req.session.user, assignments: resultsFiltered });
+            }
+        );
     } else if (req.session.user.roles == "client") {
         let resultsFiltered = [];
 
@@ -453,7 +482,7 @@ exports.getAllAssignments = (req, res) => {
                         result = {
                             ...result._doc,
                             status: request[0].status,
-                            requestStatus: "Aangevraagd"
+                            requestStatus: "Aangevraagd",
                         };
                     } else {
                         result = {
@@ -596,11 +625,11 @@ exports.cancelEnrollment = (req, res) => {
 };
 
 exports.deleteMemberFromAssignment = async (req, res) => {
-    const victimId = req.query.victimId
-    const assignmentId = req.query.assignmentId
+    const victimId = req.query.victimId;
+    const assignmentId = req.query.assignmentId;
 
-    await Request.deleteMany({userId: victimId, assignmentId: assignmentId});
-    await Assignment.updateOne({_id: assignmentId}, {$pull: {participatingLotusVictims: {_id: victimId}}})
+    await Request.deleteMany({ userId: victimId, assignmentId: assignmentId });
+    await Assignment.updateOne({ _id: assignmentId }, { $pull: { participatingLotusVictims: { _id: victimId } } });
 
     res.redirect("/assignment");
-}
+};
