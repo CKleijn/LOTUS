@@ -45,35 +45,103 @@
 
         <nav class="header-nav ms-auto">
             <ul class="d-flex align-items-center">
-                <% if(session.roles === "coordinator") { %> 
+                <% if(session.user.roles === "coordinator") { %> 
                 <li class="nav-item dropdown">
                     <a class="nav-link nav-icon" href="#" data-bs-toggle="dropdown">
                         <i class="bi bi-bell"></i>
-                        <span class="badge bg-primary badge-number">?</span>
+                        <span class="badge bg-primary badge-number"><%= session.requests.length %></span>
                     </a>
                     <!-- End Notification Icon -->
 
                     <ul class="dropdown-menu dropdown-menu-end dropdown-menu-arrow notifications">
                         <li class="dropdown-header">
-                            Er staan ? verzoeken open
-                            <a href="/request"><span class="badge rounded-pill bg-primary p-2 ms-2">Bekijk alle</span></a>
+                            Er zijn <%= session.requests.length %>  onbehandelde verzoeken
+                            <a href="/request"><span class="badge rounded-pill bg-primary p-2 ms-2">Bekijk</span></a>
                         </li>
                         <li>
                             <hr class="dropdown-divider" />
                         </li>
 
-                        <li class="notification-item">
-                            <i class="bi bi-exclamation-circle text-warning"></i>
-                            <div>
-                                <h4>Inschrijving opdracht</h4>
-                                <p>Gerard heeft zich ingeschreven voor een opdracht</p>
-                                <p>30 minuten geleden</p>
-                            </div>
-                        </li>
+                        
+                        <% for( let i = session.requests.length - 1; i > session.requests.length - 4; i-- ) { %>
 
-                        <li>
-                            <hr class="dropdown-divider" />
-                        </li>
+                            <% let requestTitle = "";
+                            let requestMessage = ""; %> 
+
+                            <% switch(session.requests[i].type) { 
+
+                                case "createAssignment":   
+                                    requestTitle = "Opdracht aanmaken"; 
+                                    requestMessage = session.requests[i].user.firstName + " wilt een opdracht aanmaken";
+ 
+                                    break; 
+                                case "updateAssignment": 
+                                    requestTitle = "Opdracht Bewerken"; 
+                                    requestMessage = session.requests[i].user.firstName + " wilt een opdracht bewerken";
+
+                                    break; 
+                                case "deleteAssignment": 
+                                    requestTitle = "Opdracht verwijderen";
+                                    requestMessage = session.requests[i].user.firstName + " wilt een opdracht verwijderen";
+
+                                    break; 
+                                case "cancelEnrollment": 
+                                    requestTitle = "Uitschrijving"; 
+                                    requestMessage = session.requests[i].user.firstName + " wilt zich uitschrijven voor een opdracht";
+
+                                    break; 
+                                case "enrollment": 
+                                    requestTitle = "Inschrijving"; 
+                                    requestMessage = session.requests[i].user.firstName + " wilt zich inschrijven voor een opdracht";
+                                    break;
+          
+                            } %>
+
+                            <a href="/request">
+                            <li class="notification-item">
+                                
+                                    <% if(session.requests[i].type === "enrollment" || session.requests[i].type === "createAssignment") { %>
+                                        <i class="bi bi-info-circle text-primary"></i>
+                                    <% } else if(session.requests[i].type === "cancelEnrollment" || session.requests[i].type === "updateAssignment" ) { %>
+                                        <i class="bi bi-exclamation-circle text-warning"></i>
+                                    <% } else if(session.requests[i].type === "deleteAssignment") { %>
+                                        <i class="bi bi-x-circle text-danger"></i>
+                                    <% } %>
+
+
+                                    <div>
+                                        <h4 style="color: #212529"><%= requestTitle %> </h4>
+                                        <p><%= requestMessage %></p>
+
+                                        <% const requestAge = msToTime(new Date().getTime() - new Date(session.requests[i].requestDate).getTime());
+                                    
+                                        function msToTime(duration) {
+                                            const seconds = Math.floor((duration / 1000) % 60);
+                                            const minutes = Math.floor((duration / (1000 * 60)) % 60);
+                                            const hours = Math.floor((duration / (1000 * 60 * 60)) % 24);
+    
+                                            if(minutes === 0 || minutes === 1) {
+                                                return "1 minuut geleden";
+                                            } else if (hours == 0) {
+                                                return minutes + " minuten geleden"
+                                            } else if(hours > 24) {
+                                                return "Langer dan een dag geleden";
+                                            } else {
+                                                return hours + " uur geleden"
+                                            }
+                                        } %> 
+
+                                        <p><%= requestAge %></p>
+                                    </div>
+                            
+                            </li>
+                        </a>
+    
+                            <li>
+                                <hr class="dropdown-divider" />
+                            </li>
+                        <% } %>
+
                         <li class="dropdown-footer">
                             <a href="/request">Bekijk alle verzoeken</a>
                         </li>
@@ -87,15 +155,15 @@
                 <li class="nav-item dropdown pe-3">
                     <a class="nav-link nav-profile d-flex align-items-center pe-0" href="#" data-bs-toggle="dropdown">
                         <img src="/assets/img/avatar.jpg" alt="Profile" class="rounded-circle" />
-                        <span class="d-none d-md-block dropdown-toggle ps-2"><%= session.firstName.charAt(0).toUpperCase() + ". " + session.lastName %></span>
+                        <span class="d-none d-md-block dropdown-toggle ps-2"><%= session.user.firstName.charAt(0).toUpperCase() + ". " + session.user.lastName %></span>
                     </a>
                     <!-- End Profile Iamge Icon -->
 
                     <ul class="dropdown-menu dropdown-menu-end dropdown-menu-arrow profile">
                         <li class="dropdown-header">
-                            <% let role = ""; switch(session.roles) { case "coordinator": role = "Coördinator"; break; case "client" : role = "Opdrachtgever"; break; case "member": role = "LOTUSslachtoffer"; break; } %>
+                            <% let role = ""; switch(session.user.roles) { case "coordinator": role = "Coördinator"; break; case "client" : role = "Opdrachtgever"; break; case "member": role = "LOTUSslachtoffer"; break; } %>
 
-                            <h6><%= session.firstName + " " + session.lastName %></h6>
+                            <h6><%= session.user.firstName + " " + session.user.lastName %></h6>
                             <span><%= role %></span>
                         </li>
                         <li>
@@ -146,7 +214,7 @@
             </li>
             <!-- End Dashboard Nav -->
 
-            <% if(session.roles == "coordinator" ) { %>
+            <% if(session.user.roles == "coordinator" ) { %>
 
                 <li class="nav-item">
 
@@ -164,7 +232,7 @@
                 <% } %>
 
                 
-                <% if(session.roles == "coordinator" || session.roles == "member") { %>
+                <% if(session.user.roles == "coordinator" || session.user.roles == "member") { %>
 
                     <li class="nav-item">
 
@@ -179,7 +247,7 @@
                         </a>
                     </li>
     
-                <% } %> <% if(session.roles == "client") { %>
+                <% } %> <% if(session.user.roles == "client") { %>
 
                     <li class="nav-item">
                         <% if(pageName === "Mijn opdrachten") { %> 
@@ -192,7 +260,7 @@
                         </a>
                     </li>
                 
-                <% } %> <% if(session.roles == "member") { %>
+                <% } %> <% if(session.user.roles == "member") { %>
 
                     <li class="nav-item">
                         <a class="nav-link collapsed" href="/member/assignment">
@@ -201,7 +269,7 @@
                         </a>
                     </li>
 
-                <% } %> <% if(session.roles == "coordinator" || session.roles == "client") { %>
+                <% } %> <% if(session.user.roles == "coordinator" || session.user.roles == "client") { %>
 
                     <li class="nav-item">
 
@@ -218,7 +286,7 @@
                 
                 <% } %>
 
-                 <% if(session.roles == "coordinator") { %>
+                 <% if(session.user.roles == "coordinator") { %>
 
                     <li class="nav-item">
 

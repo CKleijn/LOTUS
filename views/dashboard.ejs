@@ -16,8 +16,8 @@
             <div class="col-lg-6">
                 <div class="card">
                     <div class="card-body">
-                        <h5 class="card-title">Welkom <%= session.firstName %></h5>
-                        <% let role = ""; switch(session.roles) { case "coordinator": role = "Coördinator"; break; case "client" : role = "Opdrachtgever"; break; case "member": role = "LOTUSslachtoffer"; break; } %>
+                        <h5 class="card-title">Welkom <%= session.user.firstName %></h5>
+                        <% let role = ""; switch(session.user.roles) { case "coordinator": role = "Coördinator"; break; case "client" : role = "Opdrachtgever"; break; case "member": role = "LOTUSslachtoffer"; break; } %>
                         <p>Wat is het toch een mooie dag om een <%= role %> te zijn!</p>
                     </div>
                 </div>
@@ -30,9 +30,9 @@
                     <a href="/assignment">
                       <div class="card-body">
 
-                        <% if (session.roles == "coordinator" || session.roles == "member") { %>
+                        <% if (session.user.roles == "coordinator" || session.user.roles == "member") { %>
                             <h5 class="card-title">Opdrachten</h5>
-                        <% } else if (session.roles == "client") { %>
+                        <% } else if (session.user.roles == "client") { %>
                             <h5 class="card-title">Mijn opdrachten</h5>
                         <% } %>
 
@@ -50,7 +50,7 @@
       
                     </div>
                 </div>
-                <% if (session.roles == "coordinator") { %>
+                <% if (session.user.roles == "coordinator") { %>
                     <div class="col-lg-3">
                         <div class="card info-card sales-card">
         

@@ -186,7 +186,7 @@ exports.createAssignment = (req, res) => {
             }
 
             // Show the errors on the assignment page
-            res.render("assignment", { pageName: "Opdracht aanmaken", session: req.session.user, ...errors, checkedOrNotProfile, checkedOrNotPlayground, checkedOrNotMakeUp, url: req.session.originalUrl });
+            res.render("assignment", { pageName: "Opdracht aanmaken", session: req.session, ...errors, checkedOrNotProfile, checkedOrNotPlayground, checkedOrNotMakeUp, url: req.session.originalUrl });
         } else {
             (async () => {
                 if (session.user.roles === "client") {
@@ -348,7 +348,7 @@ exports.updateAssignment = async (req, res) => {
         typeof errors.amountOfLotusVictimsErr != "undefined" ||
         typeof errors.billingEmailAddressErr != "undefined"
     ) {
-        res.render("assignment", { pageName: "Formulier", session: req.session.user, ...errors, url: req.session.originalUrl, assignmentId, assignmentStatus });
+        res.render("assignment", { pageName: "Formulier", session: req.session, ...errors, url: req.session.originalUrl, assignmentId, assignmentStatus });
     } else {
         (async () => {
             if (req.session.user.roles === "coordinator" || assignmentStatus === "In behandeling") {
@@ -372,7 +372,7 @@ exports.updateAssignment = async (req, res) => {
 
 exports.getAssignmentPage = (req, res) => {
     req.session.originalUrl = req.originalUrl;
-    res.render("assignment", { pageName: "Formulier", session: req.session.user, url: req.session.originalUrl, assignmentId: req.query.id });
+    res.render("assignment", { pageName: "Formulier", session: req.session, url: req.session.originalUrl, assignmentId: req.query.id });
 };
 
 exports.getAssignmentUpdatePage = async (req, res) => {
@@ -384,7 +384,7 @@ exports.getAssignmentUpdatePage = async (req, res) => {
     assignment = assignment[0];
 
     req.session.originalUrl = req.originalUrl;
-    res.render("assignment", { pageName: "Opdracht aanmaken", session: req.session.user, url: req.session.originalUrl, assignmentId: assignmentId, assignment, assignmentStatus });
+    res.render("assignment", { pageName: "Opdracht aanmaken", session: req.session, url: req.session.originalUrl, assignmentId: assignmentId, assignment, assignmentStatus });
 };
 
 exports.getAllAssignments = (req, res) => {
@@ -420,7 +420,7 @@ exports.getAllAssignments = (req, res) => {
                     resultsFiltered.push(result);
                 }
             }
-            res.render("assignment_overview", { pageName: "Opdrachten", session: req.session.user, assignments: resultsFiltered });
+            res.render("assignment_overview", { pageName: "Opdrachten", session: req.session, assignments: resultsFiltered });
         });
     } else if (req.session.user.roles == "member") {
         let resultsFiltered = [];
@@ -458,7 +458,7 @@ exports.getAllAssignments = (req, res) => {
                         resultsFiltered.push(result);
                     }
                 }
-                res.render("assignment_overview", { pageName: "Opdrachten", session: req.session.user, assignments: resultsFiltered });
+                res.render("assignment_overview", { pageName: "Opdrachten", session: req.session, assignments: resultsFiltered });
             }
         );
     } else if (req.session.user.roles == "client") {
@@ -493,7 +493,7 @@ exports.getAllAssignments = (req, res) => {
                     resultsFiltered.push(result);
                 }
             }
-            res.render("assignment_overview", { pageName: "Mijn opdrachten", session: req.session.user, assignments: resultsFiltered });
+            res.render("assignment_overview", { pageName: "Mijn opdrachten", session: req.session, assignments: resultsFiltered });
         });
     }
 };
@@ -536,14 +536,14 @@ exports.getMemberAssignments = (req, res) => {
                     resultsFiltered.push(result);
                 }
             }
-            res.render("enrolled_assignment_overview", { pageName: "Mijn opdrachten", session: req.session.user, assignments: resultsFiltered });
+            res.render("enrolled_assignment_overview", { pageName: "Mijn opdrachten", session: req.session, assignments: resultsFiltered });
         });
     }
 };
 
 exports.getAssignmentDetailPage = (req, res) => {
     Assignment.find({ _id: req.query.id }, function (err, results) {
-        res.render("assignment_detail", { pageName: "Detailpagina", session: req.session.user, assignments: results });
+        res.render("assignment_detail", { pageName: "Detailpagina", session: req.session, assignments: results });
     });
 };
 
@@ -560,7 +560,7 @@ exports.deleteAssignment = async (req, res) => {
     }
 
     if (session.user.roles === "client") {
-        if(status == "Afgewezen" || status == "In behandeling") {
+        if (status == "Afgewezen" || status == "In behandeling") {
             await Assignment.deleteOne({ _id: req.query.id });
             await Request.deleteMany({ assignmentId: req.query.id });
         } else if (cancelStatus == "Verwijderverzoek ingediend") {
