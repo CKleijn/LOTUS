@@ -204,7 +204,9 @@ exports.createAssignment = (req, res) => {
 exports.updateAssignment = async (req, res) => {
     const assignmentId = req.body.assignmentId;
 
-    const { firstName, lastName, emailAddress, street, houseNumber, houseNumberAddition, postalCode, town, billingEmailAddress, dateTime, playgroundStreet, playgroundHouseNumber, playgroundHouseNumberAddition, playgroundPostalCode, playgroundTown, makeUpStreet, makeUpHouseNumber, makeUpHouseNumberAddition, makeUpPostalCode, makeUpTown, amountOfLotusVictims, comments, isApproved, requestId, checkedOrNotProfile, checkedOrNotPlayground, checkedOrNotMakeUp } = req.body;
+    const { assignmentStatus, firstName, lastName, emailAddress, street, houseNumber, houseNumberAddition, postalCode, town, billingEmailAddress, dateTime, playgroundStreet, playgroundHouseNumber, playgroundHouseNumberAddition, playgroundPostalCode, playgroundTown, makeUpStreet, makeUpHouseNumber, makeUpHouseNumberAddition, makeUpPostalCode, makeUpTown, amountOfLotusVictims, comments } = req.body;
+    const assignment = { firstName, lastName, emailAddress, street, houseNumber, houseNumberAddition, postalCode, town, billingEmailAddress, dateTime, playgroundStreet, playgroundHouseNumber, playgroundHouseNumberAddition, playgroundPostalCode, playgroundTown, makeUpStreet, makeUpHouseNumber, makeUpHouseNumberAddition, makeUpPostalCode, makeUpTown, amountOfLotusVictims, comments };
+
     const errors = {};
     const oldValues = {};
     errors.oldValues = oldValues;
@@ -344,11 +346,11 @@ exports.updateAssignment = async (req, res) => {
         typeof errors.amountOfLotusVictimsErr != "undefined" ||
         typeof errors.billingEmailAddressErr != "undefined"
     ) {
-        res.render("assignment", { pageName: "Formulier", session: req.session.user, ...errors, checkedOrNotProfile, checkedOrNotPlayground, checkedOrNotMakeUp, url: req.session.originalUrl, assignmentId });
+        res.render("assignment", { pageName: "Formulier", session: req.session.user, ...errors, url: req.session.originalUrl, assignmentId, assignmentStatus });
     } else {
         (async () => {
-            if (req.session.user.roles === "coordinator") {
-                await Assignment.findOneAndUpdate({ _id: assignmentId }, { ...req.body });
+            if (req.session.user.roles === "coordinator" || assignmentStatus === "In behandeling") {
+                await Assignment.findOneAndUpdate({ _id: assignmentId }, { ...assignment });
                 res.redirect("/assignment");
             } else {
                 const request = await new Request({
@@ -373,13 +375,14 @@ exports.getAssignmentPage = (req, res) => {
 
 exports.getAssignmentUpdatePage = async (req, res) => {
     const assignmentId = req.query.assignmentId;
+    const assignmentStatus = req.query.assignmentStatus;
 
     let assignment = await Assignment.find({ _id: assignmentId });
 
     assignment = assignment[0];
 
     req.session.originalUrl = req.originalUrl;
-    res.render("assignment", { pageName: "Opdracht aanmaken", session: req.session.user, url: req.session.originalUrl, assignmentId: assignmentId, assignment });
+    res.render("assignment", { pageName: "Opdracht aanmaken", session: req.session.user, url: req.session.originalUrl, assignmentId: assignmentId, assignment, assignmentStatus });
 };
 
 exports.getAllAssignments = (req, res) => {

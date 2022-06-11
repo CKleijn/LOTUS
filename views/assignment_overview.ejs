@@ -278,10 +278,14 @@
                                         </div>
                                         <div class="modal-footer">
                                           <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuleren</button>
+                                            <% if(a.status != "Afgewezen") { %> 
                                             <form action="/assignment/update" method="GET">
                                                 <input type="hidden" name="assignmentId" value="<%= a._id %>">
+                                                <input type="hidden" name="assignmentStatus" value="<%= a.status %>">
                                                 <button type="submit" class="btn btn-primary">Bewerken</button>
                                             </form>
+                                            <% } %> 
+
 
                                             <form action="/assignment/delete?id=<%= a._id %>" method="POST">
                                                 <button type="submit" class="btn btn-danger">Verwijderen</button>
