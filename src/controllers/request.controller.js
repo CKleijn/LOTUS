@@ -138,11 +138,13 @@ exports.declineRequest = async (req, res) => {
 
     if (requestType === "updateAssignment") {
         await Request.findOneAndUpdate({ _id: requestId }, { $set: { status: "Afgewezen" } });
+        await Request.deleteOne({ assignmentId: assignmentId, userId: userId, type: "updateAssignment", status: "Afgewezen" });
         res.redirect("/request");
     }
 
     if (requestType === "deleteAssignment") {
         await Request.findOneAndUpdate({ _id: requestId }, { $set: { status: "Afgewezen" } });
+        await Request.deleteOne({ assignmentId: assignmentId, userId: userId, type: "deleteAssignment", status: "Afgewezen" });
         res.redirect("/request");
     }
 

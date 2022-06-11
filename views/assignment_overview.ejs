@@ -164,7 +164,7 @@
                                     <a href="#" data-bs-toggle="modal" data-bs-target="#assignment<%= assignment._id %>">
                                         <div class="card">
                                             <div class="card-body assignment_card">
-                                            <h5 class="card-title"><%= assignment.amountOfLotusVictims + " LOTUSslachtoffers nodig in " + assignment.playgroundTown %></h5>
+                                            <h5 class="card-title"><%= assignment.amountOfLotusVictims + " LOTUSslachtoffers nodig in " + assignment.playgroundTown %> <% if(assignment.requestStatus == "Aangevraagd") { %><i class="bi bi-hourglass-split" style="float: right; font-size: 30px; color: #435df1;"></i><% } %></h5>
                                                 <%= "Opdracht in " + assignment.playgroundHouseNumber + assignment.playgroundHouseNumberAddition + " " + assignment.playgroundStreet + " " + assignment.playgroundTown + ", " + assignment.playgroundPostalCode %><br> 
                                                 <% if (assignment.status == "In behandeling") { %>
                                                     <br><i class="bi bi-circle-fill" style="color: orange; font-size: 12px;"></i> <%= assignment.status %>
@@ -296,8 +296,8 @@
                 <% } else if (session.roles == "member") { %>
                 <div>
                     <div class="row">
+                    <% if(assignments.length > 0) { %>
                         <% assignments.forEach(assignment => { %>
-                            <% if(assignment.status != "Ingeschreven voltooid") { %>
                             <div class="col-lg-6">
                                 <a href="#" data-bs-toggle="modal" data-bs-target="#assignment<%= assignment._id %>">
                                     <div class="card">
@@ -428,8 +428,17 @@
                                 </div>
                                 </div>
                             </div>
-                            <% }; %>
                         <% }); %>
+                        <% } else { %> 
+                            <div class="col-lg-6">
+                                <div class="card">
+                                    <div class="card-body">
+                                        <h5 class="card-title">Er zijn momenteel geen openstaande opdrachten</h5>
+                                        <p class="card-text">Hou de applicatie in de gaten voor nieuwe opdrachten!</p>
+                                    </div>
+                                </div>
+                            </div>
+                        <% } %> 
                     </div>
                 </div>
                 <% } %>

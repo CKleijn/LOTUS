@@ -411,6 +411,7 @@ exports.getAllAssignments = (req, res) => {
                         ...result._doc,
                         status: "Ingeschreven",
                     };
+                    resultsFiltered.push(result);
                 } else if (enrolledApprovedRequest.length > 0) {
                     result = {
                         ...result._doc,
@@ -421,9 +422,8 @@ exports.getAllAssignments = (req, res) => {
                         ...result._doc,
                         status: "Niet ingeschreven",
                     };
+                    resultsFiltered.push(result);
                 }
-
-                resultsFiltered.push(result);
             }
             res.render("assignment_overview", { pageName: "Opdrachten", session: req.session.user, assignments: resultsFiltered });
         });
@@ -434,11 +434,20 @@ exports.getAllAssignments = (req, res) => {
             for (let result of results) {
                 if (result.emailAddress == req.session.user.emailAddress) {
                     let request = await Request.find({ _id: result.requestId }).exec();
+                    let updatedAssignmentRequest = await Request.find({ assignmentId: result._id, userId: req.session.user.userId, type: "updateAssignment", status: "In behandeling" }).exec();
                     result.dateTime = format(new Date(result.dateTime));
-                    result = {
-                        ...result._doc,
-                        status: request[0].status,
-                    };
+                    if (updatedAssignmentRequest.length > 0) {
+                        result = {
+                            ...result._doc,
+                            status: request[0].status,
+                            requestStatus: "Aangevraagd"
+                        };
+                    } else {
+                        result = {
+                            ...result._doc,
+                            status: request[0].status,
+                        };
+                    }
 
                     resultsFiltered.push(result);
                 }
