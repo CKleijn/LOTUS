@@ -114,10 +114,8 @@ exports.approveRequest = async (req, res) => {
     }
 
     if (requestType === "enrollment") {
-        let user = await User.find({_id: userId});
+        let user = await User.find({ _id: userId });
         user = user[0];
-
-        console.log(user);
 
         await Assignment.findOneAndUpdate({ _id: assignmentId }, { $push: { participatingLotusVictims: user } });
         await Request.findOneAndUpdate({ _id: requestId }, { $set: { status: "Goedgekeurd" } });
