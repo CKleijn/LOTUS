@@ -563,7 +563,7 @@ exports.deleteAssignment = async (req, res) => {
             await Assignment.deleteOne({ _id: req.query.id });
             await Request.deleteMany({ assignmentId: req.query.id });
         } else if (cancelStatus == "Verwijderverzoek ingediend") {
-            await Request.deleteOne({ requestType: "deleteAssignment", assignmentId: req.query.id, status: "In behandeling" });
+            await Request.deleteMany({ requestType: "deleteAssignment", assignmentId: req.query.id, status: "In behandeling" });
         } else {
             await createRequest(req, res, req.query.id, "deleteAssignment");
         }
