@@ -433,8 +433,7 @@ exports.getAllAssignments = (req, res) => {
                     return this.participatingLotusVictims.length !== this.amountOfLotusVictims;
                 },
             },
-            async (err, results) => {
-                console.log(results);
+            async function (err, results) {
                 for await (let result of results) {
                     let enrolledRequest = await Request.find({ assignmentId: result._id, userId: req.session.user.userId, type: "enrollment", status: "In behandeling" }).exec();
                     let enrolledApprovedRequest = await Request.find({ assignmentId: result._id, userId: req.session.user.userId, type: "enrollment", status: "Goedgekeurd" }).exec();
