@@ -482,6 +482,7 @@ exports.getAllAssignments = (req, res) => {
                             ...result._doc,
                             status: request[0].status,
                             requestStatus: "Aangevraagd",
+                            cancelStatus: "Updateverzoek ingediend",
                         };
                     } else {
                         result = {
@@ -564,6 +565,8 @@ exports.deleteAssignment = async (req, res) => {
             await Request.deleteMany({ assignmentId: req.query.id });
         } else if (cancelStatus == "Verwijderverzoek ingediend") {
             await Request.deleteMany({ requestType: "deleteAssignment", assignmentId: req.query.id, status: "In behandeling" });
+        } else if (cancelStatus == "Updateverzoek ingediend") {
+            await Request.deleteMany({ requestType: "updateAssignment", assignmentId: req.query.id, status: "In behandeling" });
         } else {
             await createRequest(req, res, req.query.id, "deleteAssignment");
         }
