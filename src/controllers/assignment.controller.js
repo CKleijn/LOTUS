@@ -429,11 +429,11 @@ exports.getAllAssignments = (req, res) => {
             {
                 isApproved: true,
                 dateTime: { $gte: new Date().toISOString() },
-                $where: function () {
-                    return this.participatingLotusVictims.length !== this.amountOfLotusVictims;
-                },
+                // $where: function () {
+                //     return this.participatingLotusVictims.length !== this.amountOfLotusVictims;
+                // },
             },
-            async function (err, results) {
+            async (err, results) => {
                 for await (let result of results) {
                     let enrolledRequest = await Request.find({ assignmentId: result._id, userId: req.session.user.userId, type: "enrollment", status: "In behandeling" }).exec();
                     let enrolledApprovedRequest = await Request.find({ assignmentId: result._id, userId: req.session.user.userId, type: "enrollment", status: "Goedgekeurd" }).exec();
