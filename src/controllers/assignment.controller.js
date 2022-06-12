@@ -448,7 +448,6 @@ exports.getAllAssignments = (req, res) => {
                                 ...result._doc,
                                 status: "Ingeschreven voltooid",
                             };
-                            resultsFiltered.push(result);
                         } else {
                             result = {
                                 ...result._doc,
