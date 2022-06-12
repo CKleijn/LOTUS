@@ -172,7 +172,7 @@
         
                                     </div>
                                     <div class="modal-footer">
-                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuleren</button>
+                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Sluiten</button>
                                         <% if(assignment.status == "Ingeschreven voltooid" && assignment.cancelStatus != "Uitschrijfverzoek ingediend") { %>
                                             <form action="/assignment/cancel" method="POST">
                                                 <input type="hidden" name="status" value="<%= assignment.status %>">

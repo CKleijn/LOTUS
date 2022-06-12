@@ -560,7 +560,7 @@
                                 <%=a.participatingLotusVictims.length + "/" + a.amountOfLotusVictims %> <% } %>
                             </div>
                             <div class="modal-footer">
-                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuleren</button>
+                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Sluiten</button>
                                 <form action="/request/decline" method="POST">
                                     <input type="hidden" name="userId" value="<%= request.userId %>" />
                                     <input type="hidden" name="requestType" value="<%= request.type %>" />

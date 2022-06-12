@@ -207,7 +207,7 @@
                                                     <% } %> 
                                         </div>
                                         <div class="modal-footer">
-                                          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuleren</button>
+                                          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Sluiten</button>
                                             <form action="/assignment/update" method="GET">
                                                 <input type="hidden" name="assignmentId" value="<%= a._id %>">
                                                 <button type="submit" class="btn btn-primary">Bewerken</button>
@@ -245,7 +245,7 @@
                                     <div class="card">
                                         <a href="#" data-bs-toggle="modal" data-bs-target="#assignment<%= assignment._id %>">
                                         <div class="card-body assignment_card">
-                                            <h5 class="card-title"><%= assignment.amountOfLotusVictims + " LOTUSslachtoffers nodig in " + assignment.playgroundTown %> <% if(assignment.requestStatus == "Aangevraagd") { %><i class="bi bi-hourglass-split" style="float: right; font-size: 30px; color: #435df1;"></i><% } %></h5>
+                                            <h5 class="card-title"><%= assignment.amountOfLotusVictims + " LOTUSslachtoffers nodig in " + assignment.playgroundTown %> <% if(assignment.requestStatus == "Aangevraagd" || assignment.status == "In behandeling") { %><i class="bi bi-hourglass-split" style="float: right; font-size: 30px; color: #435df1;"></i><% } %></h5>
                                             <h6>Opdrachtgegevens</h6>
                                             <b>Opdrachtgever:</b> <%= assignment.firstName + " " + assignment.lastName %>
                                             <br>
@@ -290,11 +290,16 @@
                                                     </div>
 
                                                     <div class="rightBtnBlock">
-                                                        <% if(assignment.requestStatus == "Aangevraagd") { %>
+                                                        <% if(assignment.requestStatus == "Aangevraagd" || assignment.status == "In behandeling") { %>
                                                             <form action="/assignment/delete?id=<%= assignment._id %>" method="POST">
                                                                 <input type="hidden" name="status" value="<%= assignment.status %>">
                                                                 <input type="hidden" name="cancelStatus" value="<%= assignment.cancelStatus %>">
-                                                                <button type="submit" class="btn btn-danger">Verwijdering annuleren</button>
+                                                                <button type="submit" class="btn btn-danger">Aanvraag annuleren</button>
+                                                            </form>
+                                                        <% } else if(assignment.status == "Goedgekeurd" ) { %> 
+                                                            <form action="/assignment/delete?id=<%= assignment._id %>" method="POST">
+                                                                <input type="hidden" name="status" value="<%= assignment.status %>">
+                                                                <button type="submit" class="btn btn-danger">Verwijdering aanvragen</button>
                                                             </form>
                                                         <% } else {%> 
                                                             <form action="/assignment/delete?id=<%= assignment._id %>" method="POST">
@@ -410,7 +415,7 @@
                                                     <% } %> 
                                         </div>
                                         <div class="modal-footer">
-                                          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuleren</button>
+                                          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Sluiten</button>
                                             <% if(a.status != "Afgewezen" && assignment.requestStatus != "Aangevraagd") { %> 
                                             <form action="/assignment/update" method="GET">
                                                 <input type="hidden" name="assignmentId" value="<%= a._id %>">
@@ -418,11 +423,16 @@
                                                 <button type="submit" class="btn btn-primary">Bewerken</button>
                                             </form>
                                             <% } %> 
-                                            <% if(a.requestStatus == "Aangevraagd") { %>
+                                            <% if(a.requestStatus == "Aangevraagd" || assignment.status == "In behandeling") { %>
                                                 <form action="/assignment/delete?id=<%= a._id %>" method="POST">
                                                     <input type="hidden" name="status" value="<%= a.status %>">
                                                     <input type="hidden" name="cancelStatus" value="<%= a.cancelStatus %>">
-                                                    <button type="submit" class="btn btn-danger">Verwijdering annuleren</button>
+                                                    <button type="submit" class="btn btn-danger">Aanvraag annuleren</button>
+                                                </form>
+                                            <% } else if(assignment.status == "Goedgekeurd") { %> 
+                                                <form action="/assignment/delete?id=<%= assignment._id %>" method="POST">
+                                                    <input type="hidden" name="status" value="<%= assignment.status %>">
+                                                    <button type="submit" class="btn btn-danger">Verwijdering aanvragen</button>
                                                 </form>
                                             <% } else {%> 
                                                 <form action="/assignment/delete?id=<%= a._id %>" method="POST">
@@ -607,7 +617,7 @@
         
                                     </div>
                                     <div class="modal-footer">
-                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuleren</button>
+                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Sluiten</button>
                                         <% if(assignment.status == "Ingeschreven") { %>
                                         <form action="/assignment/cancel" method="POST">
                                             <input type="hidden" name="status" value="<%= assignment.status %>">
