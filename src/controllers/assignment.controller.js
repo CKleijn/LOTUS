@@ -429,9 +429,6 @@ exports.getAllAssignments = (req, res) => {
             {
                 isApproved: true,
                 dateTime: { $gte: new Date().toISOString() },
-                // $where: function () {
-                //     return this.participatingLotusVictims.length !== this.amountOfLotusVictims;
-                // },
             },
             async (err, results) => {
                 for await (let result of results) {
@@ -439,23 +436,26 @@ exports.getAllAssignments = (req, res) => {
                     let enrolledApprovedRequest = await Request.find({ assignmentId: result._id, userId: req.session.user.userId, type: "enrollment", status: "Goedgekeurd" }).exec();
                     result.dateTime = format(new Date(result.dateTime));
 
-                    if (enrolledRequest.length > 0) {
-                        result = {
-                            ...result._doc,
-                            status: "Ingeschreven",
-                        };
-                        resultsFiltered.push(result);
-                    } else if (enrolledApprovedRequest.length > 0) {
-                        result = {
-                            ...result._doc,
-                            status: "Ingeschreven voltooid",
-                        };
-                    } else {
-                        result = {
-                            ...result._doc,
-                            status: "Niet ingeschreven",
-                        };
-                        resultsFiltered.push(result);
+                    if (result.participatingLotusVictims.length !== result.amountOfLotusVictims) {
+                        if (enrolledRequest.length > 0) {
+                            result = {
+                                ...result._doc,
+                                status: "Ingeschreven",
+                            };
+                            resultsFiltered.push(result);
+                        } else if (enrolledApprovedRequest.length > 0) {
+                            result = {
+                                ...result._doc,
+                                status: "Ingeschreven voltooid",
+                            };
+                            resultsFiltered.push(result);
+                        } else {
+                            result = {
+                                ...result._doc,
+                                status: "Niet ingeschreven",
+                            };
+                            resultsFiltered.push(result);
+                        }
                     }
                 }
                 res.render("assignment_overview", { pageName: "Opdrachten", session: req.session, assignments: resultsFiltered });
