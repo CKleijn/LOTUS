@@ -158,11 +158,11 @@ exports.createMember = (req, res) => {
 
                     res.redirect("/user");
                 } else {
-                    res.render("user_overview", { pageName: "Gebruikers", session: req.session.user, emailAddressErr: "Dit e-mailadres is al in gebruik!", allMembers, allClients, allInvitedMembers });
+                    res.render("user_overview", { pageName: "Gebruikers", session: req.session, emailAddressErr: "Dit e-mailadres is al in gebruik!", allMembers, allClients, allInvitedMembers });
                 }
             })();
         } else {
-            res.render("user_overview", { pageName: "Gebruikers", session: req.session.user, emailAddressErr: "Het ingevulde e-mailadres is ongeldig!", allMembers, allClients, allInvitedMembers });
+            res.render("user_overview", { pageName: "Gebruikers", session: req.session, emailAddressErr: "Het ingevulde e-mailadres is ongeldig!", allMembers, allClients, allInvitedMembers });
         }
     })();
 };
@@ -184,7 +184,7 @@ const insertMember = async (emailAddress) => {
 };
 
 exports.getUserProfile = (req, res) => {
-    res.render("user_profile", { pageName: "Mijn profiel", session: req.session.user });
+    res.render("user_profile", { pageName: "Mijn profiel", session: req.session });
 };
 
 exports.changeUserProfileDetails = (req, res) => {
@@ -267,9 +267,9 @@ exports.changeUserProfileDetails = (req, res) => {
         }
 
         if (typeof errors.firstNameErr != "undefined" || typeof errors.lastNameErr != "undefined" || typeof errors.emailAddressErr != "undefined" || typeof errors.streetErr != "undefined" || typeof errors.houseNumberErr != "undefined" || typeof errors.houseNumberAdditionErr != "undefined" || typeof errors.townErr != "undefined" || (typeof errors.postalCodeErr != "undefined" && req.session.user.roles == "client")) {
-            res.render("user_profile", { pageName: "Mijn profiel", session: req.session.user, ...errors, type });
+            res.render("user_profile", { pageName: "Mijn profiel", session: req.session, ...errors, type });
         } else if (typeof errors.firstNameErr != "undefined" || typeof errors.lastNameErr != "undefined" || (typeof errors.emailAddressErr != "undefined" && req.session.user.roles != "client")) {
-            res.render("user_profile", { pageName: "Mijn profiel", session: req.session.user, ...errors, type });
+            res.render("user_profile", { pageName: "Mijn profiel", session: req.session, ...errors, type });
         } else {
             (async () => {
                 const user = req.session.user;
@@ -335,7 +335,7 @@ exports.changePassword = (req, res) => {
         }
 
         if (typeof errors.currentPasswordErr != "undefined" || typeof errors.newPasswordErr != "undefined" || typeof errors.confirmPasswordErr != "undefined") {
-            res.render("user_profile", { pageName: "Mijn profiel", session: req.session.user, ...errors, type });
+            res.render("user_profile", { pageName: "Mijn profiel", session: req.session, ...errors, type });
         } else {
             (async () => {
                 await User.updateOne({ _id: req.session.user.userId }, { $set: { password: bcrypt.hashSync(newPassword, bcrypt.genSaltSync()) } });

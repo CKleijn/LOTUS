@@ -18,15 +18,60 @@
                     <div class="row">
                         <% if(assignments.length > 0) { %>
                             <% assignments.forEach(assignment => { %>
-                            <div class="col-lg-6">
-                                <a href="#" data-bs-toggle="modal" data-bs-target="#assignment<%= assignment._id %>">
+
+                                <div class="col-lg-6">
+                                
                                     <div class="card">
+                                        <a href="#" data-bs-toggle="modal" data-bs-target="#assignment<%= assignment._id %>">
                                         <div class="card-body assignment_card">
                                             <h5 class="card-title"><%= assignment.amountOfLotusVictims + " LOTUSslachtoffers nodig in " + assignment.playgroundTown %> <% if(assignment.cancelStatus == "Uitschrijfverzoek ingediend") { %><i class="bi bi-hourglass-split" style="float: right; font-size: 30px; color: #435df1;"></i><% } %></h5>
-                                            <%= "Opdracht in " + assignment.playgroundHouseNumber + assignment.playgroundHouseNumberAddition + " " + assignment.playgroundStreet + " " + assignment.playgroundTown + ", " + assignment.playgroundPostalCode %>
+                                            <h6>Opdrachtgegevens</h6>
+                                            <b>Opdrachtgever:</b> <%= assignment.firstName + " " + assignment.lastName %>
+                                            <br>
+                                            <b>Datum:</b> <%= assignment.dateTime %> 
+                                            <br>
+                                            <b>Deelnemers:</b> <%= assignment.participatingLotusVictims.length + "/" + assignment.amountOfLotusVictims %>
+                                            <br>
+                                            <br>
+                                            <h6>Locatiegegevens</h6>
+                                            <b>Adres:</b> <%= assignment.playgroundStreet + " " + assignment.playgroundHouseNumber + assignment.playgroundHouseNumberAddition %>
+                                            <br>
+                                            <b>Postcode:</b> <%= assignment.playgroundPostalCode %>
+                                            <br>
+                                            <b>Plaats:</b> <%= assignment.playgroundPostalCode %>
+                                            
+                                        </div>
+                                    </a>
+                                        <div class="card-footer">
+                                            <div class="assignmentDataHolder">
+                                                <a href="#" style="color: #798eb3" data-bs-toggle="modal" data-bs-target="#assignment<%= assignment._id %>">
+                                                    <span style="text-decoration: none">Klik voor meer informatie</span>
+                                                </a>
+                                                <div>
+                                                    <% if(assignment.status == "Ingeschreven voltooid" && assignment.cancelStatus != "Uitschrijfverzoek ingediend") { %>
+                                                        <form action="/assignment/cancel" method="POST">
+                                                            <input type="hidden" name="status" value="<%= assignment.status %>">
+                                                            <input type="hidden" name="requestType" value="cancelEnrollment">
+                                                            <input type="hidden" name="requestId" value="<%= assignment.requestId %>">
+                                                            <input type="hidden" name="assignmentId" value="<%= assignment._id %>">
+                                                            <button type="submit" class="btn btn-danger">Uitschrijven</button>
+                                                        </form>
+                                                    <% } else { %> 
+                                                        <form action="/assignment/cancel" method="POST">
+                                                            <input type="hidden" name="status" value="<%= assignment.status %>">
+                                                            <input type="hidden" name="cancelStatus" value="<%= assignment.cancelStatus %>">
+                                                            <input type="hidden" name="requestType" value="cancelEnrollment">
+                                                            <input type="hidden" name="requestId" value="<%= assignment.requestId %>">
+                                                            <input type="hidden" name="assignmentId" value="<%= assignment._id %>">
+                                                            <button type="submit" class="btn btn-danger">Uitschrijving annuleren</button>
+                                                        </form>
+                                                    <% } %> 
+                                                </div>
+                                            </div>
+                                        
                                         </div>
                                     </div>
-                                </a>
+                                
                             </div>
 
                             <div class="modal fade" id="assignment<%= assignment._id %>" tabindex="-1">
@@ -143,7 +188,7 @@
                                                 <input type="hidden" name="requestType" value="cancelEnrollment">
                                                 <input type="hidden" name="requestId" value="<%= a.requestId %>">
                                                 <input type="hidden" name="assignmentId" value="<%= a._id %>">
-                                                <button type="submit" class="btn btn-danger">Annuleer uitschrijven</button>
+                                                <button type="submit" class="btn btn-danger">Uitschrijving annuleren</button>
                                             </form>
                                         <% } %> 
                                     </div>
