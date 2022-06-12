@@ -434,7 +434,8 @@ exports.getAllAssignments = (req, res) => {
                 },
             },
             async (err, results) => {
-                for (let result of results) {
+                console.log(results);
+                for await (let result of results) {
                     let enrolledRequest = await Request.find({ assignmentId: result._id, userId: req.session.user.userId, type: "enrollment", status: "In behandeling" }).exec();
                     let enrolledApprovedRequest = await Request.find({ assignmentId: result._id, userId: req.session.user.userId, type: "enrollment", status: "Goedgekeurd" }).exec();
                     result.dateTime = format(new Date(result.dateTime));
