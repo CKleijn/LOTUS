@@ -30,6 +30,16 @@ exports.userSchema = new mongoose.Schema({
         },
         required: [true, "Wachtwoord is verplicht!"],
     },
+    confirmPassword: {
+        type: String,
+        validate: {
+            validator: function (v) {
+                return v == this.password
+            },
+            message: `De wachtwoorden komen niet overeen!`
+        },
+        required: [true, "Bevestig wachtwoord is verplicht!"],
+    },
     street: {
         type: String,
         required: [true, "Straat is verplicht!"],
