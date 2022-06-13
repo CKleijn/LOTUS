@@ -109,6 +109,8 @@ exports.createAssignment = (req, res) => {
 
             if (typeof err.errors.dateTime != "undefined") {
                 errors.dateTimeErr = err.errors.dateTime.properties.message;
+            } else if (new Date().toISOString() > dateTime) {
+                errors.dateTimeErr = "De ingevoerde datum is verstreken!";
             } else {
                 errors.oldValues.dateTime = req.body.dateTime;
             }
@@ -309,6 +311,8 @@ exports.updateAssignment = async (req, res) => {
 
     if (!dateTime || dateTime.length === 0) {
         errors.dateTimeErr = "Datum en tijd is verplicht!";
+    } else if (new Date().toISOString() > dateTime) {
+        errors.dateTimeErr = "De ingevoerde datum is verstreken!";
     } else {
         oldValues.dateTime = dateTime;
     }
@@ -420,6 +424,7 @@ exports.getAllAssignments = (req, res) => {
                     resultsFiltered.push(result);
                 }
             }
+
             res.render("assignment_overview", { pageName: "Opdrachten", session: req.session, assignments: resultsFiltered });
         });
     } else if (req.session.user.roles == "member") {
@@ -434,26 +439,29 @@ exports.getAllAssignments = (req, res) => {
                 for await (let result of results) {
                     let enrolledRequest = await Request.find({ assignmentId: result._id, userId: req.session.user.userId, type: "enrollment", status: "In behandeling" }).exec();
                     let enrolledApprovedRequest = await Request.find({ assignmentId: result._id, userId: req.session.user.userId, type: "enrollment", status: "Goedgekeurd" }).exec();
+                    let rejectedRequests = await Request.find({ assignmentId: result._id, userId: req.session.user.userId, type: "enrollment", status: "Afgewezen" }).exec();
                     result.dateTime = format(new Date(result.dateTime));
 
-                    if (result.participatingLotusVictims.length !== result.amountOfLotusVictims) {
-                        if (enrolledRequest.length > 0) {
-                            result = {
-                                ...result._doc,
-                                status: "Ingeschreven",
-                            };
-                            resultsFiltered.push(result);
-                        } else if (enrolledApprovedRequest.length > 0) {
-                            result = {
-                                ...result._doc,
-                                status: "Ingeschreven voltooid",
-                            };
-                        } else {
-                            result = {
-                                ...result._doc,
-                                status: "Niet ingeschreven",
-                            };
-                            resultsFiltered.push(result);
+                    if (rejectedRequests.length === 0) {
+                        if (result.participatingLotusVictims.length !== result.amountOfLotusVictims) {
+                            if (enrolledRequest.length > 0) {
+                                result = {
+                                    ...result._doc,
+                                    status: "Ingeschreven",
+                                };
+                                resultsFiltered.push(result);
+                            } else if (enrolledApprovedRequest.length > 0) {
+                                result = {
+                                    ...result._doc,
+                                    status: "Ingeschreven voltooid",
+                                };
+                            } else {
+                                result = {
+                                    ...result._doc,
+                                    status: "Niet ingeschreven",
+                                };
+                                resultsFiltered.push(result);
+                            }
                         }
                     }
                 }
