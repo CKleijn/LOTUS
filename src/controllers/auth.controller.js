@@ -155,7 +155,7 @@ exports.login = (req, res) => {
                     res.render("login", { pageName: "Inloggen", err: "Ingevulde wachtwoord is onjuist!", oldMailValue: emailAddress });
                 }
             } else {
-                res.render("login", { pageName: "Inloggen", err: "Er bestaat geen gebruiker met deze e-mailadres!", oldMailValue: emailAddress });
+                res.render("login", { pageName: "Inloggen", err: "Er bestaat geen gebruiker met dit e-mailadres!", oldMailValue: emailAddress });
             }
         });
     } else {
