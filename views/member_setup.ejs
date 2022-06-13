@@ -10,7 +10,7 @@
                             <div class="card-body">
                                 <div class="pt-4 pb-2">
                                     <h5 class="card-title text-center pb-0 fs-4">Accountgegevens</h5>
-                                    <p class="text-center small">invullen</p>
+                                    <p class="text-center small">instellen</p>
                                 </div>
 
                                 <form class="row g-3 needs-validation" action="/register/setup" method="POST">
@@ -28,12 +28,16 @@
 
                                     <div class="col-12">
                                         <label class="form-label">Wachtwoord</label>
-                                        <p>
-                                            <input id="password" type="password" name="password" class="form-control" value="<% if(typeof oldValues != "undefined"){%><%=oldValues.password%><%}%>">
-                                            <i class="bi bi-eye-slash" id="togglePassword"></i>
-                                        </p>
-
+                                        <input id="password" type="password" name="password" class="form-control" value="<% if(typeof oldValues != "undefined"){%><%=oldValues.password%><%}%>">
+                                        <i class="bi bi-eye-slash" id="togglePassword"></i>
                                         <label class="form-error"><% if(typeof passwordErr != "undefined"){%><%=passwordErr%><%}%></label>
+                                    </div>
+
+                                    <div class="col-12">
+                                        <label class="form-label">Bevestig wachtwoord</label>
+                                        <input id="confirmPassword" type="password" name="confirmPassword" class="form-control" value="<% if(typeof oldValues != "undefined"){%><%=oldValues.confirmPassword%><%}%>">
+                                        <i class="bi bi-eye-slash" id="toggleConfirmPassword"></i>
+                                        <label class="form-error"><% if(typeof confirmPasswordErr != "undefined"){%><%=confirmPasswordErr%><%}%></label>
                                     </div>
 
                                     <input type="hidden" name="email" value="<%=email%>" />
@@ -58,6 +62,15 @@
     togglePassword.addEventListener("click", function (e) {
         const type = password.getAttribute("type") === "password" ? "text" : "password";
         password.setAttribute("type", type);
+        this.classList.toggle("bi-eye");
+    });
+
+    const toggleConfirmPassword = document.querySelector("#toggleConfirmPassword");
+    const confirmPassword = document.querySelector("#confirmPassword");
+
+    toggleConfirmPassword.addEventListener("click", function (e) {
+        const type = confirmPassword.getAttribute("type") === "password" ? "text" : "password";
+        confirmPassword.setAttribute("type", type);
         this.classList.toggle("bi-eye");
     });
 </script>

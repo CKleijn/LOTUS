@@ -10,7 +10,7 @@ const User = userModel;
 // Functionality for creating an user
 exports.createUser = (req, res) => {
     // Declare all variables out of req.body
-    let { firstName, lastName, emailAddress, password, street, houseNumber, houseNumberAddition, postalCode, town } = req.body;
+    let { firstName, lastName, emailAddress, password, confirmPassword, street, houseNumber, houseNumberAddition, postalCode, town } = req.body;
     emailAddress = emailAddress.toLowerCase();
     // Create new user object
     const user = new User({
@@ -18,6 +18,7 @@ exports.createUser = (req, res) => {
         lastName: lastName,
         emailAddress: emailAddress,
         password: password,
+        confirmPassword: confirmPassword,
         street: street,
         houseNumber: houseNumber,
         houseNumberAddition: houseNumberAddition,
@@ -26,7 +27,6 @@ exports.createUser = (req, res) => {
         roles: "client",
         lastLoginDate: Date.now(),
     });
-
     // Save user object in database and show errors if they exists
     user.save((err) => {
         if (err) {
@@ -61,6 +61,12 @@ exports.createUser = (req, res) => {
                     errors.passwordErr = err.errors.password.properties.message;
                 } else {
                     oldValues.password = password;
+                }
+                
+                if (err.errors.confirmPassword) {
+                    errors.confirmPasswordErr = err.errors.confirmPassword.properties.message;
+                } else {
+                    oldValues.confirmPassword = confirmPassword;
                 }
 
                 if (err.errors.street) {
