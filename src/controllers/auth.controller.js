@@ -235,3 +235,7 @@ exports.getLoginPage = (req, res) => {
 exports.getSetupPage = (req, res) => {
     res.render("member_setup", { pageName: "Accountgegevens", errors: {}, email: req.query.t });
 };
+
+exports.getForgotPasswordPage = (req, res) => {
+    res.render("forgot_password", { pageName: "Wachtwoord vergeten" });
+};

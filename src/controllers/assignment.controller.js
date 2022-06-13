@@ -3,6 +3,7 @@ const { assignmentModel } = require("../models/assignment.model");
 const { userModel } = require("../models/user.model");
 const Request = require("../models/request.model");
 const { createRequest } = require("./request.controller");
+const { notifyUserThroughMail } = require("./mail.controller");
 
 const Assignment = assignmentModel;
 const User = userModel;
@@ -109,8 +110,6 @@ exports.createAssignment = (req, res) => {
 
             if (typeof err.errors.dateTime != "undefined") {
                 errors.dateTimeErr = err.errors.dateTime.properties.message;
-            } else if (new Date().toISOString() > dateTime) {
-                errors.dateTimeErr = "De ingevoerde datum is verstreken!";
             } else {
                 errors.oldValues.dateTime = req.body.dateTime;
             }
@@ -564,6 +563,14 @@ exports.deleteAssignment = async (req, res) => {
     if (session.user.roles === "coordinator") {
         await Assignment.deleteOne({ _id: req.query.id });
         await Request.deleteMany({ assignmentId: req.query.id });
+        const sendStatus = await notifyUserThroughMail(req.query.emailAddress, req.query.firstName, "deleteAssignment", "Jouw opdracht is verwijderd");
+
+        if (sendStatus) {
+            console.log("Client notified (through email)");
+        } else {
+            console.log("Email not send");
+        }
+
         res.redirect("/assignment");
     }
 
