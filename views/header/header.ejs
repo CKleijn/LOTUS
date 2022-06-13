@@ -31,7 +31,7 @@
 </head>
 
 <body>
-    <% if (typeof session != "undefined") {%>
+    <% if (typeof session != "undefined" && typeof session.user != "undefined") {%>
     <!-- ======= Header ======= -->
     <header id="header" class="header fixed-top d-flex align-items-center">
         <div class="d-flex align-items-center justify-content-between">
@@ -90,7 +90,7 @@
  
                                     break; 
                                 case "updateAssignment": 
-                                    requestTitle = "Opdracht Bewerken"; 
+                                    requestTitle = "Opdracht bewerken"; 
                                     requestMessage = requests[i].user.firstName + " wilt een opdracht bewerken";
 
                                     break; 
