@@ -31,7 +31,7 @@
 </head>
 
 <body>
-    <% if (typeof session != "undefined") {%>
+    <% if (typeof session != "undefined" && typeof session.user != "undefined") {%>
     <!-- ======= Header ======= -->
     <header id="header" class="header fixed-top d-flex align-items-center">
         <div class="d-flex align-items-center justify-content-between">
@@ -44,32 +44,103 @@
         <!-- End Logo -->
         <nav class="header-nav ms-auto">
             <ul class="d-flex align-items-center">
-                <% if(session.roles === "coordinator") { %> 
+                <% if(session.user.roles === "coordinator") { %> 
                 <li class="nav-item dropdown">
                     <a class="nav-link nav-icon" href="#" data-bs-toggle="dropdown">
                         <i class="bi bi-bell"></i>
-                        <span class="badge bg-primary badge-number">?</span>
+                        <span class="badge bg-primary badge-number"><%= session.requests.length %></span>
                     </a>
                     <!-- End Notification Icon -->
                     <ul class="dropdown-menu dropdown-menu-end dropdown-menu-arrow notifications">
                         <li class="dropdown-header">
-                            Er staan ? verzoeken open
-                            <a href="/request"><span class="badge rounded-pill bg-primary p-2 ms-2">Bekijk alle</span></a>
+                            Er zijn <%= session.requests.length %>  onbehandelde verzoeken
+                            <a href="/request"><span class="badge rounded-pill bg-primary p-2 ms-2">Bekijk</span></a>
                         </li>
                         <li>
                             <hr class="dropdown-divider" />
                         </li>
-                        <li class="notification-item">
-                            <i class="bi bi-exclamation-circle text-warning"></i>
-                            <div>
-                                <h4>Inschrijving opdracht</h4>
-                                <p>Gerard heeft zich ingeschreven voor een opdracht</p>
-                                <p>30 minuten geleden</p>
-                            </div>
-                        </li>
-                        <li>
-                            <hr class="dropdown-divider" />
-                        </li>
+                        <% let requests = [];
+                           let loopValue = "";
+                        
+                        if(session.requests.length >= 3) { 
+                            requests = session.requests.slice(-3);
+                            loopValue = requests.length - 4
+                        } else if(session.requests.length === 2) {
+                            requests = session.requests.slice(-2);
+                            loopValue = requests.length - 3
+                        } else if(session.requests.length === 1) {
+                            requests = session.requests.slice(-1);
+                            loopValue = requests.length - 2
+                        } %>
+                        <% for( let i = requests.length - 1; i > loopValue; i-- ) { %>
+                            <% let requestTitle = "";
+                            let requestMessage = ""; %> 
+                            <% switch(requests[i].type) { 
+                                case "createAssignment":   
+                                    requestTitle = "Opdracht aanmaken"; 
+                                    requestMessage = requests[i].user.firstName + " wilt een opdracht aanmaken";
+ 
+                                    break; 
+                                case "updateAssignment": 
+                                    requestTitle = "Opdracht bewerken"; 
+                                    requestMessage = requests[i].user.firstName + " wilt een opdracht bewerken";
+                                    break; 
+                                case "deleteAssignment": 
+                                    requestTitle = "Opdracht verwijderen";
+                                    requestMessage = requests[i].user.firstName + " wilt een opdracht verwijderen";
+                                    break; 
+                                case "cancelEnrollment": 
+                                    requestTitle = "Uitschrijving"; 
+                                    requestMessage = requests[i].user.firstName + " wilt zich uitschrijven voor een opdracht";
+                                    break; 
+                                case "enrollment": 
+                                    requestTitle = "Inschrijving"; 
+                                    requestMessage = requests[i].user.firstName + " wilt zich inschrijven voor een opdracht";
+                                    break;
+          
+                            } %>
+                            <a href="/request">
+                            <li class="notification-item">
+                                
+                                    <% if(requests[i].type === "enrollment" || requests[i].type === "createAssignment") { %>
+                                        <i class="bi bi-info-circle text-primary"></i>
+                                    <% } else if(requests[i].type === "cancelEnrollment" || requests[i].type === "updateAssignment" ) { %>
+                                        <i class="bi bi-exclamation-circle text-warning"></i>
+                                    <% } else if(requests[i].type === "deleteAssignment") { %>
+                                        <i class="bi bi-x-circle text-danger"></i>
+                                    <% } %>
+                                    <div>
+                                        <h4 style="color: #212529"><%= requestTitle %> </h4>
+                                        <p><%= requestMessage %></p>
+                                        <% const requestAge = msToTime(new Date().getTime() - new Date(session.requests[i].requestDate).getTime());
+                                    
+                                        function msToTime(duration) {
+                                            const minutes = Math.floor((duration / (1000 * 60)) % 60);
+                                            const hours = Math.floor((duration / (1000 * 60 * 60)) % 24);
+                                            const days = Math.floor(duration / (24*60*60*1000));
+                                            
+                                            if(minutes === 0 && hours == 0 && days == 0 || minutes === 1 && hours == 0 && days == 0) {
+                                                return "1 minuut geleden";
+                                            } else if (hours == 0 && days == 0) {
+                                                return minutes + " minuten geleden"
+                                            } else if(days === 0) {
+                                                return hours + " uur geleden"
+                                            } else if(days === 1) {
+                                                return "1 dag geleden"
+                                            } else {
+                                                return days + " dagen geleden"
+                                            }
+                                        } %> 
+                                        <p><%= requestAge %></p>
+                                    </div>
+                        
+                            </li>
+                        </a>
+    
+                            <li>
+                                <hr class="dropdown-divider" />
+                            </li>
+                        <% } %>
                         <li class="dropdown-footer">
                             <a href="/request">Bekijk alle verzoeken</a>
                         </li>
@@ -81,13 +152,13 @@
                 <li class="nav-item dropdown pe-3">
                     <a class="nav-link nav-profile d-flex align-items-center pe-0" href="#" data-bs-toggle="dropdown">
                         <img src="/assets/img/avatar.jpg" alt="Profile" class="rounded-circle" />
-                        <span class="d-none d-md-block dropdown-toggle ps-2"><%= session.firstName.charAt(0).toUpperCase() + ". " + session.lastName %></span>
+                        <span class="d-none d-md-block dropdown-toggle ps-2"><%= session.user.firstName.charAt(0).toUpperCase() + ". " + session.user.lastName %></span>
                     </a>
                     <!-- End Profile Iamge Icon -->
                     <ul class="dropdown-menu dropdown-menu-end dropdown-menu-arrow profile">
                         <li class="dropdown-header">
-                            <% let role = ""; switch(session.roles) { case "coordinator": role = "Coördinator"; break; case "client" : role = "Opdrachtgever"; break; case "member": role = "LOTUSslachtoffer"; break; } %>
-                            <h6><%= session.firstName + " " + session.lastName %></h6>
+                            <% let role = ""; switch(session.user.roles) { case "coordinator": role = "Coördinator"; break; case "client" : role = "Opdrachtgever"; break; case "member": role = "LOTUSslachtoffer"; break; } %>
+                            <h6><%= session.user.firstName + " " + session.user.lastName %></h6>
                             <span><%= role %></span>
                         </li>
                         <li>
@@ -131,18 +202,20 @@
                 </a>
             </li>
             <!-- End Dashboard Nav -->
+            <% if(session.user.roles == "coordinator" ) { %>
+                <li class="nav-item">
+                    <% if(pageName === "Gebruikers") { %> 
+                        <a class="nav-link" href="/assignment">
+                    <% } else {  %> 
+                        <a class="nav-link collapsed" href="/user">
+                    <% } %> 
+                        <i class="bi bi-people"></i>
+                        <span>Gebruikers</span>
+                    </a>
+                </li>
+                <% } %>
                 
-                <% if(session.roles == "coordinator" || session.roles == "member") { %>
-                    <li class="nav-item">
-                        <% if(pageName === "Gebruikers") { %> 
-                            <a class="nav-link" href="/assignment">
-                        <% } else {  %> 
-                            <a class="nav-link collapsed" href="/user">
-                        <% } %> 
-                            <i class="bi bi-people"></i>
-                            <span>Gebruikers</span>
-                        </a>
-                    </li>
+                <% if(session.user.roles == "coordinator" || session.user.roles == "member") { %>
                     <li class="nav-item">
                         <% if(pageName === "Opdrachten") { %> 
                             <a class="nav-link" href="/assignment">
@@ -154,7 +227,7 @@
                         </a>
                     </li>
     
-                <% } %> <% if(session.roles == "client") { %>
+                <% } %> <% if(session.user.roles == "client") { %>
                     <li class="nav-item">
                         <% if(pageName === "Mijn opdrachten") { %> 
                             <a class="nav-link" href="/assignment">
@@ -166,14 +239,14 @@
                         </a>
                     </li>
                 
-                <% } %> <% if(session.roles == "member") { %>
+                <% } %> <% if(session.user.roles == "member") { %>
                     <li class="nav-item">
                         <a class="nav-link collapsed" href="/member/assignment">
                             <i class="bi bi-archive"></i>
                             <span>Mijn opdrachten</span>
                         </a>
                     </li>
-                <% } %> <% if(session.roles == "coordinator" || session.roles == "client") { %>
+                <% } %> <% if(session.user.roles == "coordinator" || session.user.roles == "client") { %>
                     <li class="nav-item">
                         <% if(pageName === "Opdracht aanmaken") { %> 
                             <a class="nav-link" href="/assignment/create">
@@ -186,7 +259,7 @@
                     </li>
                 
                 <% } %>
-                 <% if(session.roles == "coordinator") { %>
+                 <% if(session.user.roles == "coordinator") { %>
                     <li class="nav-item">
                         <% if(pageName === "Verzoeken") { %> 
                             <a class="nav-link" href="/request">

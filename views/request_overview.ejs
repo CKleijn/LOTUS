@@ -24,17 +24,38 @@
                 </div>
             </div>
 
-            <% } %> <% requests.forEach(request => { %> <% let role = ""; switch(request.user.roles[0]) { case "coordinator": role = "Coördinator"; break; case "client" : role = "Opdrachtgever"; break; case "member": role = "LOTUSslachtoffer"; break; } %>
+            <% } %> <% requests.reverse().forEach(request => { %> <% let role = ""; switch(request.user.roles[0]) { case "coordinator": role = "Coördinator"; break; case "client" : role = "Opdrachtgever"; break; case "member": role = "LOTUSslachtoffer"; break; } %>
             <div class="col-sm-12 col-md-6 col-lg-4">
                 <a href="#" data-bs-toggle="modal" data-bs-target="#request_<%= request._id %>">
                     <div class="card">
                         <div class="card-body request_card">
+
+                            <% const requestAge = msToTime((new Date().getTime() - new Date(request.requestDate).getTime()));
+                                    
+                            function msToTime(duration) {
+                                const minutes = Math.floor((duration / (1000 * 60)) % 60);
+                                const hours = Math.floor((duration / (1000 * 60 * 60)) % 24);
+                                const days = Math.floor(duration / (24*60*60*1000));
+
+                                if(minutes === 0 && hours == 0 && days == 0 || minutes === 1 && hours == 0 && days == 0) {
+                                    return "1 minuut";
+                                } else if (hours == 0 && days == 0) {
+                                    return minutes + " minuten"
+                                } else if(days === 0) {
+                                    return hours + " uur"
+                                } else if(days === 1) {
+                                    return "1 dag"
+                                } else {
+                                    return days + " dagen"
+                                }
+                            } %>
+
                             <% if(request.type === "createAssignment") { %>
                             <h5 class="card-title">
                                 <i class="bi bi-file-text"></i>
-                                <%= request.user.firstName + " wilt een opdracht aanmaken" %>
+                                <%= request.user.firstName + " wil een opdracht aanmaken" %>
                             </h5>
-                            <p>
+                            <p style="margin-bottom:0">
                                 <b>Naam:</b>
                                 <%= request.user.firstName + " " + request.user.lastName %>
                                 <br />
@@ -48,15 +69,17 @@
                                 <b>Type:</b>
                                 Opdracht aanmaken
                                 <br />
-                                <b>Datum:</b>
-                                <%= request.requestDate %>
+                                <br />
+                                <i class="bi bi-clock"  style="font-size: 16px; color: #012970;"></i> <span><%= requestAge %> </span>
+                                
                             </p>
                             <% } else if(request.type === "enrollment") { %>
                             <h5 class="card-title">
                                 <i class="bi bi-pencil-square"></i>
-                                <%= request.user.firstName + " wilt zich inschrijven" %>
+                                <%= request.user.firstName + " wil zich inschrijven" %>
+                                
                             </h5>
-                            <p>
+                            <p style="margin-bottom:0">
                                 <b>Naam:</b>
                                 <%= request.user.firstName + " " + request.user.lastName %>
                                 <br />
@@ -70,15 +93,16 @@
                                 <b>Type:</b>
                                 Inschrijven
                                 <br />
-                                <b>Datum:</b>
-                                <%= request.requestDate %>
+                                <br />
+                                <i class="bi bi-clock"  style="font-size: 16px; color: #012970;"></i> <span><%= requestAge %> </span>
+                                
                             </p>
                             <% } else if(request.type === "cancelEnrollment") { %>
                             <h5 class="card-title">
                                 <i class="bi bi-trash"></i>
-                                <%= request.user.firstName + " wilt zich uitschrijven" %>
+                                <%= request.user.firstName + " wil zich uitschrijven" %>
                             </h5>
-                            <p>
+                            <p style="margin-bottom:0">
                                 <b>Naam:</b>
                                 <%= request.user.firstName + " " + request.user.lastName %>
                                 <br />
@@ -92,16 +116,17 @@
                                 <b>Type:</b>
                                 Uitschrijven
                                 <br />
-                                <b>Datum:</b>
-                                <%= request.requestDate %>
+                                <br />
+                                <i class="bi bi-clock"  style="font-size: 16px; color: #012970;"></i> <span><%= requestAge %> </span>
+
                             </p>
 
                             <% } else if(request.type === "deleteAssignment") { %>
                             <h5 class="card-title">
                                 <i class="bi bi-trash"></i>
-                                <%= request.user.firstName + " wilt een opdracht verwijderen" %>
+                                <%= request.user.firstName + " wil een opdracht verwijderen" %>
                             </h5>
-                            <p>
+                            <p style="margin-bottom:0">
                                 <b>Naam:</b>
                                 <%= request.user.firstName + " " + request.user.lastName %>
                                 <br />
@@ -115,15 +140,15 @@
                                 <b>Type:</b>
                                 Opdracht verwijderen
                                 <br />
-                                <b>Datum:</b>
-                                <%= request.requestDate %>
+                                <br />
+                                <i class="bi bi-clock"  style="font-size: 16px; color: #012970;"></i> <span><%= requestAge %> </span>
                             </p>
                             <% } else if(request.type === "updateAssignment") { %>
                             <h5 class="card-title">
                                 <i class="bi bi-pencil"></i>
-                                <%= request.user.firstName + " wilt een opdracht bewerken" %>
+                                <%= request.user.firstName + " wil een opdracht bewerken" %>
                             </h5>
-                            <p>
+                            <p style="margin-bottom:0">
                                 <b>Naam:</b>
                                 <%= request.user.firstName + " " + request.user.lastName %>
                                 <br />
@@ -137,8 +162,8 @@
                                 <b>Type:</b>
                                 Opdracht bewerken
                                 <br />
-                                <b>Datum:</b>
-                                <%= request.requestDate %>
+                                <br />
+                                <i class="bi bi-clock"  style="font-size: 16px; color: #012970;"></i> <span><%= requestAge %> </span>
                             </p>
                             <% } else {%>
                             <p>pas request_overview.ejs aan</p>
@@ -534,7 +559,7 @@
                                 <%=a.participatingLotusVictims.length + "/" + a.amountOfLotusVictims %> <% } %>
                             </div>
                             <div class="modal-footer">
-                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuleren</button>
+                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Sluiten</button>
                                 <form action="/request/decline" method="POST">
                                     <input type="hidden" name="userId" value="<%= request.userId %>" />
                                     <input type="hidden" name="requestType" value="<%= request.type %>" />

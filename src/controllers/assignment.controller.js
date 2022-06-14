@@ -3,9 +3,10 @@ const { assignmentModel } = require("../models/assignment.model");
 const { userModel } = require("../models/user.model");
 const Request = require("../models/request.model");
 const { createRequest } = require("./request.controller");
+const { notifyUserThroughMail } = require("./mail.controller");
 
 const Assignment = assignmentModel;
-const User = userModel
+const User = userModel;
 
 // Functionality for creating an assignment
 exports.createAssignment = (req, res) => {
@@ -186,7 +187,7 @@ exports.createAssignment = (req, res) => {
             }
 
             // Show the errors on the assignment page
-            res.render("assignment", { pageName: "Opdracht aanmaken", session: req.session.user, ...errors, checkedOrNotProfile, checkedOrNotPlayground, checkedOrNotMakeUp, url: req.session.originalUrl });
+            res.render("assignment", { pageName: "Opdracht aanmaken", session: req.session, ...errors, checkedOrNotProfile, checkedOrNotPlayground, checkedOrNotMakeUp, url: req.session.originalUrl });
         } else {
             (async () => {
                 if (session.user.roles === "client") {
@@ -309,6 +310,8 @@ exports.updateAssignment = async (req, res) => {
 
     if (!dateTime || dateTime.length === 0) {
         errors.dateTimeErr = "Datum en tijd is verplicht!";
+    } else if (new Date().toISOString() > dateTime) {
+        errors.dateTimeErr = "De ingevoerde datum is verstreken!";
     } else {
         oldValues.dateTime = dateTime;
     }
@@ -348,7 +351,7 @@ exports.updateAssignment = async (req, res) => {
         typeof errors.amountOfLotusVictimsErr != "undefined" ||
         typeof errors.billingEmailAddressErr != "undefined"
     ) {
-        res.render("assignment", { pageName: "Formulier", session: req.session.user, ...errors, url: req.session.originalUrl, assignmentId, assignmentStatus });
+        res.render("assignment", { pageName: "Formulier", session: req.session, ...errors, url: req.session.originalUrl, assignmentId, assignmentStatus });
     } else {
         (async () => {
             if (req.session.user.roles === "coordinator" || assignmentStatus === "In behandeling") {
@@ -372,7 +375,7 @@ exports.updateAssignment = async (req, res) => {
 
 exports.getAssignmentPage = (req, res) => {
     req.session.originalUrl = req.originalUrl;
-    res.render("assignment", { pageName: "Formulier", session: req.session.user, url: req.session.originalUrl, assignmentId: req.query.id });
+    res.render("assignment", { pageName: "Formulier", session: req.session, url: req.session.originalUrl, assignmentId: req.query.id });
 };
 
 exports.getAssignmentUpdatePage = async (req, res) => {
@@ -384,25 +387,15 @@ exports.getAssignmentUpdatePage = async (req, res) => {
     assignment = assignment[0];
 
     req.session.originalUrl = req.originalUrl;
-    res.render("assignment", { pageName: "Opdracht aanmaken", session: req.session.user, url: req.session.originalUrl, assignmentId: assignmentId, assignment, assignmentStatus });
+    res.render("assignment", { pageName: "Opdracht aanmaken", session: req.session, url: req.session.originalUrl, assignmentId: assignmentId, assignment, assignmentStatus });
 };
 
 exports.getAllAssignments = (req, res) => {
     function format(inputDate) {
-        let date, month, year;
-
-        date = inputDate.getDate();
-        month = inputDate.getMonth() + 1;
-        year = inputDate.getFullYear();
-
-        date = date.toString().padStart(2, "0");
-
-        month = month.toString().padStart(2, "0");
-
-        return `${date}/${month}/${year}`;
+        return new Date(inputDate).toLocaleString([], { year: "numeric", month: "numeric", day: "numeric", hour: "2-digit", minute: "2-digit" });
     }
 
-    if (req.session.user.roles == "coordinator" || req.session.user.roles == "member") {
+    if (req.session.user.roles == "coordinator") {
         let resultsFiltered = [];
 
         Assignment.find({ isApproved: true }, async function (err, results) {
@@ -430,8 +423,50 @@ exports.getAllAssignments = (req, res) => {
                     resultsFiltered.push(result);
                 }
             }
-            res.render("assignment_overview", { pageName: "Opdrachten", session: req.session.user, assignments: resultsFiltered });
+
+            res.render("assignment_overview", { pageName: "Opdrachten", session: req.session, assignments: resultsFiltered });
         });
+    } else if (req.session.user.roles == "member") {
+        let resultsFiltered = [];
+
+        Assignment.find(
+            {
+                isApproved: true,
+                dateTime: { $gte: new Date().toISOString() },
+            },
+            async (err, results) => {
+                for await (let result of results) {
+                    let enrolledRequest = await Request.find({ assignmentId: result._id, userId: req.session.user.userId, type: "enrollment", status: "In behandeling" }).exec();
+                    let enrolledApprovedRequest = await Request.find({ assignmentId: result._id, userId: req.session.user.userId, type: "enrollment", status: "Goedgekeurd" }).exec();
+                    let rejectedRequests = await Request.find({ assignmentId: result._id, userId: req.session.user.userId, type: "enrollment", status: "Afgewezen" }).exec();
+                    result.dateTime = format(new Date(result.dateTime));
+
+                    if (rejectedRequests.length === 0) {
+                        if (result.participatingLotusVictims.length !== result.amountOfLotusVictims) {
+                            if (enrolledRequest.length > 0) {
+                                result = {
+                                    ...result._doc,
+                                    status: "Ingeschreven",
+                                };
+                                resultsFiltered.push(result);
+                            } else if (enrolledApprovedRequest.length > 0) {
+                                result = {
+                                    ...result._doc,
+                                    status: "Ingeschreven voltooid",
+                                };
+                            } else {
+                                result = {
+                                    ...result._doc,
+                                    status: "Niet ingeschreven",
+                                };
+                                resultsFiltered.push(result);
+                            }
+                        }
+                    }
+                }
+                res.render("assignment_overview", { pageName: "Opdrachten", session: req.session, assignments: resultsFiltered });
+            }
+        );
     } else if (req.session.user.roles == "client") {
         let resultsFiltered = [];
 
@@ -453,7 +488,8 @@ exports.getAllAssignments = (req, res) => {
                         result = {
                             ...result._doc,
                             status: request[0].status,
-                            requestStatus: "Aangevraagd"
+                            requestStatus: "Aangevraagd",
+                            cancelStatus: "Updateverzoek ingediend",
                         };
                     } else {
                         result = {
@@ -464,7 +500,7 @@ exports.getAllAssignments = (req, res) => {
                     resultsFiltered.push(result);
                 }
             }
-            res.render("assignment_overview", { pageName: "Mijn opdrachten", session: req.session.user, assignments: resultsFiltered });
+            res.render("assignment_overview", { pageName: "Mijn opdrachten", session: req.session, assignments: resultsFiltered });
         });
     }
 };
@@ -507,14 +543,14 @@ exports.getMemberAssignments = (req, res) => {
                     resultsFiltered.push(result);
                 }
             }
-            res.render("enrolled_assignment_overview", { pageName: "Mijn opdrachten", session: req.session.user, assignments: resultsFiltered });
+            res.render("enrolled_assignment_overview", { pageName: "Mijn opdrachten", session: req.session, assignments: resultsFiltered });
         });
     }
 };
 
 exports.getAssignmentDetailPage = (req, res) => {
     Assignment.find({ _id: req.query.id }, function (err, results) {
-        res.render("assignment_detail", { pageName: "Detailpagina", session: req.session.user, assignments: results });
+        res.render("assignment_detail", { pageName: "Detailpagina", session: req.session, assignments: results });
     });
 };
 
@@ -527,15 +563,25 @@ exports.deleteAssignment = async (req, res) => {
     if (session.user.roles === "coordinator") {
         await Assignment.deleteOne({ _id: req.query.id });
         await Request.deleteMany({ assignmentId: req.query.id });
+        const sendStatus = await notifyUserThroughMail(req.query.emailAddress, req.query.firstName, "deleteAssignment", "Jouw opdracht is verwijderd");
+
+        if (sendStatus) {
+            console.log("Client notified (through email)");
+        } else {
+            console.log("Email not send");
+        }
+
         res.redirect("/assignment");
     }
 
     if (session.user.roles === "client") {
-        if(status == "Afgewezen" || status == "In behandeling") {
+        if (status == "Afgewezen" || status == "In behandeling") {
             await Assignment.deleteOne({ _id: req.query.id });
             await Request.deleteMany({ assignmentId: req.query.id });
         } else if (cancelStatus == "Verwijderverzoek ingediend") {
-            await Request.deleteOne({ requestType: "deleteAssignment", assignmentId: req.query.id, status: "In behandeling" });
+            await Request.deleteMany({ requestType: "deleteAssignment", assignmentId: req.query.id, status: "In behandeling" });
+        } else if (cancelStatus == "Updateverzoek ingediend") {
+            await Request.deleteMany({ requestType: "updateAssignment", assignmentId: req.query.id, status: "In behandeling" });
         } else {
             await createRequest(req, res, req.query.id, "deleteAssignment");
         }
@@ -596,11 +642,11 @@ exports.cancelEnrollment = (req, res) => {
 };
 
 exports.deleteMemberFromAssignment = async (req, res) => {
-    const victimId = req.query.victimId
-    const assignmentId = req.query.assignmentId
+    const victimId = req.query.victimId;
+    const assignmentId = req.query.assignmentId;
 
-    await Request.deleteMany({userId: victimId, assignmentId: assignmentId});
-    await Assignment.updateOne({_id: assignmentId}, {$pull: {participatingLotusVictims: {_id: victimId}}})
+    await Request.deleteMany({ userId: victimId, assignmentId: assignmentId });
+    await Assignment.updateOne({ _id: assignmentId }, { $pull: { participatingLotusVictims: { _id: victimId } } });
 
     res.redirect("/assignment");
-}
+};

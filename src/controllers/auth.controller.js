@@ -4,6 +4,9 @@ const Cryptr = require("cryptr");
 const { update } = require("./../models/user.model");
 const cryptr = new Cryptr(process.env.EMAIL_SETUP_HASH);
 
+const Request = require("./../models/request.model");
+const { request } = require("express");
+
 const User = userModel;
 
 exports.isLoggedIn = (req, res, next) => {
@@ -97,6 +100,43 @@ exports.login = (req, res) => {
                                     createdDate: currentUser.createdDate,
                                     lastLoginDate: currentUser.lastLoginDate,
                                 };
+                                return res.redirect("/");
+                            } else if (currentUser.roles[0] == "coordinator") {
+                                (async () => {
+                                    session.user = {
+                                        userId: currentUser._id,
+                                        firstName: currentUser.firstName,
+                                        lastName: currentUser.lastName,
+                                        emailAddress: currentUser.emailAddress,
+                                        roles: currentUser.roles[0],
+                                        createdDate: currentUser.createdDate,
+                                        lastLoginDate: currentUser.lastLoginDate,
+                                    };
+
+                                    let requests = await Request.find({ status: "In behandeling" });
+                                    let parsedRequests = [];
+
+                                    if (requests.length === 0) {
+                                        session.requests = parsedRequests;
+                                        return res.redirect("/");
+                                    } else {
+                                        for (let i = 0; i < requests.length; i++) {
+                                            let user = await User.find({ _id: requests[i].userId }, { _id: 0, firstName: 1 });
+
+                                            const request = {
+                                                ...requests[i]._doc,
+                                                user: user[0],
+                                            };
+
+                                            parsedRequests.push(request);
+
+                                            if (parsedRequests.length === requests.length || requests.length === 0) {
+                                                session.requests = parsedRequests;
+                                                return res.redirect("/");
+                                            }
+                                        }
+                                    }
+                                })();
                             } else {
                                 session.user = {
                                     userId: currentUser._id,
@@ -107,16 +147,15 @@ exports.login = (req, res) => {
                                     createdDate: currentUser.createdDate,
                                     lastLoginDate: currentUser.lastLoginDate,
                                 };
+                                return res.redirect("/");
                             }
-
-                            return res.redirect("/");
                         });
                     }
                 } else {
                     res.render("login", { pageName: "Inloggen", err: "Ingevulde wachtwoord is onjuist!", oldMailValue: emailAddress });
                 }
             } else {
-                res.render("login", { pageName: "Inloggen", err: "Er bestaat geen gebruiker met deze e-mailadres!", oldMailValue: emailAddress });
+                res.render("login", { pageName: "Inloggen", err: "Er bestaat geen gebruiker met dit e-mailadres!", oldMailValue: emailAddress });
             }
         });
     } else {
@@ -125,7 +164,7 @@ exports.login = (req, res) => {
 };
 
 exports.setupMember = (req, res) => {
-    const { firstName, lastName, password, email } = req.body;
+    const { firstName, lastName, password, confirmPassword, email } = req.body;
     const decryptedMail = cryptr.decrypt(email);
 
     const errors = {};
@@ -154,8 +193,14 @@ exports.setupMember = (req, res) => {
         oldValues.password = password;
     }
 
-    if (typeof errors.firstNameErr != "undefined" || typeof errors.lastNameErr != "undefined" || typeof errors.passwordErr != "undefined") {
-        res.render("member_setup", { pageName: "Accountgegevens", session: req.session.user, ...errors, email });
+    if (!confirmPassword || confirmPassword.length === 0) {
+        errors.confirmPasswordErr = "Bevestig wachtwoord is verplicht!";
+    } else if (confirmPassword != password) {
+        errors.confirmPasswordErr = "De wachtwoorden komen niet overeen!";
+    }
+
+    if (typeof errors.firstNameErr != "undefined" || typeof errors.lastNameErr != "undefined" || typeof errors.passwordErr != "undefined" || typeof errors.confirmPasswordErr != "undefined") {
+        res.render("member_setup", { pageName: "Accountgegevens", session: req.session, ...errors, email });
     } else {
         User.findOneAndUpdate({ emailAddress: decryptedMail }, { firstName, lastName, password: bcrypt.hashSync(password, bcrypt.genSaltSync()), lastLoginDate: Date.now() }, { new: true }, (err, updatedUser) => {
             let session = req.session;
@@ -189,4 +234,8 @@ exports.getLoginPage = (req, res) => {
 
 exports.getSetupPage = (req, res) => {
     res.render("member_setup", { pageName: "Accountgegevens", errors: {}, email: req.query.t });
+};
+
+exports.getForgotPasswordPage = (req, res) => {
+    res.render("forgot_password", { pageName: "Wachtwoord vergeten" });
 };

@@ -3,9 +3,9 @@
 <main id="main" class="main">
     <div class="pagetitle">
 
-        <% if (session.roles == "coordinator" || session.roles == "member") { %>
+        <% if (session.user.roles == "coordinator" || session.user.roles == "member") { %>
             <h1>Opdrachten</h1>
-        <% } else if (session.roles == "client") { %>
+        <% } else if (session.user.roles == "client") { %>
             <h1>Mijn opdrachten</h1>
         <% } %>
         
@@ -13,9 +13,9 @@
             <ol class="breadcrumb">
                 <li class="breadcrumb-item"><a href="/">Dashboard</a></li>
 
-                <% if (session.roles == "coordinator" || session.roles == "member") { %>
+                <% if (session.user.roles == "coordinator" || session.user.roles == "member") { %>
                     <li class="breadcrumb-item active">Opdrachten</li>
-                <% } else if (session.roles == "client") { %>
+                <% } else if (session.user.roles == "client") { %>
                     <li class="breadcrumb-item active">Mijn opdrachten</li>
                 <% } %>
             </ol>
@@ -25,20 +25,61 @@
     <section class="section">
         <div class="row">
             <div class="col-lg-12">
-                <% if (session.roles == "coordinator") { %>
+                <% if (session.user.roles == "coordinator") { %>
                     <div>
                         <div class="row">
                             <% if(assignments.length > 0) { %>
                             <% assignments.forEach(assignment => { %>
+
                                 <div class="col-lg-6">
-                                    <a href="#" data-bs-toggle="modal" data-bs-target="#assignment<%= assignment._id %>">
-                                        <div class="card">
-                                            <div class="card-body assignment_card">
+                                
+                                    <div class="card">
+                                        <a href="#" data-bs-toggle="modal" data-bs-target="#assignment<%= assignment._id %>">
+                                        <div class="card-body assignment_card">
                                             <h5 class="card-title"><%= assignment.amountOfLotusVictims + " LOTUSslachtoffers nodig in " + assignment.playgroundTown %></h5>
-                                            <%= "Opdracht in " + assignment.playgroundHouseNumber + assignment.playgroundHouseNumberAddition + " " + assignment.playgroundStreet + " " + assignment.playgroundTown + ", " + assignment.playgroundPostalCode %><br> 
-                                            </div>
+                                            <h6>Opdrachtgegevens</h6>
+                                            <b>Opdrachtgever:</b> <%= assignment.firstName + " " + assignment.lastName %>
+                                            <br>
+                                            <b>Datum:</b> <%= assignment.dateTime %> 
+                                            <br>
+                                            <b>Deelnemers:</b> <%= assignment.participatingLotusVictims.length + "/" + assignment.amountOfLotusVictims %>
+                                            <br>
+                                            <br>
+                                            <h6>Locatiegegevens</h6>
+                                            <b>Adres:</b> <%= assignment.playgroundStreet + " " + assignment.playgroundHouseNumber + assignment.playgroundHouseNumberAddition %>
+                                            <br>
+                                            <b>Postcode:</b> <%= assignment.playgroundPostalCode %>
+                                            <br>
+                                            <b>Plaats:</b> <%= assignment.playgroundPostalCode %>
+                                            
                                         </div>
                                     </a>
+                                        <div class="card-footer">
+                                            <div class="assignmentDataHolder">
+                                                <a href="#" style="color: #798eb3" data-bs-toggle="modal" data-bs-target="#assignment<%= assignment._id %>">
+                                                    <span style="text-decoration: none;">Klik voor meer informatie</span>
+                                                </a>
+                                                <div>
+                                                    <div class="leftBtnBlock">
+                                                        <form action="/assignment/update" method="GET">
+                                                            <input type="hidden" name="assignmentId" value="<%= assignment._id %>">
+                                                            <button type="submit" class="btn btn-primary">Bewerken</button>
+                                                        </form>
+                                                    </div>
+
+                                                    <div class="rightBtnBlock">
+                                                        <form action="/assignment/delete?id=<%= assignment._id %>&emailAddress=<%= assignment.emailAddress %>&firstName=<%= assignment.firstName %>" method="POST">
+
+                                                            <button type="submit" class="btn btn-danger">Verwijderen</button>
+                                                        </form>
+                                                    </div>
+
+                                                </div>
+                                            </div>
+                                        
+                                        </div>
+                                    </div>
+                                
                                 </div>
 
                                 <div class="modal fade" id="assignment<%= assignment._id %>" tabindex="-1">
@@ -139,30 +180,41 @@
                                                         <b>Opmerkingen:</b> <%= a.comments %> 
                                                     <% } %> 
 
-                                                    <% console.log(a.participatingLotusVictims.length) %> 
-
                                                     <% if(a.participatingLotusVictims.length !== 0) { %> 
                                                         <br>
                                                         <br>
                                                         <h6>Ingeschreven leden</h6>
                                                         <% a.participatingLotusVictims.forEach(victim => { %>
-                                                            <p style="display: inline-block;"><b>Naam:</b> <%= victim.firstName + " " + victim.lastName %>                                                         
-                                                                <form action="/assignment/member/delete?victimId=<%= victim._id %>&assignmentId=<%= a._id %>" method="POST">
-                                                                    <button type="submit" class="btn btn-danger">Verwijderen</button>
-                                                                </form>   
-                                                            </p>
+
+                                                            
+                                                            <div class="assignmentDataHolder" style="margin-bottom:10px;">
+                                                                <div>
+                                                                    <p>
+                                                                        <b>Naam:</b> <%= victim.firstName + " " + victim.lastName %>  
+                                                                        <br>                                                       
+                                                                        <b>E-mailadres:</b> <%= victim.emailAddress %>   
+                                                                    </p>
+                                                                </div>
+
+                                                                <div>
+                                                                    <form action="/assignment/member/delete?victimId=<%= victim._id %>&assignmentId=<%= a._id %>" method="POST">
+                                                                        <button type="submit" class="btn btn-danger">Uitschrijven</button>
+                                                                    </form>   
+                                                                </div>
+                                                            </div>
+                                                            
         
                                                         <% }); %> 
                                                     <% } %> 
                                         </div>
                                         <div class="modal-footer">
-                                          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuleren</button>
+                                          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Sluiten</button>
                                             <form action="/assignment/update" method="GET">
                                                 <input type="hidden" name="assignmentId" value="<%= a._id %>">
                                                 <button type="submit" class="btn btn-primary">Bewerken</button>
                                             </form>
 
-                                            <form action="/assignment/delete?id=<%= a._id %>" method="POST">
+                                            <form action="/assignment/delete?id=<%= assignment._id %>&emailAddress=<%= assignment.emailAddress %>&firstName=<%= assignment.firstName %>" method="POST">
                                                 <button type="submit" class="btn btn-danger">Verwijderen</button>
                                             </form>
                                         </div>
@@ -182,27 +234,87 @@
                             <% } %> 
                         </div>
                     </div>
-                <% } else if (session.roles == "client") { %>
+                <% } else if (session.user.roles == "client") { %>
                     <div>
                         <div class="row">
                             <% if(assignments.length > 0) { %>
                             <% assignments.forEach(assignment => { %>
+
+
                                 <div class="col-lg-6">
-                                    <a href="#" data-bs-toggle="modal" data-bs-target="#assignment<%= assignment._id %>">
-                                        <div class="card">
-                                            <div class="card-body assignment_card">
-                                            <h5 class="card-title"><%= assignment.amountOfLotusVictims + " LOTUSslachtoffers nodig in " + assignment.playgroundTown %> <% if(assignment.requestStatus == "Aangevraagd") { %><i class="bi bi-hourglass-split" style="float: right; font-size: 30px; color: #435df1;"></i><% } %></h5>
-                                                <%= "Opdracht in " + assignment.playgroundHouseNumber + assignment.playgroundHouseNumberAddition + " " + assignment.playgroundStreet + " " + assignment.playgroundTown + ", " + assignment.playgroundPostalCode %><br> 
-                                                <% if (assignment.status == "In behandeling") { %>
-                                                    <br><i class="bi bi-circle-fill" style="color: orange; font-size: 12px;"></i> <%= assignment.status %>
-                                                <% } else if (assignment.status == "Goedgekeurd") { %>
-                                                    <br><i class="bi bi-circle-fill" style="color: green; font-size: 12px;"></i> <%= assignment.status %>
-                                                <% } else if (assignment.status == "Afgewezen") { %>
-                                                    <br><i class="bi bi-circle-fill" style="color: red; font-size: 12px;"></i> <%= assignment.status %>
-                                                <% } %>
-                                            </div>
+                                
+                                    <div class="card">
+                                        <a href="#" data-bs-toggle="modal" data-bs-target="#assignment<%= assignment._id %>">
+                                        <div class="card-body assignment_card">
+                                            <h5 class="card-title"><%= assignment.amountOfLotusVictims + " LOTUSslachtoffers nodig in " + assignment.playgroundTown %> <% if(assignment.requestStatus == "Aangevraagd" || assignment.status == "In behandeling") { %><i class="bi bi-hourglass-split" style="float: right; font-size: 30px; color: #435df1;"></i><% } %></h5>
+                                            <h6>Opdrachtgegevens</h6>
+                                            <b>Opdrachtgever:</b> <%= assignment.firstName + " " + assignment.lastName %>
+                                            <br>
+                                            <b>Datum:</b> <%= assignment.dateTime %> 
+                                            <br>
+                                            <b>Deelnemers:</b> <%= assignment.participatingLotusVictims.length + "/" + assignment.amountOfLotusVictims %>
+                                            <br>
+                                            <br>
+                                            <h6>Locatiegegevens</h6>
+                                            <b>Adres:</b> <%= assignment.playgroundStreet + " " + assignment.playgroundHouseNumber + assignment.playgroundHouseNumberAddition %>
+                                            <br>
+                                            <b>Postcode:</b> <%= assignment.playgroundPostalCode %>
+                                            <br>
+                                            <b>Plaats:</b> <%= assignment.playgroundPostalCode %>
+                                            <br>
+
+
+                                            <% if (assignment.status == "In behandeling") { %>
+                                                <br><i class="bi bi-circle-fill" style="color: orange; font-size: 12px;"></i> <%= assignment.status %>
+                                            <% } else if (assignment.status == "Goedgekeurd") { %>
+                                                <br><i class="bi bi-circle-fill" style="color: green; font-size: 12px;"></i> <%= assignment.status %>
+                                            <% } else if (assignment.status == "Afgewezen") { %>
+                                                <br><i class="bi bi-circle-fill" style="color: red; font-size: 12px;"></i> <%= assignment.status %>
+                                            <% } %>
+                                            
                                         </div>
                                     </a>
+                                        <div class="card-footer">
+                                            <div class="assignmentDataHolder">
+                                                <a href="#" style="color: #798eb3" data-bs-toggle="modal" data-bs-target="#assignment<%= assignment._id %>">
+                                                    <span style="text-decoration: none;">Klik voor meer informatie</span>
+                                                </a>
+                                                <div>
+                                                    <div class="leftBtnBlock">
+                                                        <% if(assignment.status != "Afgewezen" && assignment.requestStatus != "Aangevraagd") { %> 
+                                                            <form action="/assignment/update" method="GET">
+                                                                <input type="hidden" name="assignmentId" value="<%= assignment._id %>">
+                                                                <input type="hidden" name="assignmentStatus" value="<%= assignment.status %>">
+                                                                <button type="submit" class="btn btn-primary">Bewerken</button>
+                                                            </form>
+                                                            <% } %> 
+                                                    </div>
+
+                                                    <div class="rightBtnBlock">
+                                                        <% if(assignment.requestStatus == "Aangevraagd" || assignment.status == "In behandeling") { %>
+                                                            <form action="/assignment/delete?id=<%= assignment._id %>" method="POST">
+                                                                <input type="hidden" name="status" value="<%= assignment.status %>">
+                                                                <input type="hidden" name="cancelStatus" value="<%= assignment.cancelStatus %>">
+                                                                <button type="submit" class="btn btn-danger">Aanvraag annuleren</button>
+                                                            </form>
+                                                        <% } else if(assignment.status == "Goedgekeurd" ) { %> 
+                                                            <form action="/assignment/delete?id=<%= assignment._id %>" method="POST">
+                                                                <input type="hidden" name="status" value="<%= assignment.status %>">
+                                                                <button type="submit" class="btn btn-danger">Verwijdering aanvragen</button>
+                                                            </form>
+                                                        <% } else {%> 
+                                                            <form action="/assignment/delete?id=<%= assignment._id %>" method="POST">
+                                                                <input type="hidden" name="status" value="<%= assignment.status %>">
+                                                                <button type="submit" class="btn btn-danger">Verwijderen</button>
+                                                            </form>
+                                                        <% } %> 
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        
+                                        </div>
+                                    </div>
+                                
                                 </div>
 
                                 <div class="modal fade" id="assignment<%= assignment._id %>" tabindex="-1">
@@ -304,19 +416,24 @@
                                                     <% } %> 
                                         </div>
                                         <div class="modal-footer">
-                                          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuleren</button>
-                                            <% if(a.status != "Afgewezen") { %> 
+                                          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Sluiten</button>
+                                            <% if(a.status != "Afgewezen" && assignment.requestStatus != "Aangevraagd") { %> 
                                             <form action="/assignment/update" method="GET">
                                                 <input type="hidden" name="assignmentId" value="<%= a._id %>">
                                                 <input type="hidden" name="assignmentStatus" value="<%= a.status %>">
                                                 <button type="submit" class="btn btn-primary">Bewerken</button>
                                             </form>
                                             <% } %> 
-                                            <% if(a.requestStatus == "Aangevraagd") { %>
+                                            <% if(a.requestStatus == "Aangevraagd" || assignment.status == "In behandeling") { %>
                                                 <form action="/assignment/delete?id=<%= a._id %>" method="POST">
                                                     <input type="hidden" name="status" value="<%= a.status %>">
                                                     <input type="hidden" name="cancelStatus" value="<%= a.cancelStatus %>">
-                                                    <button type="submit" class="btn btn-danger">Annuleer verwijderen</button>
+                                                    <button type="submit" class="btn btn-danger">Aanvraag annuleren</button>
+                                                </form>
+                                            <% } else if(assignment.status == "Goedgekeurd") { %> 
+                                                <form action="/assignment/delete?id=<%= assignment._id %>" method="POST">
+                                                    <input type="hidden" name="status" value="<%= assignment.status %>">
+                                                    <button type="submit" class="btn btn-danger">Verwijdering aanvragen</button>
                                                 </form>
                                             <% } else {%> 
                                                 <form action="/assignment/delete?id=<%= a._id %>" method="POST">
@@ -341,20 +458,64 @@
                             <% } %> 
                         </div>
                     </div>
-                <% } else if (session.roles == "member") { %>
+                <% } else if (session.user.roles == "member") { %>
                 <div>
                     <div class="row">
                     <% if(assignments.length > 0) { %>
                         <% assignments.forEach(assignment => { %>
                             <div class="col-lg-6">
-                                <a href="#" data-bs-toggle="modal" data-bs-target="#assignment<%= assignment._id %>">
+                                
                                     <div class="card">
+                                        <a href="#" data-bs-toggle="modal" data-bs-target="#assignment<%= assignment._id %>">
                                         <div class="card-body assignment_card">
                                             <h5 class="card-title"><%= assignment.amountOfLotusVictims + " LOTUSslachtoffers nodig in " + assignment.playgroundTown %> <% if(assignment.status == "Ingeschreven") { %><i class="bi bi-hourglass-split" style="float: right; font-size: 30px; color: #435df1;"></i><% } %></h5>
-                                            <%= "Opdracht in " + assignment.playgroundHouseNumber + assignment.playgroundHouseNumberAddition + " " + assignment.playgroundStreet + " " + assignment.playgroundTown + ", " + assignment.playgroundPostalCode %>
+                                            <h6>Opdrachtgegevens</h6>
+                                            <b>Opdrachtgever:</b> <%= assignment.firstName + " " + assignment.lastName %>
+                                            <br>
+                                            <b>Datum:</b> <%= assignment.dateTime %> 
+                                            <br>
+                                            <b>Deelnemers:</b> <%= assignment.participatingLotusVictims.length + "/" + assignment.amountOfLotusVictims %>
+
+                                                                                        
+                                            <br>
+                                            <br>
+                                            <h6>Locatiegegevens</h6>
+                                            <b>Adres:</b> <%= assignment.playgroundStreet + " " + assignment.playgroundHouseNumber + assignment.playgroundHouseNumberAddition %>
+                                            <br>
+                                            <b>Postcode:</b> <%= assignment.playgroundPostalCode %>
+                                            <br>
+                                            <b>Plaats:</b> <%= assignment.playgroundPostalCode %>
+                                            
+                                        </div>
+                                    </a>
+                                        <div class="card-footer">
+                                            <div class="assignmentDataHolder">
+                                                <a href="#" style="color: #798eb3" data-bs-toggle="modal" data-bs-target="#assignment<%= assignment._id %>">
+                                                    <span style="text-decoration: none">Klik voor meer informatie</span>
+                                                </a>
+                                                <div>
+                                                    <% if(assignment.status == "Ingeschreven") { %>
+                                                        <form action="/assignment/cancel" method="POST">
+                                                            <input type="hidden" name="status" value="<%= assignment.status %>">
+                                                            <input type="hidden" name="requestType" value="cancelEnrollment">
+                                                            <input type="hidden" name="requestId" value="<%= assignment.requestId %>">
+                                                            <input type="hidden" name="assignmentId" value="<%= assignment._id %>">
+                                                            <button type="submit" class="btn btn-danger">Inschrijving annuleren</button>
+                                                        </form>
+                                                        <% } else {%> 
+                                                        <form action="/assignment/enroll" method="POST">
+                                                            <input type="hidden" name="requestType" value="enrollment">
+                                                            <input type="hidden" name="requestId" value="<%= assignment.requestId %>">
+                                                            <input type="hidden" name="assignmentId" value="<%= assignment._id %>">
+                                                            <button type="submit" class="btn btn-success">Inschrijven</button>
+                                                        </form>
+                                                        <% } %> 
+                                                </div>
+                                            </div>
+                                        
                                         </div>
                                     </div>
-                                </a>
+                                
                             </div>
 
                             <div class="modal fade" id="assignment<%= assignment._id %>" tabindex="-1">
@@ -447,6 +608,8 @@
                                                 <b>Vind plaats op:</b> <%= a.dateTime %> 
                                                 <br>
                                                 <b>Benodigde LOTUSslachtoffers:</b> <%= a.amountOfLotusVictims %> 
+                                                <br>
+                                                <b>Aantal LOTUSslachtoffers ingeschreven:</b> <%=a.participatingLotusVictims.length + "/" + a.amountOfLotusVictims %> 
                                             
                                                 <% if(a.comments != "" ) { %> 
                                                     <br>
@@ -455,14 +618,14 @@
         
                                     </div>
                                     <div class="modal-footer">
-                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuleren</button>
+                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Sluiten</button>
                                         <% if(assignment.status == "Ingeschreven") { %>
                                         <form action="/assignment/cancel" method="POST">
                                             <input type="hidden" name="status" value="<%= assignment.status %>">
                                             <input type="hidden" name="requestType" value="cancelEnrollment">
                                             <input type="hidden" name="requestId" value="<%= a.requestId %>">
                                             <input type="hidden" name="assignmentId" value="<%= a._id %>">
-                                            <button type="submit" class="btn btn-danger">Annuleer inschrijven</button>
+                                            <button type="submit" class="btn btn-danger">Inschrijving annuleren</button>
                                         </form>
                                         <% } else {%> 
                                         <form action="/assignment/enroll" method="POST">

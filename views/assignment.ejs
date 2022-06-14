@@ -12,6 +12,7 @@
             <% } else if (url.includes("/assignment/update")) { %>
                 <ol class="breadcrumb">
                     <li class="breadcrumb-item"><a href="/">Dashboard</a></li>
+                    <li class="breadcrumb-item"><a href="/assignment">Opdrachten</a></li>
                     <li class="breadcrumb-item active">Opdracht bewerken</li>
                 </ol>
             <% } %>
@@ -45,7 +46,7 @@
                                 <% if(typeof assignment == "undefined") { %>
                                     <div class="form-group mb-3">
                                         <div class="form-check">
-                                            <input class="form-check-input" type="checkbox" id="checkedOrNotProfile" name="checkedOrNotProfile" onclick='validate("<%= session.firstName %>","<%= session.lastName %>","<%= session.emailAddress %>","<%= session.street %>","<%= session.houseNumber %>","<%= session.houseNumberAddition %>","<%= session.postalCode %>","<%= session.town %>")'>
+                                            <input class="form-check-input" type="checkbox" id="checkedOrNotProfile" name="checkedOrNotProfile" onclick='validate("<%= session.user.firstName %>","<%= session.user.lastName %>","<%= session.user.emailAddress %>","<%= session.user.street %>","<%= session.user.houseNumber %>","<%= session.user.houseNumberAddition %>","<%= session.user.postalCode %>","<%= session.user.town %>")'>
                                             <label class="form-check-label" style="font-size: 14px;">Gebruik mijn persoonlijke gegevens</label>
                                         </div>
                                     </div>
@@ -130,7 +131,7 @@
                                     <% if(typeof assignment == "undefined") { %>
                                         <div class="form-group mb-3">
                                             <div class="form-check">
-                                                <input class="form-check-input" type="checkbox" id="checkedOrNotPlayground" name="checkedOrNotPlayground" onclick='validate("<%= session.firstName %>","<%= session.lastName %>","<%= session.emailAddress %>","<%= session.street %>","<%= session.houseNumber %>","<%= session.houseNumberAddition %>","<%= session.postalCode %>","<%= session.town %>")'>
+                                                <input class="form-check-input" type="checkbox" id="checkedOrNotPlayground" name="checkedOrNotPlayground" onclick='validate("<%= session.user.firstName %>","<%= session.user.lastName %>","<%= session.user.emailAddress %>","<%= session.user.street %>","<%= session.user.houseNumber %>","<%= session.user.houseNumberAddition %>","<%= session.user.postalCode %>","<%= session.user.town %>")'>
                                                 <label class="form-check-label" style="font-size: 14px;">Speelplaats adres is hetzelfde als persoonlijk adres</label>
                                             </div>
                                         </div>
@@ -191,7 +192,7 @@
                                 <% if(typeof assignment == "undefined") { %>                                    
                                     <div class="form-group mb-3">
                                         <div class="form-check">
-                                            <input class="form-check-input" type="checkbox" id="checkedOrNotMakeUp" name="checkedOrNotMakeUp" onclick='validate("<%= session.firstName %>","<%= session.lastName %>","<%= session.emailAddress %>","<%= session.street %>","<%= session.houseNumber %>","<%= session.houseNumberAddition %>","<%= session.postalCode %>","<%= session.town %>")'>
+                                            <input class="form-check-input" type="checkbox" id="checkedOrNotMakeUp" name="checkedOrNotMakeUp" onclick='validate("<%= session.user.firstName %>","<%= session.user.lastName %>","<%= session.user.emailAddress %>","<%= session.user.street %>","<%= session.user.houseNumber %>","<%= session.user.houseNumberAddition %>","<%= session.user.postalCode %>","<%= session.user.town %>")'>
                                             <label class="form-check-label" style="font-size: 14px;">Grimeer adres is hetzelfde als speelplaats adres</label>
                                         </div>
                                     </div>
@@ -300,11 +301,51 @@
                             <div class="row pr-0">
                                 <% if (url == "/assignment/create") { %>
                                     <div class="col-12">
-                                        <button class="btn btn-primary w-100" type="submit">Opdracht aanmaken</button>
+                                        <a data-bs-toggle="modal" data-bs-target="#confirmation">
+                                            <button class="btn btn-primary w-100">Opdracht aanmaken</button>
+                                        </a>
+                                    </div>
+                                    
+                                    <div class="modal fade" id="confirmation" tabindex="-1">
+                                        <div class="modal-dialog">
+                                            <div class="modal-content">
+                                                <div class="modal-header">
+                                                    <h5 class="modal-title">Bevestigen</h5>
+                                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                                </div>
+                                                <div class="modal-body">
+                                                    Weet je zeker dat je de opdracht aan wil maken?
+                                                </div>
+                                                <div class="modal-footer">
+                                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuleren</button>
+                                                    <button type="submit" class="btn btn-primary">Bevestig</button>
+                                                </div>
+                                            </div>
+                                        </div>
                                     </div>
                                 <% } else if (url.includes("/assignment/update")) { %>
                                     <div class="col-12">
-                                        <button class="btn btn-primary w-100" type="submit">Opdracht bewerken</button>
+                                        <a data-bs-toggle="modal" data-bs-target="#confirmation">
+                                            <button class="btn btn-primary w-100">Opdracht bewerken<%if(session.user.roles === "client") { %> <%= "aanvragen" %> <% } %></button>
+                                        </a>
+                                    </div>
+
+                                    <div class="modal fade" id="confirmation" tabindex="-1">
+                                        <div class="modal-dialog">
+                                            <div class="modal-content">
+                                                <div class="modal-header">
+                                                    <h5 class="modal-title">Bevestigen</h5>
+                                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                                </div>
+                                                <div class="modal-body">
+                                                    Weet je zeker dat je de opdracht wil bewerken?
+                                                </div>
+                                                <div class="modal-footer">
+                                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuleren</button>
+                                                    <button type="submit" class="btn btn-primary">Bevestig</button>
+                                                </div>
+                                            </div>  
+                                        </div>
                                     </div>
                                 <% } %>
                             </div>

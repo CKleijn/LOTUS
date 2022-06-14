@@ -3,6 +3,7 @@ const Request = require("../models/request.model");
 const { assignmentModel } = require("../models/assignment.model");
 const Assignment = assignmentModel;
 const { userModel } = require("../models/user.model");
+const session = require("express-session");
 const User = userModel;
 
 exports.createRequest = async (req, res, objectId, type) => {
@@ -23,30 +24,15 @@ exports.createRequest = async (req, res, objectId, type) => {
 exports.getAllRequests = async (req, res) => {
     const requests = await Request.find({ status: "In behandeling" });
     const parsedRequests = await parseRequest(requests);
-    return res.render("request_overview", { pageName: "Verzoeken", session: req.session.user, requests: parsedRequests });
+    return res.render("request_overview", { pageName: "Verzoeken", session: req.session, requests: parsedRequests });
 };
 
 async function parseRequest(results) {
-    async function format(inputDate) {
-        let date, month, year;
-
-        date = inputDate.getDate();
-        month = inputDate.getMonth() + 1;
-        year = inputDate.getFullYear();
-
-        date = date.toString().padStart(2, "0");
-
-        month = month.toString().padStart(2, "0");
-
-        return `${date}/${month}/${year}`;
-    }
-
     let parsedRequests = [];
 
     for (let result of results) {
         const user = await User.find({ _id: result.userId });
         const assignment = await Assignment.find({ _id: result.assignmentId });
-        const requestDate = await format(new Date(result.requestDate));
         const participations = await Request.find({ userId: result.userId, type: "enrollment", status: "Goedgekeurd" }).exec();
         const canceledParticipations = await Request.find({ userId: result.userId, type: "cancelEnrollment", status: "Goedgekeurd" }).exec();
 
@@ -54,7 +40,6 @@ async function parseRequest(results) {
 
         result = {
             ...result._doc,
-            requestDate: requestDate,
             user: user[0],
             assignment: assignment[0],
         };
@@ -69,6 +54,7 @@ exports.approveRequest = async (req, res) => {
     const { requestType, requestId, assignmentId, userId } = req.body;
 
     if (requestType === "createAssignment") {
+        req.session.requests = await req.session.requests.filter((request) => request._id != requestId);
         await Assignment.findOneAndUpdate({ _id: assignmentId }, { $set: { isApproved: true } });
         await Request.findOneAndUpdate({ _id: requestId }, { $set: { status: "Goedgekeurd" } });
         res.redirect("/request");
@@ -101,30 +87,31 @@ exports.approveRequest = async (req, res) => {
             amountOfLotusVictims,
             comments,
         };
-
+        req.session.requests = await req.session.requests.filter((request) => request._id != requestId);
         await Assignment.findOneAndUpdate({ _id: assignmentId }, { $set: { ...updatedAssignment } });
         await Request.findOneAndUpdate({ _id: requestId }, { $set: { status: "Goedgekeurd" } });
         res.redirect("/request");
     }
 
     if (requestType === "deleteAssignment") {
+        req.session.requests = await req.session.requests.filter((request) => request._id != requestId);
         await Assignment.deleteOne({ _id: assignmentId });
         await Request.deleteMany({ assignmentId: assignmentId });
         res.redirect("/request");
     }
 
     if (requestType === "enrollment") {
-        let user = await User.find({_id: userId});
+        let user = await User.find({ _id: userId });
         user = user[0];
 
-        console.log(user);
-
+        req.session.requests = await req.session.requests.filter((request) => request._id != requestId);
         await Assignment.findOneAndUpdate({ _id: assignmentId }, { $push: { participatingLotusVictims: user } });
         await Request.findOneAndUpdate({ _id: requestId }, { $set: { status: "Goedgekeurd" } });
         res.redirect("/request");
     }
 
     if (requestType === "cancelEnrollment") {
+        req.session.requests = await req.session.requests.filter((request) => request._id != requestId);
         await Assignment.updateOne({ _id: assignmentId }, { $pull: { participatingLotusVictims: { _id: userId } } });
         await Request.findOneAndUpdate({ _id: requestId }, { $set: { status: "Goedgekeurd" } });
         await Request.deleteOne({ assignmentId: assignmentId, userId: userId, type: "enrollment", status: "Goedgekeurd" });
@@ -137,29 +124,34 @@ exports.declineRequest = async (req, res) => {
     const { requestType, requestId, assignmentId, userId } = req.body;
 
     if (requestType === "createAssignment") {
+        req.session.requests = await req.session.requests.filter((request) => request._id != requestId);
         await Request.findOneAndUpdate({ _id: requestId }, { $set: { status: "Afgewezen" } });
         res.redirect("/request");
     }
 
     if (requestType === "updateAssignment") {
+        req.session.requests = await req.session.requests.filter((request) => request._id != requestId);
         await Request.findOneAndUpdate({ _id: requestId }, { $set: { status: "Afgewezen" } });
         await Request.deleteOne({ assignmentId: assignmentId, userId: userId, type: "updateAssignment", status: "Afgewezen" });
         res.redirect("/request");
     }
 
     if (requestType === "deleteAssignment") {
+        req.session.requests = await req.session.requests.filter((request) => request._id != requestId);
         await Request.findOneAndUpdate({ _id: requestId }, { $set: { status: "Afgewezen" } });
         await Request.deleteOne({ assignmentId: assignmentId, userId: userId, type: "deleteAssignment", status: "Afgewezen" });
         res.redirect("/request");
     }
 
     if (requestType === "enrollment") {
+        req.session.requests = await req.session.requests.filter((request) => request._id != requestId);
         await Request.findOneAndUpdate({ _id: requestId }, { $set: { status: "Afgewezen" } });
-        await Request.deleteOne({ assignmentId: assignmentId, userId: userId, type: "enrollment", status: "Afgewezen" });
+        // await Request.deleteOne({ assignmentId: assignmentId, userId: userId, type: "enrollment", status: "Afgewezen" });
         res.redirect("/request");
     }
 
     if (requestType === "cancelEnrollment") {
+        req.session.requests = await req.session.requests.filter((request) => request._id != requestId);
         await Request.findOneAndUpdate({ _id: requestId }, { $set: { status: "Afgewezen" } });
         await Request.deleteOne({ assignmentId: assignmentId, userId: userId, type: "cancelEnrollment", status: "Afgewezen" });
         res.redirect("/request");
