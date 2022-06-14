@@ -393,11 +393,18 @@ exports.getAssignmentUpdatePage = async (req, res) => {
 exports.getAllAssignments = (req, res) => {
     const url = req.originalUrl;
     let filterValue;
+    let searchValue;
 
     if (url.includes("filter")) {
         let parts = url.split("?");
         let parts2 = parts[1].split("=");
         filterValue = parts2[1];
+    }
+
+    if (url.includes("keyword")) {
+        let parts = url.split("?");
+        let parts2 = parts[1].split("=");
+        searchValue = parts2[1];
     }
 
     function format(inputDate) {
@@ -433,7 +440,17 @@ exports.getAllAssignments = (req, res) => {
                 }
             }
 
-            if (filterValue == "true") {
+            if (searchValue && filterValue == undefined) {
+                let searchedAssignments = [];
+
+                resultsFiltered.forEach(assignment => {
+                    if (assignment.playgroundTown == searchValue) {
+                        searchedAssignments.push(assignment)
+                    }
+                });
+
+                res.render("assignment_overview", { pageName: "Opdrachten", session: req.session, assignments: searchedAssignments, filterValue: "false" });
+            } else if (filterValue == "true") {
                 let alphabeticAssignments = [];
                 alphabeticAssignments = resultsFiltered.sort((a, b) => a.playgroundTown.localeCompare(b.playgroundTown));
 
@@ -483,7 +500,17 @@ exports.getAllAssignments = (req, res) => {
                     }
                 }
                 
-                if (filterValue == "true") {
+                if (searchValue && filterValue == undefined) {
+                    let searchedAssignments = [];
+    
+                    resultsFiltered.forEach(assignment => {
+                        if (assignment.playgroundTown == searchValue) {
+                            searchedAssignments.push(assignment)
+                        }
+                    });
+    
+                    res.render("assignment_overview", { pageName: "Opdrachten", session: req.session, assignments: searchedAssignments, filterValue: "false" });
+                } else if (filterValue == "true") {
                     let alphabeticAssignments = [];
                     alphabeticAssignments = resultsFiltered.sort((a, b) => a.playgroundTown.localeCompare(b.playgroundTown));
     
@@ -529,7 +556,17 @@ exports.getAllAssignments = (req, res) => {
                 }
             }
             
-            if (filterValue == "true") {
+            if (searchValue && filterValue == undefined) {
+                let searchedAssignments = [];
+
+                resultsFiltered.forEach(assignment => {
+                    if (assignment.playgroundTown == searchValue) {
+                        searchedAssignments.push(assignment)
+                    }
+                });
+
+                res.render("assignment_overview", { pageName: "Mijn opdrachten", session: req.session, assignments: searchedAssignments, filterValue: "false" });
+            } else if (filterValue == "true") {
                 let alphabeticAssignments = [];
                 alphabeticAssignments = resultsFiltered.sort((a, b) => a.playgroundTown.localeCompare(b.playgroundTown));
 
