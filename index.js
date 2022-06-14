@@ -1,6 +1,6 @@
 const express = require("express");
 const cookieParser = require("cookie-parser");
-const flash = require('connect-flash');
+const flash = require("connect-flash");
 
 require("dotenv").config();
 
@@ -40,6 +40,10 @@ app.use(userRoutes);
 app.use(assignmentRoutes);
 
 app.use(requestRoutes);
+
+app.all("*", (req, res) => {
+    res.render("404", { pageName: "Pagina niet gevonden" });
+});
 
 app.listen(port, () => {
     console.log("Server running at " + port);

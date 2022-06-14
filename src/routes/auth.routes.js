@@ -19,6 +19,10 @@ router.post("/register/setup", authController.setupMember);
 
 router.get("/user/forgot/password", authController.getForgotPasswordPage);
 
-// router.post("/user/forgot/password",);
+router.post("/user/forgot/password", authController.sendRecoveryMail);
+
+router.get("/user/forgot/password/reset", authController.getResetPasswordPage);
+
+router.post("/user/forgot/password/reset", authController.resetPassword);
 
 module.exports = router;
