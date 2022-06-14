@@ -20,6 +20,28 @@
                 <% } %>
             </ol>
         </nav>
+
+        <div class="row">
+            <div class="col lg-6">
+                <form action="/assignment" method="GET">
+                    <% if (filterValue == "true") { %>
+                        <input type="hidden" name="filter" value="false">
+                    <% } else if (filterValue == "false") { %>
+                        <input type="hidden" name="filter" value="true">
+                    <% } %>
+                    <button type="submit" class="btn btn-secondary">Sorteer op speelplaats</button>
+                </form>
+            </div>
+
+            <div class="col lg-6">
+                <div class="search-bar">
+                    <form class="search-form d-flex align-items-center" action="/assignment" method="GET">
+                    <input type="text" name="keyword" placeholder="Zoek op speelplaats...">
+                    <button type="submit" title="Zoeken"><i class="bi bi-search"></i></button>
+                    </form>
+                </div>
+            </div>
+        </div>
     </div>
 
     <section class="section">
