@@ -62,7 +62,7 @@ exports.createUser = (req, res) => {
                 } else {
                     oldValues.password = password;
                 }
-                
+
                 if (err.errors.confirmPassword) {
                     errors.confirmPasswordErr = err.errors.confirmPassword.properties.message;
                 } else {
@@ -357,7 +357,7 @@ exports.changeRoles = async (req, res) => {
 
     const userInfo = await User.findById({ _id: userId });
 
-    if(postedRole != userInfo.roles) {
+    if (postedRole != userInfo.roles) {
         await User.findOneAndUpdate({ _id: userId }, { $set: { roles: postedRole.roles } });
     }
 

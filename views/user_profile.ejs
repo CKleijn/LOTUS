@@ -263,7 +263,7 @@
                                         <label for="newPassword" class="col-md-4 col-lg-3 col-form-label">Nieuwe wachtwoord</label>
                                         <div class="col-md-8 col-lg-9">
                                             <p>
-                                                <input id="password" type="password" name="password" class="form-control" oninput="strengthChecker()" value="<% if(typeof oldValues != "undefined"){%><%=oldValues.password%><%}%>">
+                                                <input id="password" type="password" name="newPassword" class="form-control" oninput="strengthChecker()" value="<% if(typeof oldValues != "undefined"){%><%=oldValues.password%><%}%>">
                                                 <i class="bi bi-eye-slash" id="togglePassword"></i>
                                                 <div id="strength-bar"></div>
                                                 <p id="msg"></p>
