@@ -5,6 +5,8 @@ const { update } = require("./../models/user.model");
 const cryptr = new Cryptr(process.env.EMAIL_SETUP_HASH);
 const randomstring = require("randomstring");
 
+const { sendRecoveryMailWithLink } = require("./mail.controller");
+
 const Request = require("./../models/request.model");
 const { request } = require("express");
 
@@ -221,14 +223,12 @@ exports.sendRecoveryMail = async (req, res, next) => {
 
     emailAddress = emailAddress.toLowerCase().trim();
 
-    console.log("'" + emailAddress + "'");
-
     let emailAddressErr = "";
 
     const emailRegex = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
 
     if (!emailAddress || emailAddress.length === 0) {
-        emailAddressErr = "E-mailadres is verplicht";
+        emailAddressErr = "E-mailadres is verplicht!";
     } else if (!emailRegex.test(emailAddress)) {
         emailAddressErr = "Dit is geen geldig e-mailadres!";
     } else {
@@ -242,12 +242,72 @@ exports.sendRecoveryMail = async (req, res, next) => {
     if (emailAddressErr != "") {
         return res.render("forgot_password", { pageName: "Wachtwoord vergeten", emailAddressErr });
     } else {
-        console.log(randomstring.generate(32));
-        return res.redirect("/login");
+        const token = randomstring.generate(32);
+        const existingToken = await Token.findOne({ emailAddress });
+
+        if (existingToken !== null) {
+            emailAddressErr = "Token is al gestuurd! Bekijk je mailbox.";
+            return res.render("forgot_password", { pageName: "Wachtwoord vergeten", emailAddressErr });
+        } else {
+            await Token.create({ token, emailAddress });
+            const sendStatus = await sendRecoveryMailWithLink(token, emailAddress);
+
+            if (sendStatus) {
+                console.log("Recovery email has been send");
+            } else {
+                console.log("Recovery email did not send");
+            }
+
+            return res.redirect("/login");
+        }
+    }
+};
+
+exports.getResetPasswordPage = async (req, res, next) => {
+    const token = req.query.token;
+    const existingToken = await Token.find({ token });
+
+    if (existingToken.length !== 0) {
+        const emailAddress = existingToken[0].emailAddress;
+        res.render("reset_password", { pageName: "Wachtwoord resetten", token, emailAddress });
+    } else {
+        return next();
+    }
+};
+
+exports.resetPassword = (req, res) => {
+    const { newPassword, confirmNewPassword, token, emailAddress } = req.body;
+
+    let newPasswordErr = "";
+    let confirmPasswordErr = "";
+    let oldValue = "";
+
+    const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z\d]{8,}$/;
+
+    if (!newPassword || newPassword.length === 0) {
+        newPasswordErr = "Nieuwe wachtwoord is verplicht!";
+    } else if (!passwordRegex.test(newPassword)) {
+        newPasswordErr = "Gebruik minimaal 8 letters, 1 hoofdletter en 1 cijfer!";
+    } else {
+        oldValue = newPassword;
     }
 
-    // sendRecoveryMailWithLink(req);
-    // return res.redirect("/login");
+    if (!confirmNewPassword || confirmNewPassword.length === 0) {
+        confirmPasswordErr = "Nieuwe wachtwoord bevestigen is verplicht!";
+    } else if (!(confirmNewPassword == newPassword)) {
+        confirmPasswordErr = "De wachtwoorden komen niet overeen!";
+    }
+
+    if (newPasswordErr != "" || confirmPasswordErr != "") {
+        res.render("reset_password", { pageName: "Wachtwoord resetten", newPasswordErr, confirmPasswordErr, token, emailAddress, oldValue });
+    } else {
+        (async () => {
+            await User.updateOne({ emailAddress: emailAddress }, { $set: { password: bcrypt.hashSync(newPassword, bcrypt.genSaltSync()) } });
+            await Token.deleteOne({ token: token });
+            await Token.findOne({ token: token });
+            return res.redirect("/login");
+        })();
+    }
 };
 
 exports.logout = (req, res) => {
