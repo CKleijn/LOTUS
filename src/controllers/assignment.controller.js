@@ -581,6 +581,22 @@ exports.getAllAssignments = (req, res) => {
 };
 
 exports.getMemberAssignments = (req, res) => {
+    const url = req.originalUrl;
+    let filterValue;
+    let searchValue;
+
+    if (url.includes("filter")) {
+        let parts = url.split("?");
+        let parts2 = parts[1].split("=");
+        filterValue = parts2[1];
+    }
+
+    if (url.includes("keyword")) {
+        let parts = url.split("?");
+        let parts2 = parts[1].split("=");
+        searchValue = parts2[1];
+    }
+
     function format(inputDate) {
         let date, month, year;
 
@@ -618,7 +634,27 @@ exports.getMemberAssignments = (req, res) => {
                     resultsFiltered.push(result);
                 }
             }
-            res.render("enrolled_assignment_overview", { pageName: "Mijn opdrachten", session: req.session, assignments: resultsFiltered });
+            
+            if (searchValue && filterValue == undefined) {
+                let searchedAssignments = [];
+
+                resultsFiltered.forEach(assignment => {
+                    if (assignment.playgroundTown == searchValue) {
+                        searchedAssignments.push(assignment)
+                    }
+                });
+
+                res.render("enrolled_assignment_overview", { pageName: "Mijn opdrachten", session: req.session, assignments: searchedAssignments, filterValue: "false" });
+            } else if (filterValue == "true") {
+                let alphabeticAssignments = [];
+                alphabeticAssignments = resultsFiltered.sort((a, b) => a.playgroundTown.localeCompare(b.playgroundTown));
+
+                res.render("enrolled_assignment_overview", { pageName: "Mijn opdrachten", session: req.session, assignments: alphabeticAssignments, filterValue });
+            } else if (filterValue == undefined) {
+                res.render("enrolled_assignment_overview", { pageName: "Mijn opdrachten", session: req.session, assignments: resultsFiltered, filterValue: "false" });
+            } else {
+                res.render("enrolled_assignment_overview", { pageName: "Mijn opdrachten", session: req.session, assignments: resultsFiltered, filterValue });
+            }
         });
     }
 };
