@@ -444,7 +444,7 @@ exports.getAllAssignments = (req, res) => {
                 let searchedAssignments = [];
 
                 resultsFiltered.forEach(assignment => {
-                    if (assignment.playgroundTown == searchValue) {
+                    if (assignment.playgroundTown == searchValue || assignment.playgroundTown.toLowerCase() == searchValue.toLowerCase()) {
                         searchedAssignments.push(assignment)
                     }
                 });
@@ -504,7 +504,7 @@ exports.getAllAssignments = (req, res) => {
                     let searchedAssignments = [];
     
                     resultsFiltered.forEach(assignment => {
-                        if (assignment.playgroundTown == searchValue) {
+                        if (assignment.playgroundTown == searchValue || assignment.playgroundTown.toLowerCase() == searchValue.toLowerCase()) {
                             searchedAssignments.push(assignment)
                         }
                     });
@@ -560,7 +560,7 @@ exports.getAllAssignments = (req, res) => {
                 let searchedAssignments = [];
 
                 resultsFiltered.forEach(assignment => {
-                    if (assignment.playgroundTown == searchValue) {
+                    if (assignment.playgroundTown == searchValue || assignment.playgroundTown.toLowerCase() == searchValue.toLowerCase()) {
                         searchedAssignments.push(assignment)
                     }
                 });
@@ -639,7 +639,7 @@ exports.getMemberAssignments = (req, res) => {
                 let searchedAssignments = [];
 
                 resultsFiltered.forEach(assignment => {
-                    if (assignment.playgroundTown == searchValue) {
+                    if (assignment.playgroundTown == searchValue || assignment.playgroundTown.toLowerCase() == searchValue.toLowerCase()) {
                         searchedAssignments.push(assignment)
                     }
                 });
