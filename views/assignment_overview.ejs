@@ -69,7 +69,27 @@
 
                                                     <div class="rightBtnBlock">
                                                         <form action="/assignment/delete?id=<%= assignment._id %>" method="POST">
-                                                            <button type="submit" class="btn btn-danger">Verwijderen</button>
+                                                            <a data-bs-toggle="modal" data-bs-target="#confirmation_remove_assignment_coordinator">
+                                                                <button class="btn btn-danger">Verwijderen</button>
+                                                            </a>
+
+                                                            <div class="modal fade" id="confirmation_remove_assignment_coordinator" tabindex="-1">
+                                                                <div class="modal-dialog">
+                                                                    <div class="modal-content">
+                                                                        <div class="modal-header">
+                                                                            <h5 class="modal-title">Bevestigen</h5>
+                                                                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                                                        </div>
+                                                                        <div class="modal-body">
+                                                                            Weet je zeker dat je de opdracht wil verwijderen?
+                                                                        </div>
+                                                                        <div class="modal-footer">
+                                                                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuleren</button>
+                                                                            <button type="submit" class="btn btn-primary">Bevestig</button>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
                                                         </form>
                                                     </div>
 
@@ -196,9 +216,11 @@
                                                                 </div>
 
                                                                 <div>
-                                                                    <form action="/assignment/member/delete?victimId=<%= victim._id %>&assignmentId=<%= a._id %>" method="POST">
-                                                                        <button type="submit" class="btn btn-danger">Uitschrijven</button>
-                                                                    </form>   
+                                                                    <form id="remove_registration_form" action="/assignment/member/delete?victimId=<%= victim._id %>&assignmentId=<%= a._id %>" method="POST">
+                                                                        <a data-bs-toggle="modal" data-bs-target="#confirmation_remove_registration">
+                                                                            <button class="btn btn-danger">Uitschrijven</button>
+                                                                        </a>
+                                                                    </form>
                                                                 </div>
                                                             </div>
                                                             
@@ -206,6 +228,7 @@
                                                         <% }); %> 
                                                     <% } %> 
                                         </div>
+
                                         <div class="modal-footer">
                                           <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Sluiten</button>
                                             <form action="/assignment/update" method="GET">
@@ -214,12 +237,50 @@
                                             </form>
 
                                             <form action="/assignment/delete?id=<%= a._id %>" method="POST">
-                                                <button type="submit" class="btn btn-danger">Verwijderen</button>
+                                                <a data-bs-toggle="modal" data-bs-target="#confirmation_remove_assignment_coordinator">
+                                                    <button class="btn btn-danger">Verwijderen</button>
+                                                </a>
+
+                                                <div class="modal fade" id="confirmation_remove_assignment_coordinator" tabindex="-1">
+                                                    <div class="modal-dialog">
+                                                        <div class="modal-content">
+                                                            <div class="modal-header">
+                                                                <h5 class="modal-title">Bevestigen</h5>
+                                                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                                            </div>
+                                                            <div class="modal-body">
+                                                                Weet je zeker dat je de opdracht wil verwijderen?
+                                                            </div>
+                                                            <div class="modal-footer">
+                                                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuleren</button>
+                                                                <button type="submit" class="btn btn-primary">Bevestig</button>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
                                             </form>
                                         </div>
                                       </div>
                                     </div>
                                   </div>
+
+                                <div class="modal fade" id="confirmation_remove_registration" tabindex="-1">
+                                    <div class="modal-dialog">
+                                        <div class="modal-content">
+                                            <div class="modal-header">
+                                                <h5 class="modal-title">Bevestigen</h5>
+                                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                            </div>
+                                            <div class="modal-body">
+                                                Weet je zeker dat je het lid uit wil schrijven?
+                                            </div>
+                                            <div class="modal-footer">
+                                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuleren</button>
+                                                <button form="remove_registration_form" type="submit" class="btn btn-primary">Bevestig</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
                             <% }); %>
                             <% } else { %> 
                                 <div class="col-lg-6">
@@ -304,7 +365,27 @@
                                                         <% } else {%> 
                                                             <form action="/assignment/delete?id=<%= assignment._id %>" method="POST">
                                                                 <input type="hidden" name="status" value="<%= assignment.status %>">
-                                                                <button type="submit" class="btn btn-danger">Verwijderen</button>
+                                                                <a data-bs-toggle="modal" data-bs-target="#confirmation_remove_assignment">
+                                                                    <button class="btn btn-danger">Verwijderen</button>
+                                                                </a>
+
+                                                                <div class="modal fade" id="confirmation_remove_assignment" tabindex="-1">
+                                                                    <div class="modal-dialog">
+                                                                        <div class="modal-content">
+                                                                            <div class="modal-header">
+                                                                                <h5 class="modal-title">Bevestigen</h5>
+                                                                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                                                            </div>
+                                                                            <div class="modal-body">
+                                                                                Weet je zeker dat je de opdracht wil verwijderen?
+                                                                            </div>
+                                                                            <div class="modal-footer">
+                                                                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuleren</button>
+                                                                                <button type="submit" class="btn btn-primary">Bevestig</button>
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
                                                             </form>
                                                         <% } %> 
                                                     </div>
@@ -437,7 +518,28 @@
                                             <% } else {%> 
                                                 <form action="/assignment/delete?id=<%= a._id %>" method="POST">
                                                     <input type="hidden" name="status" value="<%= a.status %>">
-                                                    <button type="submit" class="btn btn-danger">Verwijderen</button>
+
+                                                    <a data-bs-toggle="modal" data-bs-target="#confirmation_remove_assignment">
+                                                        <button class="btn btn-danger">Verwijderen</button>
+                                                    </a>
+
+                                                    <div class="modal fade" id="confirmation_remove_assignment" tabindex="-1">
+                                                        <div class="modal-dialog">
+                                                            <div class="modal-content">
+                                                                <div class="modal-header">
+                                                                    <h5 class="modal-title">Bevestigen</h5>
+                                                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                                                </div>
+                                                                <div class="modal-body">
+                                                                    Weet je zeker dat je de opdracht wil verwijderen?
+                                                                </div>
+                                                                <div class="modal-footer">
+                                                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuleren</button>
+                                                                    <button type="submit" class="btn btn-primary">Bevestig</button>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
                                                 </form>
                                             <% } %> 
                                         </div>
