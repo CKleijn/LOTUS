@@ -31,19 +31,19 @@ function strengthChecker() {
         switch (spanRef.length - 1) {
             case 0:
                 spanRef[i].style.background = "#ff3e36";
-                msg.textContent = "";
+                msg.textContent = "Zwak";
                 break;
             case 1:
                 spanRef[i].style.background = "#ff691f";
-                msg.textContent = "";
+                msg.textContent = "Matig";
                 break;
             case 2:
                 spanRef[i].style.background = "#ffda36";
-                msg.textContent = "";
+                msg.textContent = "Sterk";
                 break;
             case 3:
                 spanRef[i].style.background = "#0be881";
-                msg.textContent = "";
+                msg.textContent = "Zeer sterk";
                 break;
         }
     }
