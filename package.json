@@ -30,7 +30,7 @@
         "generate-password": "^1.7.0",
         "mongoose": "^6.3.4",
         "nodemailer": "^4.7.0",
-        "password-strength-meter": "^2.1.0"
+        "randomstring": "^1.2.2"
     },
     "devDependencies": {
         "nodemon": "^2.0.16"
