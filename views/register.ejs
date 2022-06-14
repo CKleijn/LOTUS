@@ -33,15 +33,16 @@
                                     </div>
 
                                     <div class="col-12">
-                                        <label class="form-label">Wachtwoord</label>
-                                        <input id="password" type="password" name="password" class="form-control" value="<% if(typeof oldValues != "undefined"){%><%=oldValues.password%><%}%>">
-                                        <i class="bi bi-eye-slash" id="togglePassword"></i>
+                                            <label class="form-label">Wachtwoord</label>
+                                            <!-- <input id="password" type="password" name="password" class="form-control" value="<% if(typeof oldValues != "undefined"){%><%=oldValues.password%><%}%>"> -->
+                                            <!-- <i class="bi bi-eye-slash" id="togglePassword"></i> -->
 
-                                        <div class="pass-wrapper">
-                                            <div class="pass-graybar">
-                                                <div class="pass-colorbar"></div>
-                                            </div>
-                                        </div>
+                                                <input type="password" id="password" oninput="strengthChecker()">
+                                                <i class="bi bi-eye-slash" id="togglePassword"></i>
+
+                                                <div id="strength-bar"></div>
+                                            <p id="msg"></p>
+
                                         <label class="form-error"><% if(typeof passwordErr != "undefined"){%><%=passwordErr%><%}%></label>
                                     </div>
 
@@ -103,10 +104,7 @@
 <!-- End #main -->
 
 <script src="/assets/js/password.js"></script>
-<script src="/assets/css/password.css"></script> 
 
-<!-- <script src="https://code.jquery.com/jquery-3.1.1.min.js"></script>
-<script src="https://code.jquery.com/jquery-migrate-git.min.js"></script> -->
 
 <script>
     const togglePassword = document.querySelector("#togglePassword");
@@ -126,17 +124,7 @@
         confirmPassword.setAttribute("type", type);
         this.classList.toggle("bi-eye");
     });
-
-    jQuery(document).ready(function($) {
-
-    $('#password').password({
-        animate: true,
-  });
-
-  // Default behavior
-//   $('#default').password();
  
-});
 </script>
 
 <%- include("footer/footer") %>
