@@ -419,7 +419,7 @@ h6 {
     padding: 7px 38px 7px 8px;
     border-radius: 3px;
     transition: 0.3s;
-    width: 25%;
+    width: 50%;
 }
 .pagetitle .search-form input:focus,
 .pagetitle .search-form input:hover {
