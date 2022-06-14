@@ -13,20 +13,20 @@ exports.getHomepage = (req, res) => {
             if (req.session.user.roles == "coordinator") {
                 Request.find({ status: "In behandeling" }, function (err, requests) {
                     User.find(function (err, users) {
-                        users.forEach(user => {
+                        users.forEach((user) => {
                             if (user.roles == "client" || user.roles == "member") {
                                 usersFilteredAmount++;
                             }
                         });
 
                         res.render("dashboard", { pageName: "Dashboard", session: req.session, assignments_amount: assignments.length, request_amount: requests.length, users_amount: usersFilteredAmount });
-                    })
+                    });
                 });
             } else if (req.session.user.roles == "member") {
                 let my_assignments_amount = 0;
 
-                await assignments.forEach(assignment => {
-                    assignment.participatingLotusVictims.forEach(victim => {
+                await assignments.forEach((assignment) => {
+                    assignment.participatingLotusVictims.forEach((victim) => {
                         if (victim.emailAddress == req.session.user.emailAddress) {
                             my_assignments_amount++;
                         }
@@ -35,7 +35,7 @@ exports.getHomepage = (req, res) => {
 
                 let open_assignments_amount = assignments.length - my_assignments_amount;
 
-                res.render("dashboard", { pageName: "Dashboard", session: req.session, open_assignments_amount: open_assignments_amount, my_assignments_amount: my_assignments_amount })
+                res.render("dashboard", { pageName: "Dashboard", session: req.session, open_assignments_amount: open_assignments_amount, my_assignments_amount: my_assignments_amount });
             }
         });
     } else if (req.session.user.roles == "client") {
@@ -63,8 +63,4 @@ exports.getUserOverview = (req, res) => {
         const allInvitedMembers = await getAllInvitedMembers();
         return res.render("user_overview", { pageName: "Gebruikers", session: req.session, allMembers, allClients, allInvitedMembers });
     })();
-};
-
-exports.sendMessage = (req, res) => {
-    res.send("Clicked on " + req.originalUrl.replace("/", "") + ".");
 };

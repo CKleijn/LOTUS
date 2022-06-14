@@ -3,9 +3,12 @@ const bcrypt = require("bcrypt");
 const Cryptr = require("cryptr");
 const { update } = require("./../models/user.model");
 const cryptr = new Cryptr(process.env.EMAIL_SETUP_HASH);
+const randomstring = require("randomstring");
 
 const Request = require("./../models/request.model");
 const { request } = require("express");
+
+const Token = require("./../models/token.model");
 
 const User = userModel;
 
@@ -211,6 +214,40 @@ exports.setupMember = (req, res) => {
             return res.redirect("/");
         });
     }
+};
+
+exports.sendRecoveryMail = async (req, res, next) => {
+    let { emailAddress } = req.body;
+
+    emailAddress = emailAddress.toLowerCase().trim();
+
+    console.log("'" + emailAddress + "'");
+
+    let emailAddressErr = "";
+
+    const emailRegex = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
+
+    if (!emailAddress || emailAddress.length === 0) {
+        emailAddressErr = "E-mailadres is verplicht";
+    } else if (!emailRegex.test(emailAddress)) {
+        emailAddressErr = "Dit is geen geldig e-mailadres!";
+    } else {
+        const userWithEmail = await User.find({ emailAddress: emailAddress });
+
+        if (userWithEmail.length !== 1) {
+            emailAddressErr = "Er bestaat geen gebruiker met dit e-mailadres!";
+        }
+    }
+
+    if (emailAddressErr != "") {
+        return res.render("forgot_password", { pageName: "Wachtwoord vergeten", emailAddressErr });
+    } else {
+        console.log(randomstring.generate(32));
+        return res.redirect("/login");
+    }
+
+    // sendRecoveryMailWithLink(req);
+    // return res.redirect("/login");
 };
 
 exports.logout = (req, res) => {
