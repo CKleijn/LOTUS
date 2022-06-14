@@ -344,11 +344,24 @@ exports.changePassword = (req, res) => {
             res.render("user_profile", { pageName: "Mijn profiel", session: req.session, ...errors, type });
         } else {
             (async () => {
-                await User.updateOne({ _id: req.session.user.userId }, { $set: { password: bcrypt.hashSync(newPassword, bcrypt.genSaltSync()) } });
+                await User.updateOne({ _id: req.session.user.userId }, { $set: { password: bcrypt.hashSync(newPassword, bcrypt.genSaltSync()), confirmPassword: bcrypt.hashSync(newPassword, bcrypt.genSaltSync()) } });
                 return res.redirect("/logout");
             })();
         }
     })();
+};
+
+exports.changeRoles = async (req, res) => {
+    const userId = req.query.id;
+    const postedRole = req.body;
+
+    const userInfo = await User.findById({ _id: userId });
+
+    if(postedRole != userInfo.roles) {
+        await User.findOneAndUpdate({ _id: userId }, { $set: { roles: postedRole.roles } });
+    }
+
+    res.redirect("/user");
 };
 
 const updateUserByEmail = async (user) => {

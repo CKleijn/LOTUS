@@ -3,6 +3,8 @@ const userController = require("./../controllers/user.controller");
 const { isLoggedIn } = require("./../controllers/auth.controller");
 const router = express.Router();
 
+router.post("/user/roles", isLoggedIn, userController.changeRoles);
+
 router.post("/user/create", isLoggedIn, userController.createMember);
 
 router.get("/user/profile", isLoggedIn, userController.getUserProfile);

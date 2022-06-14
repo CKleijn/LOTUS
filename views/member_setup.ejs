@@ -33,7 +33,7 @@
                                         <label class="form-error"><% if(typeof passwordErr != "undefined"){%><%=passwordErr%><%}%></label>
                                     </div>
 
-                                    <div class="col-12">
+                                    <div class="col-12 mb-2">
                                         <label class="form-label">Bevestig wachtwoord</label>
                                         <input id="confirmPassword" type="password" name="confirmPassword" class="form-control" value="<% if(typeof oldValues != "undefined"){%><%=oldValues.confirmPassword%><%}%>">
                                         <i class="bi bi-eye-slash" id="toggleConfirmPassword"></i>
