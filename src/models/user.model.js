@@ -30,6 +30,16 @@ exports.userSchema = new mongoose.Schema({
         },
         required: [true, "Wachtwoord is verplicht!"],
     },
+    confirmPassword: {
+        type: String,
+        validate: {
+            validator: function (v) {
+                return v == this.password
+            },
+            message: `De wachtwoorden komen niet overeen!`
+        },
+        required: [true, "Bevestig wachtwoord is verplicht!"],
+    },
     street: {
         type: String,
         required: [true, "Straat is verplicht!"],
@@ -73,6 +83,7 @@ exports.userSchema.pre("save", function () {
     let user = this;
     // Hash password if password isn't empty
     user.password = bcrypt.hashSync(user.password, bcrypt.genSaltSync());
+    user.confirmPassword = bcrypt.hashSync(user.confirmPassword, bcrypt.genSaltSync());
 });
 // Create a User model
 exports.userModel = mongoose.model("User", exports.userSchema);

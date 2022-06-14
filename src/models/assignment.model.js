@@ -62,6 +62,12 @@ exports.assignmentSchema = new mongoose.Schema({
     dateTime: {
         type: String,
         required: [true, "Datum en tijd is verplicht!"],
+        validate: {
+            validator: function (v) {
+                return v > new Date().toISOString();
+            },
+            message: `De ingevoerde datum is verstreken!`,
+        },
     },
     // Playground address
     playgroundStreet: {

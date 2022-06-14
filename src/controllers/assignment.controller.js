@@ -3,6 +3,7 @@ const { assignmentModel } = require("../models/assignment.model");
 const { userModel } = require("../models/user.model");
 const Request = require("../models/request.model");
 const { createRequest } = require("./request.controller");
+const { notifyUserThroughMail } = require("./mail.controller");
 
 const Assignment = assignmentModel;
 const User = userModel;
@@ -309,6 +310,8 @@ exports.updateAssignment = async (req, res) => {
 
     if (!dateTime || dateTime.length === 0) {
         errors.dateTimeErr = "Datum en tijd is verplicht!";
+    } else if (new Date().toISOString() > dateTime) {
+        errors.dateTimeErr = "De ingevoerde datum is verstreken!";
     } else {
         oldValues.dateTime = dateTime;
     }
@@ -420,6 +423,7 @@ exports.getAllAssignments = (req, res) => {
                     resultsFiltered.push(result);
                 }
             }
+
             res.render("assignment_overview", { pageName: "Opdrachten", session: req.session, assignments: resultsFiltered });
         });
     } else if (req.session.user.roles == "member") {
@@ -434,26 +438,29 @@ exports.getAllAssignments = (req, res) => {
                 for await (let result of results) {
                     let enrolledRequest = await Request.find({ assignmentId: result._id, userId: req.session.user.userId, type: "enrollment", status: "In behandeling" }).exec();
                     let enrolledApprovedRequest = await Request.find({ assignmentId: result._id, userId: req.session.user.userId, type: "enrollment", status: "Goedgekeurd" }).exec();
+                    let rejectedRequests = await Request.find({ assignmentId: result._id, userId: req.session.user.userId, type: "enrollment", status: "Afgewezen" }).exec();
                     result.dateTime = format(new Date(result.dateTime));
 
-                    if (result.participatingLotusVictims.length !== result.amountOfLotusVictims) {
-                        if (enrolledRequest.length > 0) {
-                            result = {
-                                ...result._doc,
-                                status: "Ingeschreven",
-                            };
-                            resultsFiltered.push(result);
-                        } else if (enrolledApprovedRequest.length > 0) {
-                            result = {
-                                ...result._doc,
-                                status: "Ingeschreven voltooid",
-                            };
-                        } else {
-                            result = {
-                                ...result._doc,
-                                status: "Niet ingeschreven",
-                            };
-                            resultsFiltered.push(result);
+                    if (rejectedRequests.length === 0) {
+                        if (result.participatingLotusVictims.length !== result.amountOfLotusVictims) {
+                            if (enrolledRequest.length > 0) {
+                                result = {
+                                    ...result._doc,
+                                    status: "Ingeschreven",
+                                };
+                                resultsFiltered.push(result);
+                            } else if (enrolledApprovedRequest.length > 0) {
+                                result = {
+                                    ...result._doc,
+                                    status: "Ingeschreven voltooid",
+                                };
+                            } else {
+                                result = {
+                                    ...result._doc,
+                                    status: "Niet ingeschreven",
+                                };
+                                resultsFiltered.push(result);
+                            }
                         }
                     }
                 }
@@ -556,6 +563,14 @@ exports.deleteAssignment = async (req, res) => {
     if (session.user.roles === "coordinator") {
         await Assignment.deleteOne({ _id: req.query.id });
         await Request.deleteMany({ assignmentId: req.query.id });
+        const sendStatus = await notifyUserThroughMail(req.query.emailAddress, req.query.firstName, "deleteAssignment", "Jouw opdracht is verwijderd");
+
+        if (sendStatus) {
+            console.log("Client notified (through email)");
+        } else {
+            console.log("Email not send");
+        }
+
         res.redirect("/assignment");
     }
 

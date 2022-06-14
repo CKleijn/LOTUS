@@ -164,7 +164,7 @@ exports.login = (req, res) => {
 };
 
 exports.setupMember = (req, res) => {
-    const { firstName, lastName, password, email } = req.body;
+    const { firstName, lastName, password, confirmPassword, email } = req.body;
     const decryptedMail = cryptr.decrypt(email);
 
     const errors = {};
@@ -193,7 +193,13 @@ exports.setupMember = (req, res) => {
         oldValues.password = password;
     }
 
-    if (typeof errors.firstNameErr != "undefined" || typeof errors.lastNameErr != "undefined" || typeof errors.passwordErr != "undefined") {
+    if (!confirmPassword || confirmPassword.length === 0) {
+        errors.confirmPasswordErr = "Bevestig wachtwoord is verplicht!";
+    } else if (confirmPassword != password) {
+        errors.confirmPasswordErr = "De wachtwoorden komen niet overeen!";
+    }
+
+    if (typeof errors.firstNameErr != "undefined" || typeof errors.lastNameErr != "undefined" || typeof errors.passwordErr != "undefined" || typeof errors.confirmPasswordErr != "undefined") {
         res.render("member_setup", { pageName: "Accountgegevens", session: req.session, ...errors, email });
     } else {
         User.findOneAndUpdate({ emailAddress: decryptedMail }, { firstName, lastName, password: bcrypt.hashSync(password, bcrypt.genSaltSync()), lastLoginDate: Date.now() }, { new: true }, (err, updatedUser) => {
@@ -228,4 +234,8 @@ exports.getLoginPage = (req, res) => {
 
 exports.getSetupPage = (req, res) => {
     res.render("member_setup", { pageName: "Accountgegevens", errors: {}, email: req.query.t });
+};
+
+exports.getForgotPasswordPage = (req, res) => {
+    res.render("forgot_password", { pageName: "Wachtwoord vergeten" });
 };
