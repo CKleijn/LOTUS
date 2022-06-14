@@ -34,15 +34,10 @@
 
                                     <div class="col-12">
                                             <label class="form-label">Wachtwoord</label>
-                                            <!-- <input id="password" type="password" name="password" class="form-control" value="<% if(typeof oldValues != "undefined"){%><%=oldValues.password%><%}%>"> -->
-                                            <!-- <i class="bi bi-eye-slash" id="togglePassword"></i> -->
-
-                                                <input type="password" id="password" oninput="strengthChecker()">
+                                            <input id="password" type="password" name="password" class="form-control" oninput="strengthChecker()" value="<% if(typeof oldValues != "undefined"){%><%=oldValues.password%><%}%>">
                                                 <i class="bi bi-eye-slash" id="togglePassword"></i>
-
                                                 <div id="strength-bar"></div>
                                             <p id="msg"></p>
-
                                         <label class="form-error"><% if(typeof passwordErr != "undefined"){%><%=passwordErr%><%}%></label>
                                     </div>
 
