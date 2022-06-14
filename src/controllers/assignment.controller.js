@@ -391,6 +391,15 @@ exports.getAssignmentUpdatePage = async (req, res) => {
 };
 
 exports.getAllAssignments = (req, res) => {
+    const url = req.originalUrl;
+    let filterValue;
+
+    if (url.includes("filter")) {
+        let parts = url.split("?");
+        let parts2 = parts[1].split("=");
+        filterValue = parts2[1];
+    }
+
     function format(inputDate) {
         return new Date(inputDate).toLocaleString([], { year: "numeric", month: "numeric", day: "numeric", hour: "2-digit", minute: "2-digit" });
     }
@@ -424,7 +433,16 @@ exports.getAllAssignments = (req, res) => {
                 }
             }
 
-            res.render("assignment_overview", { pageName: "Opdrachten", session: req.session, assignments: resultsFiltered });
+            if (filterValue == "true") {
+                let alphabeticAssignments = [];
+                alphabeticAssignments = resultsFiltered.sort((a, b) => a.playgroundTown.localeCompare(b.playgroundTown));
+
+                res.render("assignment_overview", { pageName: "Opdrachten", session: req.session, assignments: alphabeticAssignments, filterValue });
+            } else if (filterValue == undefined) {
+                res.render("assignment_overview", { pageName: "Opdrachten", session: req.session, assignments: resultsFiltered, filterValue: "false" });
+            } else {
+                res.render("assignment_overview", { pageName: "Opdrachten", session: req.session, assignments: resultsFiltered, filterValue });
+            }
         });
     } else if (req.session.user.roles == "member") {
         let resultsFiltered = [];
@@ -464,7 +482,17 @@ exports.getAllAssignments = (req, res) => {
                         }
                     }
                 }
-                res.render("assignment_overview", { pageName: "Opdrachten", session: req.session, assignments: resultsFiltered });
+                
+                if (filterValue == "true") {
+                    let alphabeticAssignments = [];
+                    alphabeticAssignments = resultsFiltered.sort((a, b) => a.playgroundTown.localeCompare(b.playgroundTown));
+    
+                    res.render("assignment_overview", { pageName: "Opdrachten", session: req.session, assignments: alphabeticAssignments, filterValue });
+                } else if (filterValue == undefined) {
+                    res.render("assignment_overview", { pageName: "Opdrachten", session: req.session, assignments: resultsFiltered, filterValue: "false" });
+                } else {
+                    res.render("assignment_overview", { pageName: "Opdrachten", session: req.session, assignments: resultsFiltered, filterValue });
+                }
             }
         );
     } else if (req.session.user.roles == "client") {
@@ -500,7 +528,17 @@ exports.getAllAssignments = (req, res) => {
                     resultsFiltered.push(result);
                 }
             }
-            res.render("assignment_overview", { pageName: "Mijn opdrachten", session: req.session, assignments: resultsFiltered });
+            
+            if (filterValue == "true") {
+                let alphabeticAssignments = [];
+                alphabeticAssignments = resultsFiltered.sort((a, b) => a.playgroundTown.localeCompare(b.playgroundTown));
+
+                res.render("assignment_overview", { pageName: "Mijn opdrachten", session: req.session, assignments: alphabeticAssignments, filterValue });
+            } else if (filterValue == undefined) {
+                res.render("assignment_overview", { pageName: "Mijn opdrachten", session: req.session, assignments: resultsFiltered, filterValue: "false" });
+            } else {
+                res.render("assignment_overview", { pageName: "Mijn opdrachten", session: req.session, assignments: resultsFiltered, filterValue });
+            }
         });
     }
 };

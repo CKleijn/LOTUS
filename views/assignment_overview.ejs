@@ -20,6 +20,15 @@
                 <% } %>
             </ol>
         </nav>
+
+        <form action="/assignment" method="GET">
+            <% if (filterValue == "true") { %>
+                <input type="hidden" name="filter" value="false">
+            <% } else if (filterValue == "false") { %>
+                <input type="hidden" name="filter" value="true">
+            <% } %>
+            <button type="submit" class="btn btn-secondary">Sorteer op speelplaats plaats</button>
+        </form>
     </div>
 
     <section class="section">
