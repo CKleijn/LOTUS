@@ -33,8 +33,8 @@ async function parseRequest(results) {
     for (let result of results) {
         const user = await User.find({ _id: result.userId });
         const assignment = await Assignment.find({ _id: result.assignmentId });
-        const participations = await Request.find({ userId: result.userId, type: "enrollment", status: "Goedgekeurd" }).exec();
-        const canceledParticipations = await Request.find({ userId: result.userId, type: "cancelEnrollment", status: "Goedgekeurd" }).exec();
+        const participations = await Request.find({ userId: result.userId, type: "enrollment", status: "Openstaand" }).exec();
+        const canceledParticipations = await Request.find({ userId: result.userId, type: "cancelEnrollment", status: "Openstaand" }).exec();
 
         user[0].participations = participations.length - canceledParticipations.length;
 
@@ -56,7 +56,7 @@ exports.approveRequest = async (req, res) => {
     if (requestType === "createAssignment") {
         req.session.requests = await req.session.requests.filter((request) => request._id != requestId);
         await Assignment.findOneAndUpdate({ _id: assignmentId }, { $set: { isApproved: true } });
-        await Request.findOneAndUpdate({ _id: requestId }, { $set: { status: "Goedgekeurd" } });
+        await Request.findOneAndUpdate({ _id: requestId }, { $set: { status: "Openstaand" } });
         res.redirect("/request");
     }
 
@@ -89,7 +89,7 @@ exports.approveRequest = async (req, res) => {
         };
         req.session.requests = await req.session.requests.filter((request) => request._id != requestId);
         await Assignment.findOneAndUpdate({ _id: assignmentId }, { $set: { ...updatedAssignment } });
-        await Request.findOneAndUpdate({ _id: requestId }, { $set: { status: "Goedgekeurd" } });
+        await Request.findOneAndUpdate({ _id: requestId }, { $set: { status: "Openstaand" } });
         res.redirect("/request");
     }
 
@@ -107,6 +107,15 @@ exports.approveRequest = async (req, res) => {
         req.session.requests = await req.session.requests.filter((request) => request._id != requestId);
         await Assignment.findOneAndUpdate({ _id: assignmentId }, { $push: { participatingLotusVictims: user } });
         await Request.findOneAndUpdate({ _id: requestId }, { $set: { status: "Goedgekeurd" } });
+        let assignment = await Assignment.find({ _id: assignmentId });
+        assignment = assignment[0];
+
+        if (assignment.participatingLotusVictims.length === assignment.amountOfLotusVictims) {
+            await Request.findOneAndUpdate({ assignmentId: assignmentId, type: "createAssignment" }, { $set: { status: "Compleet" } });
+        } else {
+            await Request.findOneAndUpdate({ assignmentId: assignmentId, type: "createAssignment" }, { $set: { status: "Openstaand" } });
+        }
+
         res.redirect("/request");
     }
 
@@ -114,8 +123,19 @@ exports.approveRequest = async (req, res) => {
         req.session.requests = await req.session.requests.filter((request) => request._id != requestId);
         await Assignment.updateOne({ _id: assignmentId }, { $pull: { participatingLotusVictims: { _id: userId } } });
         await Request.findOneAndUpdate({ _id: requestId }, { $set: { status: "Goedgekeurd" } });
-        await Request.deleteOne({ assignmentId: assignmentId, userId: userId, type: "enrollment", status: "Goedgekeurd" });
-        await Request.deleteOne({ assignmentId: assignmentId, userId: userId, type: "cancelEnrollment", status: "Goedgekeurd" });
+
+        let assignment = await Assignment.find({ _id: assignmentId });
+        assignment = assignment[0];
+
+        if (assignment.participatingLotusVictims.length === assignment.amountOfLotusVictims) {
+            await Request.findOneAndUpdate({ assignmentId: assignmentId, type: "createAssignment" }, { $set: { status: "Compleet" } });
+        } else {
+            await Request.findOneAndUpdate({ assignmentId: assignmentId, type: "createAssignment" }, { $set: { status: "Openstaand" } });
+        }
+
+        await Request.deleteMany({ assignmentId: assignmentId, userId: userId, type: "enrollment", status: "Goedgekeurd" });
+        await Request.deleteMany({ assignmentId: assignmentId, userId: userId, type: "cancelEnrollment", status: "Goedgekeurd" });
+
         res.redirect("/request");
     }
 };
