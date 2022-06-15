@@ -154,7 +154,9 @@ exports.createMember = (req, res) => {
 
                 if (result.length === 0) {
                     const password = await insertMember(emailAddress);
+                    console.log(password);
                     const sendStatus = await sendMemberInviteMail(emailAddress, password);
+                    console.log(sendStatus);
 
                     if (sendStatus) {
                         console.log("Send");
@@ -181,6 +183,7 @@ const insertMember = async (emailAddress) => {
         lastName: "",
         emailAddress: emailAddress,
         password: password,
+        confirmPassword: password,
         roles: "member",
     });
 
