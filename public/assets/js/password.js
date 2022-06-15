@@ -10,14 +10,17 @@ let msg = document.getElementById("msg");
 function strengthChecker() {
     let password = document.getElementById("password").value;
 
-    parameters.letters = /[A-Za-z]+/.test(password) ? true : false;
-    parameters.numbers = /[0-9]+/.test(password) ? true : false;
-    parameters.special = /[!\"$%&/()=?@~`\\.\';:+=^*_-]+/.test(password) ? true : false;
     parameters.count = password.length > 7 ? true : false;
+    parameters.numbers = /[0-9]+/.test(password) ? true : false;
+    parameters.special = /[A-Z]+/.test(password) ? true : false;
+
+    if (password.length > 11 && /[A-Z]+/.test(password) && /[0-9]+/.test(password)) {
+        parameters.letters = true;
+    } else {
+        parameters.letters = false;
+    }
 
     let barLength = Object.values(parameters).filter((value) => value);
-
-    console.log(Object.values(parameters), barLength);
 
     strengthBar.innerHTML = "";
     for (let i in barLength) {
@@ -27,6 +30,7 @@ function strengthChecker() {
     }
 
     let spanRef = document.getElementsByClassName("strength");
+    console.log(spanRef.length);
     for (let i = 0; i < spanRef.length; i++) {
         switch (spanRef.length - 1) {
             case 0:

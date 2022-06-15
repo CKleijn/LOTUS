@@ -193,7 +193,7 @@ exports.setupMember = (req, res) => {
     if (!password || lastName.password === 0) {
         errors.passwordErr = "Wachtwoord is verplicht!";
     } else if (!passwordRegex.test(password)) {
-        errors.passwordErr = "Wachtwoord is niet sterk genoeg!";
+        errors.passwordErr = "Gebruik minimaal 8 letters, 1 hoofdletter en 1 cijfer!";
     } else {
         oldValues.password = password;
     }
