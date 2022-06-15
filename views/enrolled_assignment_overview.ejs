@@ -13,12 +13,23 @@
         <div class="row">
             <div class="col lg-6">
                 <form action="/member/assignment" method="GET">
-                    <% if (filterValue == "true") { %>
+                    <% if (filterValue != undefined) { %>
+                        <% if (filterValue == "true") { %>
+                            <input type="hidden" name="filter" value="false">
+                        <% } else if (filterValue == "false") { %>
+                            <input type="hidden" name="filter" value="true">
+                        <% } %>
+                    <% } else { %>
                         <input type="hidden" name="filter" value="false">
-                    <% } else if (filterValue == "false") { %>
-                        <input type="hidden" name="filter" value="true">
                     <% } %>
-                    <button type="submit" class="btn btn-secondary">Sorteer op speelplaats</button>
+                    
+                    <% if (filterValue == "true") { %>
+                        <button type="submit" class="btn btn-secondary sort_btn">Sorteer op speelplaats<i class="bi bi-chevron-down sort_icon"></i></button>
+                    <% } else if (filterValue == "false") { %>
+                        <button type="submit" class="btn btn-secondary sort_btn">Sorteer op speelplaats<i class="bi bi-chevron-up sort_icon"></i></button>
+                    <% } else if (filterValue == undefined) { %>
+                        <button type="submit" class="btn btn-secondary sort_btn">Sorteer op speelplaats<i class="bi bi-dash-lg sort_icon"></i></button>
+                    <% } %>
                 </form>
             </div>
 

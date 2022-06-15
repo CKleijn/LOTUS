@@ -388,26 +388,6 @@ h6 {
     min-width: 360px;
     padding: 0 20px;
 }
-@media (max-width: 1199px) {
-    .pagetitle .search-bar {
-        position: fixed;
-        top: 50px;
-        left: 0;
-        right: 0;
-        padding: 20px;
-        box-shadow: 0px 0px 15px 0px rgba(1, 41, 112, 0.1);
-        background: white;
-        z-index: 9999;
-        transition: 0.3s;
-        visibility: hidden;
-        opacity: 0;
-    }
-    .pagetitle .search-bar-show {
-        top: 60px;
-        visibility: visible;
-        opacity: 1;
-    }
-}
 .pagetitle .search-form {
     width: 100%;
 }
@@ -720,6 +700,15 @@ h6 {
 }
 .dashboard .filter .dropdown-item {
     padding: 8px 15px;
+}
+
+.sort_btn {
+    text-align: left;
+}
+
+.sort_icon {
+    float: right;
+    margin-left: 10px;
 }
 
 /* Info Cards */
