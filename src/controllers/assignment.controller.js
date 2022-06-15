@@ -404,7 +404,7 @@ exports.getAllAssignments = (req, res) => {
     }
 
     if (url.includes("keyword")) {
-        searchValue = req.query.keyword;
+        searchValue = req.query.keyword.toLowerCase();
     }
 
     function format(inputDate) {
@@ -640,7 +640,7 @@ exports.getMemberAssignments = (req, res) => {
     }
 
     if (url.includes("keyword")) {
-        searchValue = req.query.keyword;
+        searchValue = req.query.keyword.toLowerCase();
     }
 
     function format(inputDate) {
