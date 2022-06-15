@@ -404,7 +404,7 @@ exports.getAllAssignments = (req, res) => {
     if (url.includes("keyword")) {
         let parts = url.split("?");
         let parts2 = parts[1].split("=");
-        searchValue = parts2[1];
+        searchValue = parts2[1].toLowerCase();
     }
 
     function format(inputDate) {
@@ -444,7 +444,9 @@ exports.getAllAssignments = (req, res) => {
                 let searchedAssignments = [];
 
                 resultsFiltered.forEach(assignment => {
-                    if (assignment.playgroundTown == searchValue || assignment.playgroundTown.toLowerCase() == searchValue.toLowerCase()) {
+                    if (assignment.playgroundTown.toLowerCase() == searchValue) {
+                        searchedAssignments.push(assignment)
+                    } else if (searchValue.startsWith(assignment.playgroundTown.substr(0, searchValue.length).toLowerCase())) {
                         searchedAssignments.push(assignment)
                     }
                 });
@@ -504,7 +506,9 @@ exports.getAllAssignments = (req, res) => {
                     let searchedAssignments = [];
     
                     resultsFiltered.forEach(assignment => {
-                        if (assignment.playgroundTown == searchValue || assignment.playgroundTown.toLowerCase() == searchValue.toLowerCase()) {
+                        if (assignment.playgroundTown.toLowerCase() == searchValue) {
+                            searchedAssignments.push(assignment)
+                        } else if (searchValue.startsWith(assignment.playgroundTown.substr(0, searchValue.length).toLowerCase())) {
                             searchedAssignments.push(assignment)
                         }
                     });
@@ -560,7 +564,9 @@ exports.getAllAssignments = (req, res) => {
                 let searchedAssignments = [];
 
                 resultsFiltered.forEach(assignment => {
-                    if (assignment.playgroundTown == searchValue || assignment.playgroundTown.toLowerCase() == searchValue.toLowerCase()) {
+                    if (assignment.playgroundTown.toLowerCase() == searchValue) {
+                        searchedAssignments.push(assignment)
+                    } else if (searchValue.startsWith(assignment.playgroundTown.substr(0, searchValue.length).toLowerCase())) {
                         searchedAssignments.push(assignment)
                     }
                 });
@@ -594,7 +600,7 @@ exports.getMemberAssignments = (req, res) => {
     if (url.includes("keyword")) {
         let parts = url.split("?");
         let parts2 = parts[1].split("=");
-        searchValue = parts2[1];
+        searchValue = parts2[1].toLowerCase();
     }
 
     function format(inputDate) {
@@ -639,7 +645,9 @@ exports.getMemberAssignments = (req, res) => {
                 let searchedAssignments = [];
 
                 resultsFiltered.forEach(assignment => {
-                    if (assignment.playgroundTown == searchValue || assignment.playgroundTown.toLowerCase() == searchValue.toLowerCase()) {
+                    if (assignment.playgroundTown.toLowerCase() == searchValue) {
+                        searchedAssignments.push(assignment)
+                    } else if (searchValue.startsWith(assignment.playgroundTown.substr(0, searchValue.length).toLowerCase())) {
                         searchedAssignments.push(assignment)
                     }
                 });
