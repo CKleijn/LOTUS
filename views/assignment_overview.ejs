@@ -345,10 +345,12 @@
 
                                             <% if (assignment.status == "In behandeling") { %>
                                                 <br><i class="bi bi-circle-fill" style="color: orange; font-size: 12px;"></i> <%= assignment.status %>
-                                            <% } else if (assignment.status == "Goedgekeurd") { %>
-                                                <br><i class="bi bi-circle-fill" style="color: green; font-size: 12px;"></i> <%= assignment.status %>
+                                            <% } else if (assignment.status == "Openstaand") { %>
+                                                <br><i class="bi bi-circle-fill" style="color: blue; font-size: 12px;"></i> <%= assignment.status %>
                                             <% } else if (assignment.status == "Afgewezen") { %>
                                                 <br><i class="bi bi-circle-fill" style="color: red; font-size: 12px;"></i> <%= assignment.status %>
+                                            <% } else if (assignment.status == "Compleet") { %>
+                                                <br><i class="bi bi-circle-fill" style="color: green; font-size: 12px;"></i> <%= assignment.status %>
                                             <% } %>
                                             
                                         </div>
@@ -376,7 +378,7 @@
                                                                 <input type="hidden" name="cancelStatus" value="<%= assignment.cancelStatus %>">
                                                                 <button type="submit" class="btn btn-danger">Aanvraag annuleren</button>
                                                             </form>
-                                                        <% } else if(assignment.status == "Goedgekeurd" ) { %> 
+                                                        <% } else if(assignment.status == "Openstaand" ||  assignment.status == "Compleet") { %> 
                                                             <form action="/assignment/delete?id=<%= assignment._id %>" method="POST">
                                                                 <input type="hidden" name="status" value="<%= assignment.status %>">
                                                                 <button type="submit" class="btn btn-danger">Verwijdering aanvragen</button>
@@ -529,7 +531,7 @@
                                                     <input type="hidden" name="cancelStatus" value="<%= a.cancelStatus %>">
                                                     <button type="submit" class="btn btn-danger">Aanvraag annuleren</button>
                                                 </form>
-                                            <% } else if(assignment.status == "Goedgekeurd") { %> 
+                                            <% } else if(assignment.status == "Openstaand" || assignment.status == "Compleet") { %> 
                                                 <form action="/assignment/delete?id=<%= assignment._id %>" method="POST">
                                                     <input type="hidden" name="status" value="<%= assignment.status %>">
                                                     <button type="submit" class="btn btn-danger">Verwijdering aanvragen</button>

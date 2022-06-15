@@ -417,7 +417,7 @@ exports.getAllAssignments = (req, res) => {
         Assignment.find({ isApproved: true }, async function (err, results) {
             for (let result of results) {
                 let enrolledRequest = await Request.find({ assignmentId: result._id, userId: req.session.user.userId, type: "enrollment", status: "In behandeling" }).exec();
-                let enrolledApprovedRequest = await Request.find({ assignmentId: result._id, userId: req.session.user.userId, type: "enrollment", status: "Goedgekeurd" }).exec();
+                let enrolledApprovedRequest = await Request.find({ assignmentId: result._id, userId: req.session.user.userId, type: "enrollment", status: "Openstaand" }).exec();
                 result.dateTime = format(new Date(result.dateTime));
 
                 if (enrolledRequest.length > 0) {
@@ -443,11 +443,11 @@ exports.getAllAssignments = (req, res) => {
             if (searchValue && filterValue == undefined) {
                 let searchedAssignments = [];
 
-                resultsFiltered.forEach(assignment => {
+                resultsFiltered.forEach((assignment) => {
                     if (assignment.playgroundTown.toLowerCase() == searchValue) {
-                        searchedAssignments.push(assignment)
+                        searchedAssignments.push(assignment);
                     } else if (searchValue.startsWith(assignment.playgroundTown.substr(0, searchValue.length).toLowerCase())) {
-                        searchedAssignments.push(assignment)
+                        searchedAssignments.push(assignment);
                     }
                 });
 
@@ -474,7 +474,7 @@ exports.getAllAssignments = (req, res) => {
             async (err, results) => {
                 for await (let result of results) {
                     let enrolledRequest = await Request.find({ assignmentId: result._id, userId: req.session.user.userId, type: "enrollment", status: "In behandeling" }).exec();
-                    let enrolledApprovedRequest = await Request.find({ assignmentId: result._id, userId: req.session.user.userId, type: "enrollment", status: "Goedgekeurd" }).exec();
+                    let enrolledApprovedRequest = await Request.find({ assignmentId: result._id, userId: req.session.user.userId, type: "enrollment", status: "Openstaand" }).exec();
                     let rejectedRequests = await Request.find({ assignmentId: result._id, userId: req.session.user.userId, type: "enrollment", status: "Afgewezen" }).exec();
                     result.dateTime = format(new Date(result.dateTime));
 
@@ -501,23 +501,23 @@ exports.getAllAssignments = (req, res) => {
                         }
                     }
                 }
-                
+
                 if (searchValue && filterValue == undefined) {
                     let searchedAssignments = [];
-    
-                    resultsFiltered.forEach(assignment => {
+
+                    resultsFiltered.forEach((assignment) => {
                         if (assignment.playgroundTown.toLowerCase() == searchValue) {
-                            searchedAssignments.push(assignment)
+                            searchedAssignments.push(assignment);
                         } else if (searchValue.startsWith(assignment.playgroundTown.substr(0, searchValue.length).toLowerCase())) {
-                            searchedAssignments.push(assignment)
+                            searchedAssignments.push(assignment);
                         }
                     });
-    
+
                     res.render("assignment_overview", { pageName: "Opdrachten", session: req.session, assignments: searchedAssignments, filterValue: "false" });
                 } else if (filterValue == "true") {
                     let alphabeticAssignments = [];
                     alphabeticAssignments = resultsFiltered.sort((a, b) => a.playgroundTown.localeCompare(b.playgroundTown));
-    
+
                     res.render("assignment_overview", { pageName: "Opdrachten", session: req.session, assignments: alphabeticAssignments, filterValue });
                 } else if (filterValue == undefined) {
                     res.render("assignment_overview", { pageName: "Opdrachten", session: req.session, assignments: resultsFiltered, filterValue: "false" });
@@ -559,15 +559,15 @@ exports.getAllAssignments = (req, res) => {
                     resultsFiltered.push(result);
                 }
             }
-            
+
             if (searchValue && filterValue == undefined) {
                 let searchedAssignments = [];
 
-                resultsFiltered.forEach(assignment => {
+                resultsFiltered.forEach((assignment) => {
                     if (assignment.playgroundTown.toLowerCase() == searchValue) {
-                        searchedAssignments.push(assignment)
+                        searchedAssignments.push(assignment);
                     } else if (searchValue.startsWith(assignment.playgroundTown.substr(0, searchValue.length).toLowerCase())) {
-                        searchedAssignments.push(assignment)
+                        searchedAssignments.push(assignment);
                     }
                 });
 
@@ -640,15 +640,15 @@ exports.getMemberAssignments = (req, res) => {
                     resultsFiltered.push(result);
                 }
             }
-            
+
             if (searchValue && filterValue == undefined) {
                 let searchedAssignments = [];
 
-                resultsFiltered.forEach(assignment => {
+                resultsFiltered.forEach((assignment) => {
                     if (assignment.playgroundTown.toLowerCase() == searchValue) {
-                        searchedAssignments.push(assignment)
+                        searchedAssignments.push(assignment);
                     } else if (searchValue.startsWith(assignment.playgroundTown.substr(0, searchValue.length).toLowerCase())) {
-                        searchedAssignments.push(assignment)
+                        searchedAssignments.push(assignment);
                     }
                 });
 

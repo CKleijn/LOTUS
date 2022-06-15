@@ -1,6 +1,6 @@
 const mongoose = require("../../database/dbconnection");
 const ObjectId = mongoose.Schema.Types.ObjectId;
-const {assignmentSchema} = require("./assignment.model")
+const { assignmentSchema } = require("./assignment.model");
 
 // Create requestSchema with all fields
 const requestSchema = new mongoose.Schema({
@@ -16,7 +16,7 @@ const requestSchema = new mongoose.Schema({
     },
     status: {
         type: String,
-        enum: ["Afgewezen", "In behandeling", "Goedgekeurd"],
+        enum: ["Afgewezen", "In behandeling", "Goedgekeurd", "Openstaand", "Compleet"],
         default: "In behandeling",
     },
     type: {
@@ -24,8 +24,7 @@ const requestSchema = new mongoose.Schema({
         type: String,
         enum: ["createAssignment", "enrollment", "cancelEnrollment", "deleteAssignment", "updateAssignment"],
     },
-    updatedAssignment: assignmentSchema
-
+    updatedAssignment: assignmentSchema,
 });
 // Create a Request model
 module.exports = mongoose.model("Request", requestSchema);
