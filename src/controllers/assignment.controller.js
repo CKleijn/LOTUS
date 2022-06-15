@@ -3,6 +3,7 @@ const { assignmentModel } = require("../models/assignment.model");
 const { userModel } = require("../models/user.model");
 const Request = require("../models/request.model");
 const { createRequest } = require("./request.controller");
+const pdfService = require('../services/pdf-service');
 const { notifyUserThroughMail } = require("./mail.controller");
 
 const Assignment = assignmentModel;
@@ -13,9 +14,7 @@ exports.createAssignment = (req, res) => {
     // Get session
     const session = req.session;
     // Declare all variables out of req.body
-
     const { firstName, lastName, emailAddress, street, houseNumber, houseNumberAddition, postalCode, town, billingEmailAddress, dateTime, playgroundStreet, playgroundHouseNumber, playgroundHouseNumberAddition, playgroundPostalCode, playgroundTown, makeUpStreet, makeUpHouseNumber, makeUpHouseNumberAddition, makeUpPostalCode, makeUpTown, amountOfLotusVictims, comments, isApproved, requestId, checkedOrNotProfile, checkedOrNotPlayground, checkedOrNotMakeUp } = req.body;
-
     // Create new assignment object
     const assignment = new Assignment({
         firstName: firstName,
@@ -769,3 +768,57 @@ exports.deleteMemberFromAssignment = async (req, res) => {
 
     res.redirect("/assignment");
 };
+
+exports.sendPDFdata = async (req, res, next) => {
+    const assignmentId = req.query.assignmentId;
+    let assignment = await Assignment.find({ _id: assignmentId }).exec();
+
+    let isRegistratedMember = false;
+
+    for await (let member of assignment[0].participatingLotusVictims) {
+        if (member._id == req.session.user.userId) {
+            isRegistratedMember = true;
+        }
+    }
+
+    if (isRegistratedMember) {
+        let request = await Request.find({ assignmentId: assignmentId, userId: req.session.user.userId, type: "enrollment", status: "Goedgekeurd" }).exec();
+
+        assignment = {
+            ...assignment[0]._doc,
+            request: {...request[0]._doc},
+            user: {...req.session.user},
+        };
+    
+        await this.getPDF(req, res, assignment);
+    } else {
+        return next();
+    }
+}
+
+exports.getPDF = async (req, res, assignment) => {
+    function formatDate(inputDate) {
+        let date, month, year;
+      
+        date = inputDate.getDate();
+        month = inputDate.getMonth() + 1;
+        year = inputDate.getFullYear();
+      
+        date = date.toString().padStart(2, "0");
+      
+        month = month.toString().padStart(2, "0");
+      
+        return `${date}-${month}-${year}`;
+    }
+
+    const stream = res.writeHead(200, {
+        'Content-Type': 'application/',
+        'Content-Disposition': `attachment;filename=LOTUS_${assignment.playgroundTown}_${formatDate(new Date(assignment.dateTime))}_contract.pdf`,
+    });
+
+    const pdf = await pdfService.buildPDF(
+        (chunk) => stream.write(chunk),
+        () => stream.end(),
+        assignment
+    );
+}

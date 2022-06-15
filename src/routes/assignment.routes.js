@@ -25,5 +25,7 @@ router.post("/assignment/cancel", isLoggedIn, assignmentController.cancelEnrollm
 
 router.post("/assignment/member/delete", isLoggedIn, assignmentController.deleteMemberFromAssignment);
 
+router.get("/member/assignment/pdf", isLoggedIn, assignmentController.sendPDFdata);
+
 module.exports = router;
  
