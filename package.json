@@ -31,7 +31,7 @@
         "generate-password": "^1.7.0",
         "mongoose": "^6.3.4",
         "nodemailer": "^4.7.0",
-        "pdfkit": "^0.13.0"
+        "pdfkit": "^0.13.0",
         "randomstring": "^1.2.2"
     },
     "devDependencies": {
