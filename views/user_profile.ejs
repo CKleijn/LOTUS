@@ -263,8 +263,10 @@
                                         <label for="newPassword" class="col-md-4 col-lg-3 col-form-label">Nieuwe wachtwoord</label>
                                         <div class="col-md-8 col-lg-9">
                                             <p>
-                                                <input id="newPassword" name="newPassword" type="password" class="form-control" id="newPassword" />
-                                                <i class="bi bi-eye-slash" id="toggleNewPassword"></i>
+                                                <input id="password" type="password" name="newPassword" class="form-control" oninput="strengthChecker()" value="<% if(typeof oldValues != "undefined"){%><%=oldValues.password%><%}%>">
+                                                <i class="bi bi-eye-slash" id="togglePassword"></i>
+                                                <div id="strength-bar"></div>
+                                                <p id="msg"></p>
                                             </p>
                                             <label class="form-error"><% if(typeof newPasswordErr != "undefined"){%><%=newPasswordErr%><%}%></label>
                                         </div>
@@ -298,6 +300,8 @@
 </main>
 <!-- End #main -->
 
+<script src="/assets/js/password.js"></script>
+
 <script>
     function isNaN(x) {
         return x !== x;
@@ -306,8 +310,8 @@
     const toggleCurrentPassword = document.querySelector("#toggleCurrentPassword");
     const currentPassword = document.querySelector("#currentPassword");
 
-    const toggleNewPassword = document.querySelector("#toggleNewPassword");
-    const newPassword = document.querySelector("#newPassword");
+    const toggleNewPassword = document.querySelector("#togglePassword");
+    const newPassword = document.querySelector("#password");
 
     const toggleConfirmNewPassword = document.querySelector("#toggleConfirmNewPassword");
     const confirmNewPassword = document.querySelector("#confirmNewPassword");
