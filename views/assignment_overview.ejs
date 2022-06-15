@@ -22,7 +22,7 @@
         </nav>
 
         <div class="row">
-            <div class="col lg-6">
+            <div class="col lg-12 filter_col">
                 <form action="/assignment" method="GET">
                     <% if (filterValue != undefined) { %>
                         <% if (filterValue == "true") { %>
@@ -34,17 +34,23 @@
                         <input type="hidden" name="filter" value="false">
                     <% } %>
                     
-                    <% if (filterValue == "true") { %>
-                        <button type="submit" class="btn btn-secondary sort_btn">Sorteer op speelplaats<i class="bi bi-chevron-down sort_icon"></i></button>
-                    <% } else if (filterValue == "false") { %>
-                        <button type="submit" class="btn btn-secondary sort_btn">Sorteer op speelplaats<i class="bi bi-chevron-up sort_icon"></i></button>
-                    <% } else if (filterValue == undefined) { %>
-                        <button type="submit" class="btn btn-secondary sort_btn">Sorteer op speelplaats<i class="bi bi-dash-lg sort_icon"></i></button>
-                    <% } %>
+                    <div class="sort_class">
+                        <% if (filterValue == "true") { %>
+                            <button type="submit" class="btn btn-secondary sort_btn">Sorteer op speelplaats<i class="bi bi-chevron-down sort_icon"></i></button>
+                        <% } else if (filterValue == "false") { %>
+                            <button type="submit" class="btn btn-secondary sort_btn">Sorteer op speelplaats<i class="bi bi-chevron-up sort_icon"></i></button>
+                        <% } else if (filterValue == undefined) { %>
+                            <button type="submit" class="btn btn-secondary sort_btn">Sorteer op speelplaats<i class="bi bi-dash-lg sort_icon"></i></button>
+                        <% } %>
+                    </div>
                 </form>
-            </div>
 
-            <div class="col lg-6">
+                <div class="remove_sort_class">
+                    <form action="/assignment" method="GET">
+                        <button type="submit" class="btn btn-secondary sort_btn">Verwijder filters<i class="bi bi-x-lg sort_icon"></i></button>
+                    </form>
+                </div>
+
                 <div class="search-bar">
                     <form class="search-form d-flex align-items-center" action="/assignment" method="GET">
                     <input type="text" name="keyword" placeholder="Zoek op speelplaats...">
