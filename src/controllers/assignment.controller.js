@@ -391,19 +391,20 @@ exports.getAssignmentUpdatePage = async (req, res) => {
 
 exports.getAllAssignments = (req, res) => {
     const url = req.originalUrl;
-    let filterValue;
+    let sortPlaygroundValue;
+    let sortDateValue;
     let searchValue;
 
-    if (url.includes("filter")) {
-        let parts = url.split("?");
-        let parts2 = parts[1].split("=");
-        filterValue = parts2[1];
+    if (url.includes("sortPlayground")) {
+        sortPlaygroundValue = req.query.sortPlayground;
+    }
+
+    if (url.includes("sortDate")) {
+        sortDateValue = req.query.sortDate;
     }
 
     if (url.includes("keyword")) {
-        let parts = url.split("?");
-        let parts2 = parts[1].split("=");
-        searchValue = parts2[1].toLowerCase();
+        searchValue = req.query.keyword;
     }
 
     function format(inputDate) {
@@ -439,7 +440,7 @@ exports.getAllAssignments = (req, res) => {
                 }
             }
 
-            if (searchValue && filterValue == undefined) {
+            if (searchValue && sortPlaygroundValue == undefined && sortDateValue == undefined) {
                 let searchedAssignments = [];
 
                 resultsFiltered.forEach((assignment) => {
@@ -450,19 +451,29 @@ exports.getAllAssignments = (req, res) => {
                     }
                 });
 
-                res.render("assignment_overview", { pageName: "Opdrachten", session: req.session, assignments: searchedAssignments, filterValue: undefined });
-            } else if (filterValue == "true") {
+                res.render("assignment_overview", { pageName: "Opdrachten", session: req.session, assignments: searchedAssignments, sortPlaygroundValue: undefined, sortDateValue: undefined });
+            } else if (sortPlaygroundValue == "true") {
                 let alphabeticAssignments = [];
                 alphabeticAssignments = resultsFiltered.sort((a, b) => a.playgroundTown.localeCompare(b.playgroundTown));
 
-                res.render("assignment_overview", { pageName: "Opdrachten", session: req.session, assignments: alphabeticAssignments, filterValue });
-            } else if (filterValue == undefined) {
-                res.render("assignment_overview", { pageName: "Opdrachten", session: req.session, assignments: resultsFiltered, filterValue: undefined });
-            } else {
+                res.render("assignment_overview", { pageName: "Opdrachten", session: req.session, assignments: alphabeticAssignments, sortPlaygroundValue, sortDateValue: undefined });
+            } else if (sortDateValue == "true") {
+                let dateAssignments = [];
+                dateAssignments = resultsFiltered.sort((a, b) => a.dateTime.localeCompare(b.dateTime));
+
+                res.render("assignment_overview", { pageName: "Opdrachten", session: req.session, assignments: dateAssignments, sortPlaygroundValue: undefined, sortDateValue });
+            } else if (sortPlaygroundValue == "false") {
                 let alphabeticAssignments = [];
                 alphabeticAssignments = resultsFiltered.sort((a, b) => b.playgroundTown.localeCompare(a.playgroundTown));
 
-                res.render("assignment_overview", { pageName: "Opdrachten", session: req.session, assignments: alphabeticAssignments, filterValue });
+                res.render("assignment_overview", { pageName: "Opdrachten", session: req.session, assignments: alphabeticAssignments, sortPlaygroundValue, sortDateValue: undefined });
+            } else if (sortDateValue == "false") {
+                let dateAssignments = [];
+                dateAssignments = resultsFiltered.sort((a, b) => b.dateTime.localeCompare(a.dateTime));
+
+                res.render("assignment_overview", { pageName: "Opdrachten", session: req.session, assignments: dateAssignments, sortPlaygroundValue: undefined, sortDateValue });
+            } else if (sortPlaygroundValue == undefined && sortDateValue == undefined) {
+                res.render("assignment_overview", { pageName: "Opdrachten", session: req.session, assignments: resultsFiltered, sortPlaygroundValue: undefined, sortDateValue: undefined });
             }
         });
     } else if (req.session.user.roles == "member") {
@@ -504,9 +515,9 @@ exports.getAllAssignments = (req, res) => {
                     }
                 }
 
-                if (searchValue && filterValue == undefined) {
+                if (searchValue && sortPlaygroundValue == undefined && sortDateValue == undefined) {
                     let searchedAssignments = [];
-
+    
                     resultsFiltered.forEach((assignment) => {
                         if (assignment.playgroundTown.toLowerCase() == searchValue) {
                             searchedAssignments.push(assignment);
@@ -514,20 +525,30 @@ exports.getAllAssignments = (req, res) => {
                             searchedAssignments.push(assignment);
                         }
                     });
-
-                    res.render("assignment_overview", { pageName: "Opdrachten", session: req.session, assignments: searchedAssignments, filterValue: undefined });
-                } else if (filterValue == "true") {
+    
+                    res.render("assignment_overview", { pageName: "Opdrachten", session: req.session, assignments: searchedAssignments, sortPlaygroundValue: undefined, sortDateValue: undefined });
+                } else if (sortPlaygroundValue == "true") {
                     let alphabeticAssignments = [];
                     alphabeticAssignments = resultsFiltered.sort((a, b) => a.playgroundTown.localeCompare(b.playgroundTown));
-
-                    res.render("assignment_overview", { pageName: "Opdrachten", session: req.session, assignments: alphabeticAssignments, filterValue });
-                } else if (filterValue == undefined) {
-                    res.render("assignment_overview", { pageName: "Opdrachten", session: req.session, assignments: resultsFiltered, filterValue: undefined });
-                } else {
+    
+                    res.render("assignment_overview", { pageName: "Opdrachten", session: req.session, assignments: alphabeticAssignments, sortPlaygroundValue, sortDateValue: undefined });
+                } else if (sortDateValue == "true") {
+                    let dateAssignments = [];
+                    dateAssignments = resultsFiltered.sort((a, b) => a.dateTime.localeCompare(b.dateTime));
+    
+                    res.render("assignment_overview", { pageName: "Opdrachten", session: req.session, assignments: dateAssignments, sortPlaygroundValue: undefined, sortDateValue });
+                } else if (sortPlaygroundValue == "false") {
                     let alphabeticAssignments = [];
                     alphabeticAssignments = resultsFiltered.sort((a, b) => b.playgroundTown.localeCompare(a.playgroundTown));
-
-                    res.render("assignment_overview", { pageName: "Opdrachten", session: req.session, assignments: alphabeticAssignments, filterValue });
+    
+                    res.render("assignment_overview", { pageName: "Opdrachten", session: req.session, assignments: alphabeticAssignments, sortPlaygroundValue, sortDateValue: undefined });
+                } else if (sortDateValue == "false") {
+                    let dateAssignments = [];
+                    dateAssignments = resultsFiltered.sort((a, b) => b.dateTime.localeCompare(a.dateTime));
+    
+                    res.render("assignment_overview", { pageName: "Opdrachten", session: req.session, assignments: dateAssignments, sortPlaygroundValue: undefined, sortDateValue });
+                } else if (sortPlaygroundValue == undefined && sortDateValue == undefined) {
+                    res.render("assignment_overview", { pageName: "Opdrachten", session: req.session, assignments: resultsFiltered, sortPlaygroundValue: undefined, sortDateValue: undefined });
                 }
             }
         );
@@ -565,7 +586,7 @@ exports.getAllAssignments = (req, res) => {
                 }
             }
 
-            if (searchValue && filterValue == undefined) {
+            if (searchValue && sortPlaygroundValue == undefined && sortDateValue == undefined) {
                 let searchedAssignments = [];
 
                 resultsFiltered.forEach((assignment) => {
@@ -576,19 +597,29 @@ exports.getAllAssignments = (req, res) => {
                     }
                 });
 
-                res.render("assignment_overview", { pageName: "Mijn opdrachten", session: req.session, assignments: searchedAssignments, filterValue: undefined });
-            } else if (filterValue == "true") {
+                res.render("assignment_overview", { pageName: "Mijn opdrachten", session: req.session, assignments: searchedAssignments, sortPlaygroundValue: undefined, sortDateValue: undefined });
+            } else if (sortPlaygroundValue == "true") {
                 let alphabeticAssignments = [];
                 alphabeticAssignments = resultsFiltered.sort((a, b) => a.playgroundTown.localeCompare(b.playgroundTown));
 
-                res.render("assignment_overview", { pageName: "Mijn opdrachten", session: req.session, assignments: alphabeticAssignments, filterValue });
-            } else if (filterValue == undefined) {
-                res.render("assignment_overview", { pageName: "Mijn opdrachten", session: req.session, assignments: resultsFiltered, filterValue: undefined });
-            } else {
+                res.render("assignment_overview", { pageName: "Mijn opdrachten", session: req.session, assignments: alphabeticAssignments, sortPlaygroundValue, sortDateValue: undefined });
+            } else if (sortDateValue == "true") {
+                let dateAssignments = [];
+                dateAssignments = resultsFiltered.sort((a, b) => a.dateTime.localeCompare(b.dateTime));
+
+                res.render("assignment_overview", { pageName: "Mijn opdrachten", session: req.session, assignments: dateAssignments, sortPlaygroundValue: undefined, sortDateValue });
+            } else if (sortPlaygroundValue == "false") {
                 let alphabeticAssignments = [];
                 alphabeticAssignments = resultsFiltered.sort((a, b) => b.playgroundTown.localeCompare(a.playgroundTown));
 
-                res.render("assignment_overview", { pageName: "Mijn opdrachten", session: req.session, assignments: alphabeticAssignments, filterValue });
+                res.render("assignment_overview", { pageName: "Mijn opdrachten", session: req.session, assignments: alphabeticAssignments, sortPlaygroundValue, sortDateValue: undefined });
+            } else if (sortDateValue == "false") {
+                let dateAssignments = [];
+                dateAssignments = resultsFiltered.sort((a, b) => b.dateTime.localeCompare(a.dateTime));
+
+                res.render("assignment_overview", { pageName: "Mijn opdrachten", session: req.session, assignments: dateAssignments, sortPlaygroundValue: undefined, sortDateValue });
+            } else if (sortPlaygroundValue == undefined && sortDateValue == undefined) {
+                res.render("assignment_overview", { pageName: "Mijn opdrachten", session: req.session, assignments: resultsFiltered, sortPlaygroundValue: undefined, sortDateValue: undefined });
             }
         });
     }
@@ -596,19 +627,20 @@ exports.getAllAssignments = (req, res) => {
 
 exports.getMemberAssignments = (req, res) => {
     const url = req.originalUrl;
-    let filterValue;
+    let sortPlaygroundValue;
+    let sortDateValue;
     let searchValue;
 
-    if (url.includes("filter")) {
-        let parts = url.split("?");
-        let parts2 = parts[1].split("=");
-        filterValue = parts2[1];
+    if (url.includes("sortPlayground")) {
+        sortPlaygroundValue = req.query.sortPlayground;
+    }
+
+    if (url.includes("sortDate")) {
+        sortDateValue = req.query.sortDate;
     }
 
     if (url.includes("keyword")) {
-        let parts = url.split("?");
-        let parts2 = parts[1].split("=");
-        searchValue = parts2[1].toLowerCase();
+        searchValue = req.query.keyword;
     }
 
     function format(inputDate) {
@@ -649,7 +681,7 @@ exports.getMemberAssignments = (req, res) => {
                 }
             }
 
-            if (searchValue && filterValue == undefined) {
+            if (searchValue && sortPlaygroundValue == undefined && sortDateValue == undefined) {
                 let searchedAssignments = [];
 
                 resultsFiltered.forEach((assignment) => {
@@ -660,19 +692,29 @@ exports.getMemberAssignments = (req, res) => {
                     }
                 });
 
-                res.render("enrolled_assignment_overview", { pageName: "Mijn opdrachten", session: req.session, assignments: searchedAssignments, filterValue: undefined });
-            } else if (filterValue == "true") {
+                res.render("enrolled_assignment_overview", { pageName: "Mijn opdrachten", session: req.session, assignments: searchedAssignments, sortPlaygroundValue: undefined, sortDateValue: undefined });
+            } else if (sortPlaygroundValue == "true") {
                 let alphabeticAssignments = [];
                 alphabeticAssignments = resultsFiltered.sort((a, b) => a.playgroundTown.localeCompare(b.playgroundTown));
 
-                res.render("enrolled_assignment_overview", { pageName: "Mijn opdrachten", session: req.session, assignments: alphabeticAssignments, filterValue });
-            } else if (filterValue == undefined) {
-                res.render("enrolled_assignment_overview", { pageName: "Mijn opdrachten", session: req.session, assignments: resultsFiltered, filterValue: undefined });
-            } else {
+                res.render("enrolled_assignment_overview", { pageName: "Mijn opdrachten", session: req.session, assignments: alphabeticAssignments, sortPlaygroundValue, sortDateValue: undefined });
+            } else if (sortDateValue == "true") {
+                let dateAssignments = [];
+                dateAssignments = resultsFiltered.sort((a, b) => a.dateTime.localeCompare(b.dateTime));
+
+                res.render("enrolled_assignment_overview", { pageName: "Mijn opdrachten", session: req.session, assignments: dateAssignments, sortPlaygroundValue: undefined, sortDateValue });
+            } else if (sortPlaygroundValue == "false") {
                 let alphabeticAssignments = [];
                 alphabeticAssignments = resultsFiltered.sort((a, b) => b.playgroundTown.localeCompare(a.playgroundTown));
 
-                res.render("enrolled_assignment_overview", { pageName: "Mijn opdrachten", session: req.session, assignments: alphabeticAssignments, filterValue });
+                res.render("enrolled_assignment_overview", { pageName: "Mijn opdrachten", session: req.session, assignments: alphabeticAssignments, sortPlaygroundValue, sortDateValue: undefined });
+            } else if (sortDateValue == "false") {
+                let dateAssignments = [];
+                dateAssignments = resultsFiltered.sort((a, b) => b.dateTime.localeCompare(a.dateTime));
+
+                res.render("enrolled_assignment_overview", { pageName: "Mijn opdrachten", session: req.session, assignments: dateAssignments, sortPlaygroundValue: undefined, sortDateValue });
+            } else if (sortPlaygroundValue == undefined && sortDateValue == undefined) {
+                res.render("enrolled_assignment_overview", { pageName: "Mijn opdrachten", session: req.session, assignments: resultsFiltered, sortPlaygroundValue: undefined, sortDateValue: undefined });
             }
         });
     }
