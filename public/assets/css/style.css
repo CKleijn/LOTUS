@@ -384,12 +384,12 @@ h6 {
     cursor: pointer;
     color: #012970;
 }
-.header .search-bar {
+.pagetitle .search-bar {
     min-width: 360px;
     padding: 0 20px;
 }
 @media (max-width: 1199px) {
-    .header .search-bar {
+    .pagetitle .search-bar {
         position: fixed;
         top: 50px;
         left: 0;
@@ -402,16 +402,16 @@ h6 {
         visibility: hidden;
         opacity: 0;
     }
-    .header .search-bar-show {
+    .pagetitle .search-bar-show {
         top: 60px;
         visibility: visible;
         opacity: 1;
     }
 }
-.header .search-form {
+.pagetitle .search-form {
     width: 100%;
 }
-.header .search-form input {
+.pagetitle .search-form input {
     border: 0;
     font-size: 14px;
     color: #012970;
@@ -419,21 +419,21 @@ h6 {
     padding: 7px 38px 7px 8px;
     border-radius: 3px;
     transition: 0.3s;
-    width: 100%;
+    width: 50%;
 }
-.header .search-form input:focus,
-.header .search-form input:hover {
+.pagetitle .search-form input:focus,
+.pagetitle .search-form input:hover {
     outline: none;
     box-shadow: 0 0 10px 0 rgba(1, 41, 112, 0.15);
     border: 1px solid rgba(1, 41, 112, 0.3);
 }
-.header .search-form button {
+.pagetitle .search-form button {
     border: 0;
     padding: 0;
-    margin-left: -30px;
+    margin-left: -10px;
     background: none;
 }
-.header .search-form button i {
+.pagetitle .search-form button i {
     color: #012970;
 }
 
@@ -541,6 +541,10 @@ h6 {
 }
 .header-nav .profile .dropdown-item:hover {
     background-color: #f6f9ff;
+}
+
+.header .logout_header:hover {
+    cursor: pointer;
 }
 
 /*--------------------------------------------------------------
@@ -958,6 +962,14 @@ form i {
 
 .rightBtnBlock {
     float: left;
+}
+
+/*--------------------------------------------------------------
+# Confirmation Modals
+--------------------------------------------------------------*/
+
+.rightBtnBlock .modal {
+    color: #444444;
 }
 
 /*--------------------------------------------------------------

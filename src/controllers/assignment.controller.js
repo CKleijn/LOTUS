@@ -4,6 +4,7 @@ const { userModel } = require("../models/user.model");
 const Request = require("../models/request.model");
 const { createRequest } = require("./request.controller");
 const pdfService = require('../services/pdf-service');
+const { notifyUserThroughMail } = require("./mail.controller");
 
 const Assignment = assignmentModel;
 const User = userModel;
@@ -308,6 +309,8 @@ exports.updateAssignment = async (req, res) => {
 
     if (!dateTime || dateTime.length === 0) {
         errors.dateTimeErr = "Datum en tijd is verplicht!";
+    } else if (new Date().toISOString() > dateTime) {
+        errors.dateTimeErr = "De ingevoerde datum is verstreken!";
     } else {
         oldValues.dateTime = dateTime;
     }
@@ -387,6 +390,22 @@ exports.getAssignmentUpdatePage = async (req, res) => {
 };
 
 exports.getAllAssignments = (req, res) => {
+    const url = req.originalUrl;
+    let filterValue;
+    let searchValue;
+
+    if (url.includes("filter")) {
+        let parts = url.split("?");
+        let parts2 = parts[1].split("=");
+        filterValue = parts2[1];
+    }
+
+    if (url.includes("keyword")) {
+        let parts = url.split("?");
+        let parts2 = parts[1].split("=");
+        searchValue = parts2[1].toLowerCase();
+    }
+
     function format(inputDate) {
         return new Date(inputDate).toLocaleString([], { year: "numeric", month: "numeric", day: "numeric", hour: "2-digit", minute: "2-digit" });
     }
@@ -397,7 +416,7 @@ exports.getAllAssignments = (req, res) => {
         Assignment.find({ isApproved: true }, async function (err, results) {
             for (let result of results) {
                 let enrolledRequest = await Request.find({ assignmentId: result._id, userId: req.session.user.userId, type: "enrollment", status: "In behandeling" }).exec();
-                let enrolledApprovedRequest = await Request.find({ assignmentId: result._id, userId: req.session.user.userId, type: "enrollment", status: "Goedgekeurd" }).exec();
+                let enrolledApprovedRequest = await Request.find({ assignmentId: result._id, userId: req.session.user.userId, type: "enrollment", status: "Openstaand" }).exec();
                 result.dateTime = format(new Date(result.dateTime));
 
                 if (enrolledRequest.length > 0) {
@@ -419,7 +438,29 @@ exports.getAllAssignments = (req, res) => {
                     resultsFiltered.push(result);
                 }
             }
-            res.render("assignment_overview", { pageName: "Opdrachten", session: req.session, assignments: resultsFiltered });
+
+            if (searchValue && filterValue == undefined) {
+                let searchedAssignments = [];
+
+                resultsFiltered.forEach((assignment) => {
+                    if (assignment.playgroundTown.toLowerCase() == searchValue) {
+                        searchedAssignments.push(assignment);
+                    } else if (searchValue.startsWith(assignment.playgroundTown.substr(0, searchValue.length).toLowerCase())) {
+                        searchedAssignments.push(assignment);
+                    }
+                });
+
+                res.render("assignment_overview", { pageName: "Opdrachten", session: req.session, assignments: searchedAssignments, filterValue: "false" });
+            } else if (filterValue == "true") {
+                let alphabeticAssignments = [];
+                alphabeticAssignments = resultsFiltered.sort((a, b) => a.playgroundTown.localeCompare(b.playgroundTown));
+
+                res.render("assignment_overview", { pageName: "Opdrachten", session: req.session, assignments: alphabeticAssignments, filterValue });
+            } else if (filterValue == undefined) {
+                res.render("assignment_overview", { pageName: "Opdrachten", session: req.session, assignments: resultsFiltered, filterValue: "false" });
+            } else {
+                res.render("assignment_overview", { pageName: "Opdrachten", session: req.session, assignments: resultsFiltered, filterValue });
+            }
         });
     } else if (req.session.user.roles == "member") {
         let resultsFiltered = [];
@@ -432,31 +473,56 @@ exports.getAllAssignments = (req, res) => {
             async (err, results) => {
                 for await (let result of results) {
                     let enrolledRequest = await Request.find({ assignmentId: result._id, userId: req.session.user.userId, type: "enrollment", status: "In behandeling" }).exec();
-                    let enrolledApprovedRequest = await Request.find({ assignmentId: result._id, userId: req.session.user.userId, type: "enrollment", status: "Goedgekeurd" }).exec();
+                    let enrolledApprovedRequest = await Request.find({ assignmentId: result._id, userId: req.session.user.userId, type: "enrollment", status: "Openstaand" }).exec();
+                    let rejectedRequests = await Request.find({ assignmentId: result._id, userId: req.session.user.userId, type: "enrollment", status: "Afgewezen" }).exec();
                     result.dateTime = format(new Date(result.dateTime));
 
-                    if (result.participatingLotusVictims.length !== result.amountOfLotusVictims) {
-                        if (enrolledRequest.length > 0) {
-                            result = {
-                                ...result._doc,
-                                status: "Ingeschreven",
-                            };
-                            resultsFiltered.push(result);
-                        } else if (enrolledApprovedRequest.length > 0) {
-                            result = {
-                                ...result._doc,
-                                status: "Ingeschreven voltooid",
-                            };
-                        } else {
-                            result = {
-                                ...result._doc,
-                                status: "Niet ingeschreven",
-                            };
-                            resultsFiltered.push(result);
+                    if (rejectedRequests.length === 0) {
+                        if (result.participatingLotusVictims.length !== result.amountOfLotusVictims) {
+                            if (enrolledRequest.length > 0) {
+                                result = {
+                                    ...result._doc,
+                                    status: "Ingeschreven",
+                                };
+                                resultsFiltered.push(result);
+                            } else if (enrolledApprovedRequest.length > 0) {
+                                result = {
+                                    ...result._doc,
+                                    status: "Ingeschreven voltooid",
+                                };
+                            } else {
+                                result = {
+                                    ...result._doc,
+                                    status: "Niet ingeschreven",
+                                };
+                                resultsFiltered.push(result);
+                            }
                         }
                     }
                 }
-                res.render("assignment_overview", { pageName: "Opdrachten", session: req.session, assignments: resultsFiltered });
+
+                if (searchValue && filterValue == undefined) {
+                    let searchedAssignments = [];
+
+                    resultsFiltered.forEach((assignment) => {
+                        if (assignment.playgroundTown.toLowerCase() == searchValue) {
+                            searchedAssignments.push(assignment);
+                        } else if (searchValue.startsWith(assignment.playgroundTown.substr(0, searchValue.length).toLowerCase())) {
+                            searchedAssignments.push(assignment);
+                        }
+                    });
+
+                    res.render("assignment_overview", { pageName: "Opdrachten", session: req.session, assignments: searchedAssignments, filterValue: "false" });
+                } else if (filterValue == "true") {
+                    let alphabeticAssignments = [];
+                    alphabeticAssignments = resultsFiltered.sort((a, b) => a.playgroundTown.localeCompare(b.playgroundTown));
+
+                    res.render("assignment_overview", { pageName: "Opdrachten", session: req.session, assignments: alphabeticAssignments, filterValue });
+                } else if (filterValue == undefined) {
+                    res.render("assignment_overview", { pageName: "Opdrachten", session: req.session, assignments: resultsFiltered, filterValue: "false" });
+                } else {
+                    res.render("assignment_overview", { pageName: "Opdrachten", session: req.session, assignments: resultsFiltered, filterValue });
+                }
             }
         );
     } else if (req.session.user.roles == "client") {
@@ -492,12 +558,50 @@ exports.getAllAssignments = (req, res) => {
                     resultsFiltered.push(result);
                 }
             }
-            res.render("assignment_overview", { pageName: "Mijn opdrachten", session: req.session, assignments: resultsFiltered });
+
+            if (searchValue && filterValue == undefined) {
+                let searchedAssignments = [];
+
+                resultsFiltered.forEach((assignment) => {
+                    if (assignment.playgroundTown.toLowerCase() == searchValue) {
+                        searchedAssignments.push(assignment);
+                    } else if (searchValue.startsWith(assignment.playgroundTown.substr(0, searchValue.length).toLowerCase())) {
+                        searchedAssignments.push(assignment);
+                    }
+                });
+
+                res.render("assignment_overview", { pageName: "Mijn opdrachten", session: req.session, assignments: searchedAssignments, filterValue: "false" });
+            } else if (filterValue == "true") {
+                let alphabeticAssignments = [];
+                alphabeticAssignments = resultsFiltered.sort((a, b) => a.playgroundTown.localeCompare(b.playgroundTown));
+
+                res.render("assignment_overview", { pageName: "Mijn opdrachten", session: req.session, assignments: alphabeticAssignments, filterValue });
+            } else if (filterValue == undefined) {
+                res.render("assignment_overview", { pageName: "Mijn opdrachten", session: req.session, assignments: resultsFiltered, filterValue: "false" });
+            } else {
+                res.render("assignment_overview", { pageName: "Mijn opdrachten", session: req.session, assignments: resultsFiltered, filterValue });
+            }
         });
     }
 };
 
 exports.getMemberAssignments = (req, res) => {
+    const url = req.originalUrl;
+    let filterValue;
+    let searchValue;
+
+    if (url.includes("filter")) {
+        let parts = url.split("?");
+        let parts2 = parts[1].split("=");
+        filterValue = parts2[1];
+    }
+
+    if (url.includes("keyword")) {
+        let parts = url.split("?");
+        let parts2 = parts[1].split("=");
+        searchValue = parts2[1].toLowerCase();
+    }
+
     function format(inputDate) {
         let date, month, year;
 
@@ -535,7 +639,29 @@ exports.getMemberAssignments = (req, res) => {
                     resultsFiltered.push(result);
                 }
             }
-            res.render("enrolled_assignment_overview", { pageName: "Mijn opdrachten", session: req.session, assignments: resultsFiltered });
+
+            if (searchValue && filterValue == undefined) {
+                let searchedAssignments = [];
+
+                resultsFiltered.forEach((assignment) => {
+                    if (assignment.playgroundTown.toLowerCase() == searchValue) {
+                        searchedAssignments.push(assignment);
+                    } else if (searchValue.startsWith(assignment.playgroundTown.substr(0, searchValue.length).toLowerCase())) {
+                        searchedAssignments.push(assignment);
+                    }
+                });
+
+                res.render("enrolled_assignment_overview", { pageName: "Mijn opdrachten", session: req.session, assignments: searchedAssignments, filterValue: "false" });
+            } else if (filterValue == "true") {
+                let alphabeticAssignments = [];
+                alphabeticAssignments = resultsFiltered.sort((a, b) => a.playgroundTown.localeCompare(b.playgroundTown));
+
+                res.render("enrolled_assignment_overview", { pageName: "Mijn opdrachten", session: req.session, assignments: alphabeticAssignments, filterValue });
+            } else if (filterValue == undefined) {
+                res.render("enrolled_assignment_overview", { pageName: "Mijn opdrachten", session: req.session, assignments: resultsFiltered, filterValue: "false" });
+            } else {
+                res.render("enrolled_assignment_overview", { pageName: "Mijn opdrachten", session: req.session, assignments: resultsFiltered, filterValue });
+            }
         });
     }
 };
@@ -555,6 +681,14 @@ exports.deleteAssignment = async (req, res) => {
     if (session.user.roles === "coordinator") {
         await Assignment.deleteOne({ _id: req.query.id });
         await Request.deleteMany({ assignmentId: req.query.id });
+        const sendStatus = await notifyUserThroughMail(req.query.emailAddress, req.query.firstName, "deleteAssignment", "Jouw opdracht is verwijderd");
+
+        if (sendStatus) {
+            console.log("Client notified (through email)");
+        } else {
+            console.log("Email not send");
+        }
+
         res.redirect("/assignment");
     }
 

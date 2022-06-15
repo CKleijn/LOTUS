@@ -301,11 +301,11 @@
                             <div class="row pr-0">
                                 <% if (url == "/assignment/create") { %>
                                     <div class="col-12">
-                                        <button class="btn btn-primary w-100" type="submit">Opdracht aanmaken</button>
+                                        <button type="submit" class="btn btn-primary w-100">Opdracht aanmaken</button>
                                     </div>
                                 <% } else if (url.includes("/assignment/update")) { %>
                                     <div class="col-12">
-                                        <button class="btn btn-primary w-100" type="submit">Opdracht bewerken<%if(session.user.roles === "client") { %> <%= "aanvragen" %> <% } %></button>
+                                        <button type="submit" class="btn btn-primary w-100">Opdracht bewerken<%if(session.user.roles === "client") { %> <%= "aanvragen" %> <% } %></button>
                                     </div>
                                 <% } %>
                             </div>
