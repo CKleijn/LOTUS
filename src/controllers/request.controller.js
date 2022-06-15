@@ -166,7 +166,6 @@ exports.declineRequest = async (req, res) => {
     if (requestType === "enrollment") {
         req.session.requests = await req.session.requests.filter((request) => request._id != requestId);
         await Request.findOneAndUpdate({ _id: requestId }, { $set: { status: "Afgewezen" } });
-        // await Request.deleteOne({ assignmentId: assignmentId, userId: userId, type: "enrollment", status: "Afgewezen" });
         res.redirect("/request");
     }
 
