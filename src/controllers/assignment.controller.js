@@ -3,7 +3,7 @@ const { assignmentModel } = require("../models/assignment.model");
 const { userModel } = require("../models/user.model");
 const Request = require("../models/request.model");
 const { createRequest } = require("./request.controller");
-const pdfService = require('../services/pdf-service');
+const pdfService = require("../services/pdf-service");
 const { notifyUserThroughMail } = require("./mail.controller");
 
 const Assignment = assignmentModel;
@@ -765,6 +765,7 @@ exports.deleteMemberFromAssignment = async (req, res) => {
 
     await Request.deleteMany({ userId: victimId, assignmentId: assignmentId });
     await Assignment.updateOne({ _id: assignmentId }, { $pull: { participatingLotusVictims: { _id: victimId } } });
+    await Request.findOneAndUpdate({ assignmentId: assignmentId, type: "createAssignment" }, { $set: { status: "Openstaand" } });
 
     res.redirect("/assignment");
 };
@@ -786,34 +787,34 @@ exports.sendPDFdata = async (req, res, next) => {
 
         assignment = {
             ...assignment[0]._doc,
-            request: {...request[0]._doc},
-            user: {...req.session.user},
+            request: { ...request[0]._doc },
+            user: { ...req.session.user },
         };
-    
+
         await this.getPDF(req, res, assignment);
     } else {
         return next();
     }
-}
+};
 
 exports.getPDF = async (req, res, assignment) => {
     function formatDate(inputDate) {
         let date, month, year;
-      
+
         date = inputDate.getDate();
         month = inputDate.getMonth() + 1;
         year = inputDate.getFullYear();
-      
+
         date = date.toString().padStart(2, "0");
-      
+
         month = month.toString().padStart(2, "0");
-      
+
         return `${date}-${month}-${year}`;
     }
 
     const stream = res.writeHead(200, {
-        'Content-Type': 'application/',
-        'Content-Disposition': `attachment;filename=LOTUS_${assignment.playgroundTown}_${formatDate(new Date(assignment.dateTime))}_contract.pdf`,
+        "Content-Type": "application/",
+        "Content-Disposition": `attachment;filename=LOTUS_${assignment.playgroundTown}_${formatDate(new Date(assignment.dateTime))}_contract.pdf`,
     });
 
     const pdf = await pdfService.buildPDF(
@@ -821,4 +822,4 @@ exports.getPDF = async (req, res, assignment) => {
         () => stream.end(),
         assignment
     );
-}
+};
