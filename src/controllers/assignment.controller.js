@@ -457,22 +457,25 @@ exports.getAllAssignments = (req, res) => {
                     for (let result of results) {
                         let enrolledRequest = await Request.find({ assignmentId: result._id, userId: req.session.user.userId, type: "enrollment", status: "In behandeling" }).exec();
                         let enrolledApprovedRequest = await Request.find({ assignmentId: result._id, userId: req.session.user.userId, type: "enrollment", status: "Openstaand" }).exec();
-                        result.dateTime = format(new Date(result.dateTime));
+                        let formattedDateTime = format(new Date(result.dateTime));
         
                         if (enrolledRequest.length > 0) {
                             result = {
                                 ...result._doc,
+                                formattedDateTime,
                                 status: "Ingeschreven",
                             };
                             resultsFiltered.push(result);
                         } else if (enrolledApprovedRequest.length > 0) {
                             result = {
                                 ...result._doc,
+                                formattedDateTime,
                                 status: "Ingeschreven voltooid",
                             };
                         } else {
                             result = {
                                 ...result._doc,
+                                formattedDateTime,
                                 status: "Niet ingeschreven",
                             };
                             resultsFiltered.push(result);
@@ -488,22 +491,25 @@ exports.getAllAssignments = (req, res) => {
                 for (let result of results) {
                     let enrolledRequest = await Request.find({ assignmentId: result._id, userId: req.session.user.userId, type: "enrollment", status: "In behandeling" }).exec();
                     let enrolledApprovedRequest = await Request.find({ assignmentId: result._id, userId: req.session.user.userId, type: "enrollment", status: "Openstaand" }).exec();
-                    result.dateTime = format(new Date(result.dateTime));
+                    let formattedDateTime = format(new Date(result.dateTime));
     
                     if (enrolledRequest.length > 0) {
                         result = {
                             ...result._doc,
+                            formattedDateTime,
                             status: "Ingeschreven",
                         };
                         resultsFiltered.push(result);
                     } else if (enrolledApprovedRequest.length > 0) {
                         result = {
                             ...result._doc,
+                            formattedDateTime,
                             status: "Ingeschreven voltooid",
                         };
                     } else {
                         result = {
                             ...result._doc,
+                            formattedDateTime,
                             status: "Niet ingeschreven",
                         };
                         resultsFiltered.push(result);
@@ -602,24 +608,27 @@ exports.getAllAssignments = (req, res) => {
                         let enrolledRequest = await Request.find({ assignmentId: result._id, userId: req.session.user.userId, type: "enrollment", status: "In behandeling" }).exec();
                         let enrolledApprovedRequest = await Request.find({ assignmentId: result._id, userId: req.session.user.userId, type: "enrollment", status: "Openstaand" }).exec();
                         let rejectedRequests = await Request.find({ assignmentId: result._id, userId: req.session.user.userId, type: "enrollment", status: "Afgewezen" }).exec();
-                        result.dateTime = format(new Date(result.dateTime));
+                        let formattedDateTime = format(new Date(result.dateTime));
     
                         if (rejectedRequests.length === 0) {
                             if (result.participatingLotusVictims.length !== result.amountOfLotusVictims) {
                                 if (enrolledRequest.length > 0) {
                                     result = {
                                         ...result._doc,
+                                        formattedDateTime,
                                         status: "Ingeschreven",
                                     };
                                     resultsFiltered.push(result);
                                 } else if (enrolledApprovedRequest.length > 0) {
                                     result = {
                                         ...result._doc,
+                                        formattedDateTime,
                                         status: "Ingeschreven voltooid",
                                     };
                                 } else {
                                     result = {
                                         ...result._doc,
+                                        formattedDateTime,
                                         status: "Niet ingeschreven",
                                     };
                                     resultsFiltered.push(result);
@@ -643,24 +652,27 @@ exports.getAllAssignments = (req, res) => {
                     let enrolledRequest = await Request.find({ assignmentId: result._id, userId: req.session.user.userId, type: "enrollment", status: "In behandeling" }).exec();
                     let enrolledApprovedRequest = await Request.find({ assignmentId: result._id, userId: req.session.user.userId, type: "enrollment", status: "Openstaand" }).exec();
                     let rejectedRequests = await Request.find({ assignmentId: result._id, userId: req.session.user.userId, type: "enrollment", status: "Afgewezen" }).exec();
-                    result.dateTime = format(new Date(result.dateTime));
+                    let formattedDateTime = format(new Date(result.dateTime));
 
                     if (rejectedRequests.length === 0) {
                         if (result.participatingLotusVictims.length !== result.amountOfLotusVictims) {
                             if (enrolledRequest.length > 0) {
                                 result = {
                                     ...result._doc,
+                                    formattedDateTime,
                                     status: "Ingeschreven",
                                 };
                                 resultsFiltered.push(result);
                             } else if (enrolledApprovedRequest.length > 0) {
                                 result = {
                                     ...result._doc,
+                                    formattedDateTime,
                                     status: "Ingeschreven voltooid",
                                 };
                             } else {
                                 result = {
                                     ...result._doc,
+                                    formattedDateTime,
                                     status: "Niet ingeschreven",
                                 };
                                 resultsFiltered.push(result);
@@ -757,12 +769,14 @@ exports.getAllAssignments = (req, res) => {
                             let request = await Request.find({ _id: result.requestId }).exec();
                             let updatedAssignmentRequest = await Request.find({ assignmentId: result._id, userId: req.session.user.userId, type: "updateAssignment", status: "In behandeling" }).exec();
                             let cancelRequest = await Request.find({ assignmentId: result._id, userId: req.session.user.userId, type: "deleteAssignment", status: "In behandeling" }).exec();
-                            result.dateTime = format(new Date(result.dateTime));
+                            let formattedDateTime = format(new Date(result.dateTime));
+
                             if (cancelRequest.length > 0) {
                                 result = {
                                     ...result._doc,
                                     status: request[0].status,
                                     requestStatus: "Aangevraagd",
+                                    formattedDateTime,
                                     cancelStatus: "Verwijderverzoek ingediend",
                                 };
                             } else if (updatedAssignmentRequest.length > 0) {
@@ -770,11 +784,13 @@ exports.getAllAssignments = (req, res) => {
                                     ...result._doc,
                                     status: request[0].status,
                                     requestStatus: "Aangevraagd",
+                                    formattedDateTime,
                                     cancelStatus: "Updateverzoek ingediend",
                                 };
                             } else {
                                 result = {
                                     ...result._doc,
+                                    formattedDateTime,
                                     status: request[0].status,
                                 };
                             }
@@ -793,12 +809,14 @@ exports.getAllAssignments = (req, res) => {
                         let request = await Request.find({ _id: result.requestId }).exec();
                         let updatedAssignmentRequest = await Request.find({ assignmentId: result._id, userId: req.session.user.userId, type: "updateAssignment", status: "In behandeling" }).exec();
                         let cancelRequest = await Request.find({ assignmentId: result._id, userId: req.session.user.userId, type: "deleteAssignment", status: "In behandeling" }).exec();
-                        result.dateTime = format(new Date(result.dateTime));
+                        let formattedDateTime = format(new Date(result.dateTime));
+
                         if (cancelRequest.length > 0) {
                             result = {
                                 ...result._doc,
                                 status: request[0].status,
                                 requestStatus: "Aangevraagd",
+                                formattedDateTime,
                                 cancelStatus: "Verwijderverzoek ingediend",
                             };
                         } else if (updatedAssignmentRequest.length > 0) {
@@ -806,11 +824,13 @@ exports.getAllAssignments = (req, res) => {
                                 ...result._doc,
                                 status: request[0].status,
                                 requestStatus: "Aangevraagd",
+                                formattedDateTime,
                                 cancelStatus: "Updateverzoek ingediend",
                             };
                         } else {
                             result = {
                                 ...result._doc,
+                                formattedDateTime,
                                 status: request[0].status,
                             };
                         }
@@ -939,17 +959,20 @@ exports.getMemberAssignments = (req, res) => {
                         for (let result of results) {
                             let enrolledApprovedRequest = await Request.find({ assignmentId: result._id, userId: req.session.user.userId, type: "enrollment", status: "Goedgekeurd" }).exec();
                             let cancelRequest = await Request.find({ assignmentId: result._id, userId: req.session.user.userId, type: "cancelEnrollment", status: "In behandeling" }).exec();
-                            result.dateTime = format(new Date(result.dateTime));
+                            let formattedDateTime = format(new Date(result.dateTime));
+
                             if (enrolledApprovedRequest.length > 0 && cancelRequest.length > 0) {
                                 result = {
                                     ...result._doc,
                                     status: "Ingeschreven voltooid",
+                                    formattedDateTime,
                                     cancelStatus: "Uitschrijfverzoek ingediend",
                                 };
                                 resultsFiltered.push(result);
                             } else if (enrolledApprovedRequest.length > 0) {
                                 result = {
                                     ...result._doc,
+                                    formattedDateTime,
                                     status: "Ingeschreven voltooid",
                                 };
                                 resultsFiltered.push(result);
@@ -965,17 +988,20 @@ exports.getMemberAssignments = (req, res) => {
                 for (let result of results) {
                     let enrolledApprovedRequest = await Request.find({ assignmentId: result._id, userId: req.session.user.userId, type: "enrollment", status: "Goedgekeurd" }).exec();
                     let cancelRequest = await Request.find({ assignmentId: result._id, userId: req.session.user.userId, type: "cancelEnrollment", status: "In behandeling" }).exec();
-                    result.dateTime = format(new Date(result.dateTime));
+                    let formattedDateTime = format(new Date(result.dateTime));
+
                     if (enrolledApprovedRequest.length > 0 && cancelRequest.length > 0) {
                         result = {
                             ...result._doc,
                             status: "Ingeschreven voltooid",
+                            formattedDateTime,
                             cancelStatus: "Uitschrijfverzoek ingediend",
                         };
                         resultsFiltered.push(result);
                     } else if (enrolledApprovedRequest.length > 0) {
                         result = {
                             ...result._doc,
+                            formattedDateTime,
                             status: "Ingeschreven voltooid",
                         };
                         resultsFiltered.push(result);

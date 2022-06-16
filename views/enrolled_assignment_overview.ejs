@@ -89,7 +89,7 @@
                                             <h6>Opdrachtgegevens</h6>
                                             <b>Opdrachtgever:</b> <%= assignment.firstName + " " + assignment.lastName %>
                                             <br>
-                                            <b>Datum:</b> <%= assignment.dateTime %> 
+                                            <b>Datum:</b> <%= assignment.formattedDateTime %> 
                                             <br>
                                             <b>Deelnemers:</b> <%= assignment.participatingLotusVictims.length + "/" + assignment.amountOfLotusVictims %>
                                             <br>
@@ -222,7 +222,7 @@
                                                 <br>
         
                                                 <h6>Overige</h6>
-                                                <b>Vind plaats op:</b> <%= a.dateTime %> 
+                                                <b>Vind plaats op:</b> <%= a.formattedDateTime %> 
                                                 <br>
                                                 <b>Benodigde LOTUSslachtoffers:</b> <%= a.amountOfLotusVictims %> 
                                             
