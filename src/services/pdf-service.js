@@ -22,6 +22,7 @@ exports.buildPDF = async (dataCallback, endCallback, assignment) => {
   generateHeader(doc, logo);
   generatePersonalInfo(doc, assignment);
   generateAssignmentData(doc, assignment);
+  generateBillingData(doc, assignment);
   generateExtraData(doc, assignment);
   generateFooter(doc, assignment);
   doc.end();
@@ -81,6 +82,12 @@ function generateAssignmentData(doc, assignment) {
       .text("Datum/tijd: ", 50, assignmentDataInfo + 30)
       .font("Helvetica")
       .text(formatDate(new Date(assignment.dateTime)), 200, assignmentDataInfo + 30)
+    doc
+      .fontSize(10)
+      .font("Helvetica-Bold")
+      .text("Contact: ", 50, assignmentDataInfo + 45)
+      .font("Helvetica")
+      .text(assignment.billingEmailAddress, 200, assignmentDataInfo + 45)
       .moveDown()
   } else {
     doc
@@ -95,19 +102,44 @@ function generateAssignmentData(doc, assignment) {
       .text("Datum/tijd: ", 50, assignmentDataInfo + 15)
       .font("Helvetica")
       .text(formatDate(new Date(assignment.dateTime)), 200, assignmentDataInfo + 15)
+    doc
+      .fontSize(10)
+      .font("Helvetica-Bold")
+      .text("Contact: ", 50, assignmentDataInfo + 30)
+      .font("Helvetica")
+      .text(assignment.emailAddress, 200, assignmentDataInfo + 30)
       .moveDown()
   }
+}
+
+function generateBillingData(doc, assignment) {
+  doc
+    .fillColor("#444444")
+    .fontSize(14)
+    .text("Factuurgegevens", 50, 385);
+
+  generateHr(doc, 410);
+
+  const extraBillingInfo = 425;
+
+  doc
+    .fontSize(10)
+    .font("Helvetica-Bold")
+    .text("E-mailadres: ", 50, extraBillingInfo)
+    .font("Helvetica")
+    .text(assignment.billingEmailAddress, 200, extraBillingInfo)
+    .moveDown()
 }
 
 function generateExtraData(doc, assignment) {
   doc
     .fillColor("#444444")
     .fontSize(14)
-    .text("Overig", 50, 375);
+    .text("Overig", 50, 465);
 
-  generateHr(doc, 400);
+  generateHr(doc, 490);
 
-  const extraDataInfo = 415;
+  const extraDataInfo = 505;
 
   doc
     .fontSize(10)
@@ -167,18 +199,18 @@ function generateFooter(doc, assignment) {
   doc
     .fontSize(10)
     .font("Helvetica-Bold")
-    .text("Handtekening opdrachtgever:", 50, 525)
+    .text("Handtekening opdrachtgever:", 50, 635)
     .font("Helvetica")
-    .text("________________________", 50, 570)
+    .text("________________________", 50, 680)
     .font("Helvetica-Oblique")
-    .text(assignment.firstName + " " + assignment.lastName, 50, 590)
+    .text(assignment.firstName + " " + assignment.lastName, 50, 700)
 
   doc
     .fontSize(10)
     .font("Helvetica-Bold")
-    .text("Handtekening LOTUSslachtoffer:", 260, 525)
+    .text("Handtekening LOTUSslachtoffer:", 260, 635)
     .font("Helvetica")
-    .text("_____________________________", 260, 570)
+    .text("_____________________________", 260, 680)
     .font("Helvetica-Oblique")
-    .text(assignment.user.firstName + " " + assignment.user.lastName, 260, 590)
+    .text(assignment.user.firstName + " " + assignment.user.lastName, 260, 700)
 }
