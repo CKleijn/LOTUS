@@ -44,11 +44,11 @@ function generatePersonalInfo(doc, assignment) {
     .font("Helvetica-Bold")
     .text("Volledige naam:", 50, personalInfoTop)
     .font("Helvetica")
-    .text(assignment.firstName + " " + assignment.lastName, 200, personalInfoTop)
+    .text(assignment.user.firstName + " " + assignment.user.lastName, 200, personalInfoTop)
     .font("Helvetica-Bold")
     .text("E-mailadres", 50, personalInfoTop + 15)
     .font("Helvetica")
-    .text(assignment.emailAddress, 200, personalInfoTop + 15)
+    .text(assignment.user.emailAddress, 200, personalInfoTop + 15)
     .moveDown();
 }
 
@@ -115,17 +115,14 @@ function generateExtraData(doc, assignment) {
     .text("Aantal gereden kilometers: ", 50, extraDataInfo)
     .font("Helvetica")
     .text("___________ km", 200, extraDataInfo)
-    .moveDown()
     
-  if (assignment.comments) {
-    doc
-      .fontSize(10)
-      .font("Helvetica-Bold")
-      .text("Opmerkingen: ", 50, extraDataInfo + 15)
-      .font("Helvetica")
-      .text("__________________________________________________________________________________________________________________________________________________________________________________________", 200, extraDataInfo + 15)
-      .moveDown();
-  }
+  doc
+    .fontSize(10)
+    .font("Helvetica-Bold")
+    .text("Opmerkingen: ", 50, extraDataInfo + 15)
+    .font("Helvetica")
+    .text("__________________________________________________________________________________________________________________________________________________________________________________________", 200, extraDataInfo + 15)
+    .moveDown();
 }
 
 function generateHeader(doc, logo) {
@@ -134,9 +131,6 @@ function generateHeader(doc, logo) {
 		.fontSize(16)
     .font("Helvetica")
 		.text("LOTUS-Kring Here We Go", 110, 65)
-		.fontSize(10)
-		.text('Hooiakker 6', 200, 65, { align: 'right' })
-		.text('Rijen, 5122HZ', 200, 80, { align: 'right' })
 		.moveDown();
 }
 

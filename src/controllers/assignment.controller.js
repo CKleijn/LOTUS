@@ -1176,6 +1176,8 @@ exports.sendPDFdata = async (req, res, next) => {
             user: { ...req.session.user },
         };
 
+        console.log(assignment)
+
         await this.getPDF(req, res, assignment);
     } else {
         return next();
