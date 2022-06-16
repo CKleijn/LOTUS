@@ -3,29 +3,30 @@ const assignmentController = require("../controllers/assignment.controller");
 const { isLoggedIn } = require("./../controllers/auth.controller");
 const router = express.Router();
 
-router.get("/assignment/create", isLoggedIn, assignmentController.getAssignmentPage);
+const { loadPendingRequests } = require("./../controllers/auth.controller");
 
-router.get("/assignment/update", isLoggedIn, assignmentController.getAssignmentUpdatePage);
+router.get("/assignment/create", isLoggedIn, loadPendingRequests, assignmentController.getAssignmentPage);
 
-router.get("/assignment", isLoggedIn, assignmentController.getAllAssignments);
+router.get("/assignment/update", isLoggedIn, loadPendingRequests, assignmentController.getAssignmentUpdatePage);
 
-router.get("/member/assignment", isLoggedIn, assignmentController.getMemberAssignments);
+router.get("/assignment", isLoggedIn, loadPendingRequests, assignmentController.getAllAssignments);
 
-router.post("/assignment", isLoggedIn, assignmentController.createAssignment);
+router.get("/member/assignment", isLoggedIn, loadPendingRequests, assignmentController.getMemberAssignments);
 
-router.post("/assignment/update", isLoggedIn, assignmentController.updateAssignment)
+router.post("/assignment", isLoggedIn, loadPendingRequests, assignmentController.createAssignment);
 
-router.post("/assignment/delete", isLoggedIn, assignmentController.deleteAssignment);
+router.post("/assignment/update", isLoggedIn, loadPendingRequests, assignmentController.updateAssignment);
 
-router.get("/assignment/detail", isLoggedIn, assignmentController.getAssignmentDetailPage);
+router.post("/assignment/delete", isLoggedIn, loadPendingRequests, assignmentController.deleteAssignment);
+
+router.get("/assignment/detail", isLoggedIn, loadPendingRequests, assignmentController.getAssignmentDetailPage);
 
 router.post("/assignment/enroll", isLoggedIn, assignmentController.enrollAssignment);
 
 router.post("/assignment/cancel", isLoggedIn, assignmentController.cancelEnrollment);
 
-router.post("/assignment/member/delete", isLoggedIn, assignmentController.deleteMemberFromAssignment);
+router.post("/assignment/member/delete", isLoggedIn, loadPendingRequests, assignmentController.deleteMemberFromAssignment);
 
-router.get("/member/assignment/pdf", isLoggedIn, assignmentController.sendPDFdata);
+router.get("/member/assignment/pdf", isLoggedIn, loadPendingRequests, assignmentController.sendPDFdata);
 
 module.exports = router;
- 
