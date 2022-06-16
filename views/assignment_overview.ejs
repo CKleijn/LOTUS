@@ -97,7 +97,7 @@
                                     <div class="card">
                                         <a href="#" data-bs-toggle="modal" data-bs-target="#assignment<%= assignment._id %>">
                                         <div class="card-body assignment_card">
-                                            <h5 class="card-title"><%= assignment.amountOfLotusVictims + " LOTUSslachtoffers nodig in " + assignment.playgroundTown %></h5>
+                                            <h5 class="card-title"><% if(assignment.amountOfLotusVictims === 1) { %> <%= assignment.amountOfLotusVictims + " LOTUSslachtoffer nodig in " + assignment.playgroundTown %> <%} else { %> <%= assignment.amountOfLotusVictims + " LOTUSslachtoffers nodig in " + assignment.playgroundTown %> <% } %></h5>
                                             <h6>Opdrachtgegevens</h6>
                                             <b>Opdrachtgever:</b> <%= assignment.firstName + " " + assignment.lastName %>
                                             <br>
@@ -111,7 +111,7 @@
                                             <br>
                                             <b>Postcode:</b> <%= assignment.playgroundPostalCode %>
                                             <br>
-                                            <b>Plaats:</b> <%= assignment.playgroundPostalCode %>
+                                            <b>Plaats:</b> <%= assignment.playgroundTown %>
                                         </div>
                                     </a>
                                         <div class="card-footer">
@@ -162,7 +162,7 @@
                                     <div class="modal-dialog modal-dialog-centered modal-lg modal-dialog-scrollable">
                                       <div class="modal-content">
                                         <div class="modal-header">
-                                          <h5 class="modal-title"><%= assignment.amountOfLotusVictims + " LOTUSslachtoffers nodig in " + assignment.playgroundTown %></h5>
+                                            <h5 class="card-title"><% if(assignment.amountOfLotusVictims === 1) { %> <%= assignment.amountOfLotusVictims + " LOTUSslachtoffer nodig in " + assignment.playgroundTown %> <%} else { %> <%= assignment.amountOfLotusVictims + " LOTUSslachtoffers nodig in " + assignment.playgroundTown %> <% } %></h5>
                                           <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                                         </div>
                                         <div class="modal-body">
@@ -363,7 +363,7 @@
                                     <div class="card">
                                         <a href="#" data-bs-toggle="modal" data-bs-target="#assignment<%= assignment._id %>">
                                         <div class="card-body assignment_card">
-                                            <h5 class="card-title"><%= assignment.amountOfLotusVictims + " LOTUSslachtoffers nodig in " + assignment.playgroundTown %> <% if(assignment.requestStatus == "Aangevraagd" || assignment.status == "In behandeling") { %><i class="bi bi-hourglass-split" style="float: right; font-size: 30px; color: #435df1;"></i><% } %></h5>
+                                            <h5 class="card-title"><% if(assignment.amountOfLotusVictims === 1) { %> <%= assignment.amountOfLotusVictims + " LOTUSslachtoffer nodig in " + assignment.playgroundTown %> <%} else { %> <%= assignment.amountOfLotusVictims + " LOTUSslachtoffers nodig in " + assignment.playgroundTown %> <% } %> <% if(assignment.requestStatus == "Aangevraagd" || assignment.status == "In behandeling") { %><i class="bi bi-hourglass-split" style="float: right; font-size: 30px; color: #435df1;"></i><% } %></h5>
                                             <h6>Opdrachtgegevens</h6>
                                             <b>Opdrachtgever:</b> <%= assignment.firstName + " " + assignment.lastName %>
                                             <br>
@@ -377,7 +377,7 @@
                                             <br>
                                             <b>Postcode:</b> <%= assignment.playgroundPostalCode %>
                                             <br>
-                                            <b>Plaats:</b> <%= assignment.playgroundPostalCode %>
+                                            <b>Plaats:</b> <%= assignment.playgroundTown %>
                                             <br>
 
 
@@ -460,7 +460,7 @@
                                     <div class="modal-dialog modal-dialog-centered modal-lg modal-dialog-scrollable">
                                       <div class="modal-content">
                                         <div class="modal-header">
-                                          <h5 class="modal-title"><%= assignment.amountOfLotusVictims + " LOTUSslachtoffers nodig in " + assignment.playgroundTown %></h5>
+                                          <h5 class="modal-title"><% if(assignment.amountOfLotusVictims === 1) { %> <%= assignment.amountOfLotusVictims + " LOTUSslachtoffer nodig in " + assignment.playgroundTown %> <%} else { %> <%= assignment.amountOfLotusVictims + " LOTUSslachtoffers nodig in " + assignment.playgroundTown %> <% } %></h5>
                                           <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                                         </div>
                                         <div class="modal-body">
@@ -628,7 +628,7 @@
                                     <div class="card">
                                         <a href="#" data-bs-toggle="modal" data-bs-target="#assignment<%= assignment._id %>">
                                         <div class="card-body assignment_card">
-                                            <h5 class="card-title"><%= assignment.amountOfLotusVictims + " LOTUSslachtoffers nodig in " + assignment.playgroundTown %> <% if(assignment.status == "Ingeschreven") { %><i class="bi bi-hourglass-split" style="float: right; font-size: 30px; color: #435df1;"></i><% } %></h5>
+                                            <h5 class="card-title"><% if(assignment.amountOfLotusVictims === 1) { %> <%= assignment.amountOfLotusVictims + " LOTUSslachtoffer nodig in " + assignment.playgroundTown %> <%} else { %> <%= assignment.amountOfLotusVictims + " LOTUSslachtoffers nodig in " + assignment.playgroundTown %> <% } %> <% if(assignment.status == "Ingeschreven") { %><i class="bi bi-hourglass-split" style="float: right; font-size: 30px; color: #435df1;"></i><% } %></h5>
                                             <h6>Opdrachtgegevens</h6>
                                             <b>Opdrachtgever:</b> <%= assignment.firstName + " " + assignment.lastName %>
                                             <br>
@@ -644,7 +644,7 @@
                                             <br>
                                             <b>Postcode:</b> <%= assignment.playgroundPostalCode %>
                                             <br>
-                                            <b>Plaats:</b> <%= assignment.playgroundPostalCode %>
+                                            <b>Plaats:</b> <%= assignment.playgroundTown %>
                                             
                                         </div>
                                     </a>
@@ -682,7 +682,7 @@
                                 <div class="modal-dialog modal-dialog-centered modal-lg modal-dialog-scrollable">
                                 <div class="modal-content">
                                     <div class="modal-header">
-                                    <h5 class="modal-title"><%= assignment.amountOfLotusVictims + " LOTUSslachtoffers nodig in " + assignment.playgroundTown %></h5>
+                                    <h5 class="modal-title"><% if(assignment.amountOfLotusVictims === 1) { %> <%= assignment.amountOfLotusVictims + " LOTUSslachtoffer nodig in " + assignment.playgroundTown %> <%} else { %> <%= assignment.amountOfLotusVictims + " LOTUSslachtoffers nodig in " + assignment.playgroundTown %> <% } %></h5>
                                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                                     </div>
                                     <div class="modal-body">
