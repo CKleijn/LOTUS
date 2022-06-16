@@ -24,7 +24,7 @@
                 <div class="row">
             <div class="col lg-6 filter_col">
                 <label class="form-label sort_label"><i class="bi bi-arrow-down-up"></i> Sorteren op:</label>
-                <form action="/member/assignment" method="GET">
+                <form action="/assignment" method="GET">
                     <% if (sortPlaygroundValue != undefined) { %>
                         <% if (sortPlaygroundValue == "true") { %>
                             <input type="hidden" name="sortPlayground" value="false">
@@ -46,7 +46,7 @@
                     </div>
                 </form>
                 
-                <form action="/member/assignment" method="GET">
+                <form action="/assignment" method="GET">
                     <% if (sortDateValue != undefined) { %>
                         <% if (sortDateValue == "true") { %>
                             <input type="hidden" name="sortDate" value="false">
@@ -69,13 +69,13 @@
                 </form>
 
                 <div class="remove_sort_class">
-                    <form action="/member/assignment" method="GET">
+                    <form action="/assignment" method="GET">
                         <button type="submit" class="btn btn-secondary sort_btn">Verwijder filters<i class="bi bi-x-lg sort_icon"></i></button>
                     </form>
                 </div>
             </div>
             <div class="col-lg-6 filter_col">
-                <form class="search-form d-flex align-items-center" action="/member/assignment" method="GET">
+                <form class="search-form d-flex align-items-center" action="/assignment" method="GET">
                     <input type="text" name="keyword" class="search-input" placeholder="Zoek op speelplaats...">
                     <button type="submit" title="Zoeken"><i class="bi bi-search"></i></button>
                 </form>
