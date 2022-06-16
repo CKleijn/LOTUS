@@ -168,6 +168,36 @@ exports.login = (req, res) => {
     }
 };
 
+exports.loadPendingRequests = async (req, res, next) => {
+    if (req.session.user.roles === "coordinator") {
+        let requests = await Request.find({ status: "In behandeling" });
+        let parsedRequests = [];
+
+        if (requests.length === 0) {
+            req.session.requests = parsedRequests;
+            return next();
+        } else {
+            for (let i = 0; i < requests.length; i++) {
+                let user = await User.find({ _id: requests[i].userId }, { _id: 0, firstName: 1 });
+
+                const request = {
+                    ...requests[i]._doc,
+                    user: user[0],
+                };
+
+                parsedRequests.push(request);
+
+                if (parsedRequests.length === requests.length || requests.length === 0) {
+                    req.session.requests = parsedRequests;
+                    return next();
+                }
+            }
+        }
+    } else {
+        return next();
+    }
+};
+
 exports.setupMember = (req, res) => {
     const { firstName, lastName, password, confirmPassword, email } = req.body;
     const decryptedMail = cryptr.decrypt(email);

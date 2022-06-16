@@ -3,10 +3,12 @@ const requestController = require("../controllers/request.controller");
 const { isLoggedIn } = require("./../controllers/auth.controller");
 const router = express.Router();
 
-router.get("/request", isLoggedIn, requestController.getAllRequests);
+const { loadPendingRequests } = require("./../controllers/auth.controller");
 
-router.post("/request/approve", isLoggedIn, requestController.approveRequest);
+router.get("/request", isLoggedIn, loadPendingRequests, requestController.getAllRequests);
 
-router.post("/request/decline", isLoggedIn, requestController.declineRequest);
+router.post("/request/approve", isLoggedIn, loadPendingRequests, requestController.approveRequest);
+
+router.post("/request/decline", isLoggedIn, loadPendingRequests, requestController.declineRequest);
 
 module.exports = router;

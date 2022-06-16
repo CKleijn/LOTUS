@@ -3,14 +3,16 @@ const userController = require("./../controllers/user.controller");
 const { isLoggedIn } = require("./../controllers/auth.controller");
 const router = express.Router();
 
-router.post("/user/roles", isLoggedIn, userController.changeRoles);
+const { loadPendingRequests } = require("./../controllers/auth.controller");
 
-router.post("/user/create", isLoggedIn, userController.createMember);
+router.post("/user/roles", isLoggedIn, loadPendingRequests, userController.changeRoles);
 
-router.get("/user/profile", isLoggedIn, userController.getUserProfile);
+router.post("/user/create", isLoggedIn, loadPendingRequests, userController.createMember);
 
-router.post("/user/profile/edit", isLoggedIn, userController.changeUserProfileDetails);
+router.get("/user/profile", isLoggedIn, loadPendingRequests, userController.getUserProfile);
 
-router.post("/user/profile/password", isLoggedIn, userController.changePassword);
+router.post("/user/profile/edit", isLoggedIn, loadPendingRequests, userController.changeUserProfileDetails);
+
+router.post("/user/profile/password", isLoggedIn, loadPendingRequests, userController.changePassword);
 
 module.exports = router;

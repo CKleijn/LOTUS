@@ -3,8 +3,10 @@ const homeController = require("./../controllers/home.controller");
 const { isLoggedIn, isCoordinator } = require("./../controllers/auth.controller");
 const router = express.Router();
 
-router.get("/", isLoggedIn, homeController.getHomepage);
+const { loadPendingRequests } = require("./../controllers/auth.controller");
 
-router.get("/user", isLoggedIn, isCoordinator, homeController.getUserOverview);
+router.get("/", isLoggedIn, loadPendingRequests, homeController.getHomepage);
+
+router.get("/user", isLoggedIn, isCoordinator, loadPendingRequests, homeController.getUserOverview);
 
 module.exports = router;
