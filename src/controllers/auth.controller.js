@@ -96,6 +96,7 @@ exports.login = (req, res) => {
                                     firstName: currentUser.firstName,
                                     lastName: currentUser.lastName,
                                     emailAddress: currentUser.emailAddress,
+                                    phoneNumber: currentUser.phoneNumber,
                                     street: currentUser.street,
                                     houseNumber: currentUser.houseNumber,
                                     houseNumberAddition: currentUser.houseNumberAddition,
