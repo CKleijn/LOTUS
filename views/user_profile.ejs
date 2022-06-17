@@ -79,6 +79,11 @@
                                     <div class="col-lg-9 col-md-8"><%= session.user.emailAddress %></div>
                                 </div>
 
+                                <div class="row">
+                                    <div class="col-lg-3 col-md-4 label">Telefoonnummer</div>
+                                    <div class="col-lg-9 col-md-8"><%= session.user.phoneNumber %></div>
+                                </div>
+
                                 <% if(session.user.roles == "client") { %> 
                                     <div class="row">
                                         <div class="col-lg-3 col-md-4 label">Straat</div>
@@ -155,6 +160,21 @@
                                     </div>
 
                                    <% if(session.user.roles == "client") { %>
+
+                                    <div class="row mb-3">
+                                        <label for="Email" class="col-md-4 col-lg-3 col-form-label">Telefoonnummer</label>
+                                        <div class="col-md-8 col-lg-9">
+                                            <% if(typeof oldValues != "undefined" && typeof oldValues.phoneNumber != "undefined") { %>
+                                            <input name="phoneNumber" type="text" class="form-control" id="phoneNumber" value="<%= oldValues.phoneNumber %>" />
+                                            <% } else if (typeof phoneNumberErr != "undefined") { %>
+                                            <input name="phoneNumber" type="text" class="form-control" id="phoneNumber" />
+                                            <% } else { %>
+                                            <input name="phoneNumber" type="text" class="form-control" id="phoneNumber" value="<%= session.user.phoneNumber %>" />
+                                            <% } %>
+
+                                            <label class="form-error"><% if(typeof phoneNumberErr != "undefined"){%><%=phoneNumberErr%><%}%></label>
+                                        </div>
+                                    </div>
 
                                     <div class="row mb-3">
                                         <label for="Email" class="col-md-4 col-lg-3 col-form-label">Straat</label>
