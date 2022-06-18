@@ -346,63 +346,72 @@ exports.updateAssignment = async (req, res) => {
         oldValues.endTime = endTime;
     }
 
-    if (!amountOfLotusVictims || amountOfLotusVictims.length === 0) {
-        errors.amountOfLotusVictimsErr = "Aantal LOTUS slachtoffers is verplicht!";
-    } else if (isNaN(amountOfLotusVictims)) {
-        errors.amountOfLotusVictimsErr = "Aantal LOTUS slachtoffers moet een getal zijn!";
-    } else {
-        oldValues.amountOfLotusVictims = amountOfLotusVictims;
-    }
+    (async () => {
+        let tempAssignment = await Assignment.find({ _id: assignmentId });
+        tempAssignment = tempAssignment[0];
 
-    oldValues.comments = comments;
+        if (!amountOfLotusVictims || amountOfLotusVictims.length === 0) {
+            errors.amountOfLotusVictimsErr = "Aantal LOTUS slachtoffers is verplicht!";
+        } else if (isNaN(amountOfLotusVictims)) {
+            errors.amountOfLotusVictimsErr = "Aantal LOTUS slachtoffers moet een getal zijn!";
+        } else if (amountOfLotusVictims < 1) {
+            errors.amountOfLotusVictimsErr = `Aantal LOTUSslachtoffers moet minimaal 1 zijn!`;
+        } else if (tempAssignment.participatingLotusVictims.length > amountOfLotusVictims) {
+            errors.amountOfLotusVictimsErr = `Er zijn al ${tempAssignment.participatingLotusVictims.length} LOTUSslachtoffers ingeschreven!`;
+        } else {
+            oldValues.amountOfLotusVictims = amountOfLotusVictims;
+        }
 
-    //factuur
-    if (!billingEmailAddress || billingEmailAddress.length === 0) {
-        errors.billingEmailAddressErr = "E-mailadres is verplicht!";
-    } else if (!emailRegex.test(billingEmailAddress)) {
-        errors.billingEmailAddressErr = "Gebruik een geldig e-mailadres zoals j.doe@gmail.com!";
-    } else {
-        oldValues.billingEmailAddress = billingEmailAddress;
-    }
+        oldValues.comments = comments;
 
-    if (
-        typeof errors.firstNameErr != "undefined" ||
-        typeof errors.lastNameErr != "undefined" ||
-        typeof errors.emailAddressErr != "undefined" ||
-        typeof errors.phoneNumberErr != "undefined" ||
-        typeof errors.streetErr != "undefined" ||
-        typeof errors.houseNumberErr != "undefined" ||
-        typeof errors.postalCodeErr != "undefined" ||
-        typeof errors.townErr != "undefined" ||
-        typeof errors.playgroundStreetErr != "undefined" ||
-        typeof errors.playgroundHouseNumberErr != "undefined" ||
-        typeof errors.playgroundPostalCodeErr != "undefined" ||
-        typeof errors.playgroundTownErr != "undefined" ||
-        typeof errors.dateTimeErr != "undefined" ||
-        typeof errors.endTimeErr != "undefined" ||
-        typeof errors.amountOfLotusVictimsErr != "undefined" ||
-        typeof errors.billingEmailAddressErr != "undefined"
-    ) {
-        res.render("assignment", { pageName: "Formulier", session: req.session, ...errors, url: req.session.originalUrl, assignmentId, assignmentStatus });
-    } else {
-        (async () => {
-            if (req.session.user.roles === "coordinator" || assignmentStatus === "In behandeling") {
-                await Assignment.findOneAndUpdate({ _id: assignmentId }, { ...assignment });
-                res.redirect("/assignment");
-            } else {
-                const request = await new Request({
-                    userId: req.session.user.userId,
-                    assignmentId: assignmentId.toString(),
-                    type: "updateAssignment",
-                    updatedAssignment: { ...req.body },
-                });
-                // Save request
-                request.save();
+        //factuur
+        if (!billingEmailAddress || billingEmailAddress.length === 0) {
+            errors.billingEmailAddressErr = "E-mailadres is verplicht!";
+        } else if (!emailRegex.test(billingEmailAddress)) {
+            errors.billingEmailAddressErr = "Gebruik een geldig e-mailadres zoals j.doe@gmail.com!";
+        } else {
+            oldValues.billingEmailAddress = billingEmailAddress;
+        }
 
-                res.redirect("/assignment");
-            }
-        })();
-    }
+        if (
+            typeof errors.firstNameErr != "undefined" ||
+            typeof errors.lastNameErr != "undefined" ||
+            typeof errors.emailAddressErr != "undefined" ||
+            typeof errors.phoneNumberErr != "undefined" ||
+            typeof errors.streetErr != "undefined" ||
+            typeof errors.houseNumberErr != "undefined" ||
+            typeof errors.postalCodeErr != "undefined" ||
+            typeof errors.townErr != "undefined" ||
+            typeof errors.playgroundStreetErr != "undefined" ||
+            typeof errors.playgroundHouseNumberErr != "undefined" ||
+            typeof errors.playgroundPostalCodeErr != "undefined" ||
+            typeof errors.playgroundTownErr != "undefined" ||
+            typeof errors.dateTimeErr != "undefined" ||
+            typeof errors.endTimeErr != "undefined" ||
+            typeof errors.amountOfLotusVictimsErr != "undefined" ||
+            typeof errors.billingEmailAddressErr != "undefined"
+        ) {
+            res.render("assignment", { pageName: "Formulier", session: req.session, ...errors, url: req.session.originalUrl, assignmentId, assignmentStatus });
+        } else {
+            (async () => {
+                if (req.session.user.roles === "coordinator" || assignmentStatus === "In behandeling") {
+                    await Assignment.findOneAndUpdate({ _id: assignmentId }, { ...assignment });
+                    res.redirect("/assignment");
+                } else {
+                    const request = await new Request({
+                        userId: req.session.user.userId,
+                        assignmentId: assignmentId.toString(),
+                        type: "updateAssignment",
+                        updatedAssignment: { ...req.body },
+                    });
+                    // Save request
+                    request.save();
+
+                    res.redirect("/assignment");
+                }
+            })();
+        }
+    })();
 };
 
 exports.getAssignmentPage = (req, res) => {
