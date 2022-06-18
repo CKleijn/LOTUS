@@ -33,6 +33,12 @@
                                     </div>
 
                                     <div class="col-12">
+                                        <label class="form-label">Telefoonnummer</label>
+                                        <input type="text" name="phoneNumber" class="form-control" value="<% if(typeof oldValues != "undefined"){%><%=oldValues.phoneNumber%><%}%>">
+                                        <label class="form-error"><% if(typeof phoneNumberErr != "undefined"){%><%=phoneNumberErr%><%}%></label>
+                                    </div>
+
+                                    <div class="col-12">
                                             <label class="form-label">Wachtwoord</label>
                                             <input id="password" type="password" name="password" class="form-control" oninput="strengthChecker()" value="<% if(typeof oldValues != "undefined"){%><%=oldValues.password%><%}%>">
                                                 <i class="bi bi-eye-slash" id="togglePassword"></i>
@@ -44,9 +50,11 @@
                                     <div class="col-12">
                                         <label class="form-label">Bevestig wachtwoord</label>
                                         <input id="confirmPassword" type="password" name="confirmPassword" class="form-control" value="<% if(typeof oldValues != "undefined"){%><%=oldValues.confirmPassword%><%}%>">
+                                        
                                         <i class="bi bi-eye-slash" id="toggleConfirmPassword"></i>
-                                        <label class="form-error"><% if(typeof confirmPasswordErr != "undefined"){%><%=confirmPasswordErr%><%}%></label>
+
                                     </div>
+                                    <label class="form-error"><% if(typeof confirmPasswordErr != "undefined"){%><%=confirmPasswordErr%><%}%></label>
 
                                     <div class="col-12">
                                         <label class="form-label">Straat</label>

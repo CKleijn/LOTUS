@@ -1,5 +1,7 @@
 const mongoose = require("./../../database/dbconnection");
 const bcrypt = require("bcrypt");
+const { phone } = require("phone");
+
 // Create userSchema with all fields
 exports.userSchema = new mongoose.Schema({
     firstName: {
@@ -9,6 +11,17 @@ exports.userSchema = new mongoose.Schema({
     lastName: {
         type: String,
         required: [true, "Achternaam is verplicht!"],
+    },
+    phoneNumber: {
+        type: String,
+        validate: {
+            validator: function (v) {
+                const validNumber = phone(v, { country: "NL" });
+                return validNumber.isValid;
+            },
+            message: `Gebruik een geldig telefoonnummer`,
+        },
+        required: [true, "Telefoonnummer is verplicht!"],
     },
     emailAddress: {
         type: String,
@@ -34,9 +47,9 @@ exports.userSchema = new mongoose.Schema({
         type: String,
         validate: {
             validator: function (v) {
-                return v == this.password
+                return v == this.password;
             },
-            message: `De wachtwoorden komen niet overeen!`
+            message: `De wachtwoorden komen niet overeen!`,
         },
         required: [true, "Bevestig wachtwoord is verplicht!"],
     },

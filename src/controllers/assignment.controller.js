@@ -4,6 +4,7 @@ const { userModel } = require("../models/user.model");
 const Request = require("../models/request.model");
 const { createRequest } = require("./request.controller");
 const pdfService = require("../services/pdf-service");
+const { phone } = require("phone");
 const { notifyUserThroughMail } = require("./mail.controller");
 
 const Assignment = assignmentModel;
@@ -14,12 +15,13 @@ exports.createAssignment = (req, res) => {
     // Get session
     const session = req.session;
     // Declare all variables out of req.body
-    const { firstName, lastName, emailAddress, street, houseNumber, houseNumberAddition, postalCode, town, billingEmailAddress, dateTime, playgroundStreet, playgroundHouseNumber, playgroundHouseNumberAddition, playgroundPostalCode, playgroundTown, makeUpStreet, makeUpHouseNumber, makeUpHouseNumberAddition, makeUpPostalCode, makeUpTown, amountOfLotusVictims, comments, isApproved, requestId, checkedOrNotProfile, checkedOrNotPlayground, checkedOrNotMakeUp } = req.body;
+    const { firstName, lastName, emailAddress, street, houseNumber, phoneNumber, houseNumberAddition, postalCode, town, billingEmailAddress, dateTime, endTime, playgroundStreet, playgroundHouseNumber, playgroundHouseNumberAddition, playgroundPostalCode, playgroundTown, makeUpStreet, makeUpHouseNumber, makeUpHouseNumberAddition, makeUpPostalCode, makeUpTown, amountOfLotusVictims, comments, isApproved, requestId, checkedOrNotProfile, checkedOrNotPlayground, checkedOrNotMakeUp } = req.body;
     // Create new assignment object
     const assignment = new Assignment({
         firstName: firstName,
         lastName: lastName,
         emailAddress: emailAddress,
+        phoneNumber: phoneNumber,
         street: street,
         houseNumber: houseNumber,
         houseNumberAddition: houseNumberAddition,
@@ -27,6 +29,7 @@ exports.createAssignment = (req, res) => {
         town: town,
         billingEmailAddress: billingEmailAddress,
         dateTime: dateTime,
+        endTime: endTime,
         playgroundStreet: playgroundStreet,
         playgroundHouseNumber: playgroundHouseNumber,
         playgroundHouseNumberAddition: playgroundHouseNumberAddition,
@@ -111,6 +114,18 @@ exports.createAssignment = (req, res) => {
                 errors.dateTimeErr = err.errors.dateTime.properties.message;
             } else {
                 errors.oldValues.dateTime = req.body.dateTime;
+            }
+
+            if (typeof err.errors.endTime != "undefined") {
+                errors.endTimeErr = err.errors.endTime.properties.message;
+            } else {
+                errors.oldValues.endTime = req.body.endTime;
+            }
+
+            if (typeof err.errors.phoneNumber != "undefined") {
+                errors.phoneNumberErr = err.errors.phoneNumber.properties.message;
+            } else {
+                errors.oldValues.phoneNumber = req.body.phoneNumber;
             }
 
             if (typeof err.errors.playgroundStreet != "undefined") {
@@ -206,8 +221,8 @@ exports.createAssignment = (req, res) => {
 exports.updateAssignment = async (req, res) => {
     const assignmentId = req.body.assignmentId;
 
-    const { assignmentStatus, firstName, lastName, emailAddress, street, houseNumber, houseNumberAddition, postalCode, town, billingEmailAddress, dateTime, playgroundStreet, playgroundHouseNumber, playgroundHouseNumberAddition, playgroundPostalCode, playgroundTown, makeUpStreet, makeUpHouseNumber, makeUpHouseNumberAddition, makeUpPostalCode, makeUpTown, amountOfLotusVictims, comments } = req.body;
-    const assignment = { firstName, lastName, emailAddress, street, houseNumber, houseNumberAddition, postalCode, town, billingEmailAddress, dateTime, playgroundStreet, playgroundHouseNumber, playgroundHouseNumberAddition, playgroundPostalCode, playgroundTown, makeUpStreet, makeUpHouseNumber, makeUpHouseNumberAddition, makeUpPostalCode, makeUpTown, amountOfLotusVictims, comments };
+    const { assignmentStatus, firstName, lastName, emailAddress, phoneNumber, endTime, street, houseNumber, houseNumberAddition, postalCode, town, billingEmailAddress, dateTime, playgroundStreet, playgroundHouseNumber, playgroundHouseNumberAddition, playgroundPostalCode, playgroundTown, makeUpStreet, makeUpHouseNumber, makeUpHouseNumberAddition, makeUpPostalCode, makeUpTown, amountOfLotusVictims, comments } = req.body;
+    const assignment = { firstName, lastName, emailAddress, phoneNumber, endTime, street, houseNumber, houseNumberAddition, postalCode, town, billingEmailAddress, dateTime, playgroundStreet, playgroundHouseNumber, playgroundHouseNumberAddition, playgroundPostalCode, playgroundTown, makeUpStreet, makeUpHouseNumber, makeUpHouseNumberAddition, makeUpPostalCode, makeUpTown, amountOfLotusVictims, comments };
 
     const errors = {};
     const oldValues = {};
@@ -233,6 +248,14 @@ exports.updateAssignment = async (req, res) => {
         errors.emailAddressErr = "Gebruik een geldig e-mailadres zoals j.doe@gmail.com!";
     } else {
         oldValues.emailAddress = emailAddress;
+    }
+
+    if (!phoneNumber || phoneNumber.length === 0) {
+        errors.phoneNumberErr = "Telefoonnummer is verplicht!";
+    } else if (!phone(phoneNumber, { country: "NL" }).isValid) {
+        errors.phoneNumberErr = "Gebruik een geldig telefoonnummer";
+    } else {
+        oldValues.phoneNumber = phoneNumber;
     }
 
     if (!street || street.length === 0) {
@@ -308,68 +331,87 @@ exports.updateAssignment = async (req, res) => {
     //overige
 
     if (!dateTime || dateTime.length === 0) {
-        errors.dateTimeErr = "Datum en tijd is verplicht!";
+        errors.dateTimeErr = "Begindatum en begintijd zijn verplicht!";
     } else if (new Date().toISOString() > dateTime) {
         errors.dateTimeErr = "De ingevoerde datum is verstreken!";
     } else {
         oldValues.dateTime = dateTime;
     }
 
-    if (!amountOfLotusVictims || amountOfLotusVictims.length === 0) {
-        errors.amountOfLotusVictimsErr = "Aantal LOTUS slachtoffers is verplicht!";
-    } else if (isNaN(amountOfLotusVictims)) {
-        errors.amountOfLotusVictimsErr = "Aantal LOTUS slachtoffers moet een getal zijn!";
+    if (!endTime || endTime.length === 0) {
+        errors.endTimeErr = "Einddatum en eindtijd zijn verplicht!";
+    } else if (dateTime > endTime) {
+        errors.endTimeErr = "De eindtijd moet plaatsvinden na de begintijd!";
     } else {
-        oldValues.amountOfLotusVictims = amountOfLotusVictims;
+        oldValues.endTime = endTime;
     }
 
-    oldValues.comments = comments;
+    (async () => {
+        let tempAssignment = await Assignment.find({ _id: assignmentId });
+        tempAssignment = tempAssignment[0];
 
-    //factuur
-    if (!billingEmailAddress || billingEmailAddress.length === 0) {
-        errors.billingEmailAddressErr = "E-mailadres is verplicht!";
-    } else if (!emailRegex.test(billingEmailAddress)) {
-        errors.billingEmailAddressErr = "Gebruik een geldig e-mailadres zoals j.doe@gmail.com!";
-    } else {
-        oldValues.billingEmailAddress = billingEmailAddress;
-    }
+        if (!amountOfLotusVictims || amountOfLotusVictims.length === 0) {
+            errors.amountOfLotusVictimsErr = "Aantal LOTUS slachtoffers is verplicht!";
+        } else if (isNaN(amountOfLotusVictims)) {
+            errors.amountOfLotusVictimsErr = "Aantal LOTUS slachtoffers moet een getal zijn!";
+        } else if (amountOfLotusVictims < 1) {
+            errors.amountOfLotusVictimsErr = `Aantal LOTUSslachtoffers moet minimaal 1 zijn!`;
+        } else if (tempAssignment.participatingLotusVictims.length > amountOfLotusVictims) {
+            errors.amountOfLotusVictimsErr = `Er zijn al ${tempAssignment.participatingLotusVictims.length} LOTUSslachtoffers ingeschreven!`;
+        } else {
+            oldValues.amountOfLotusVictims = amountOfLotusVictims;
+        }
 
-    if (
-        typeof errors.firstNameErr != "undefined" ||
-        typeof errors.lastNameErr != "undefined" ||
-        typeof errors.emailAddressErr != "undefined" ||
-        typeof errors.streetErr != "undefined" ||
-        typeof errors.houseNumberErr != "undefined" ||
-        typeof errors.postalCodeErr != "undefined" ||
-        typeof errors.townErr != "undefined" ||
-        typeof errors.playgroundStreetErr != "undefined" ||
-        typeof errors.playgroundHouseNumberErr != "undefined" ||
-        typeof errors.playgroundPostalCodeErr != "undefined" ||
-        typeof errors.playgroundTownErr != "undefined" ||
-        typeof errors.dateTimeErr != "undefined" ||
-        typeof errors.amountOfLotusVictimsErr != "undefined" ||
-        typeof errors.billingEmailAddressErr != "undefined"
-    ) {
-        res.render("assignment", { pageName: "Formulier", session: req.session, ...errors, url: req.session.originalUrl, assignmentId, assignmentStatus });
-    } else {
-        (async () => {
-            if (req.session.user.roles === "coordinator" || assignmentStatus === "In behandeling") {
-                await Assignment.findOneAndUpdate({ _id: assignmentId }, { ...assignment });
-                res.redirect("/assignment");
-            } else {
-                const request = await new Request({
-                    userId: req.session.user.userId,
-                    assignmentId: assignmentId.toString(),
-                    type: "updateAssignment",
-                    updatedAssignment: { ...req.body },
-                });
-                // Save request
-                request.save();
+        oldValues.comments = comments;
 
-                res.redirect("/assignment");
-            }
-        })();
-    }
+        //factuur
+        if (!billingEmailAddress || billingEmailAddress.length === 0) {
+            errors.billingEmailAddressErr = "E-mailadres is verplicht!";
+        } else if (!emailRegex.test(billingEmailAddress)) {
+            errors.billingEmailAddressErr = "Gebruik een geldig e-mailadres zoals j.doe@gmail.com!";
+        } else {
+            oldValues.billingEmailAddress = billingEmailAddress;
+        }
+
+        if (
+            typeof errors.firstNameErr != "undefined" ||
+            typeof errors.lastNameErr != "undefined" ||
+            typeof errors.emailAddressErr != "undefined" ||
+            typeof errors.phoneNumberErr != "undefined" ||
+            typeof errors.streetErr != "undefined" ||
+            typeof errors.houseNumberErr != "undefined" ||
+            typeof errors.postalCodeErr != "undefined" ||
+            typeof errors.townErr != "undefined" ||
+            typeof errors.playgroundStreetErr != "undefined" ||
+            typeof errors.playgroundHouseNumberErr != "undefined" ||
+            typeof errors.playgroundPostalCodeErr != "undefined" ||
+            typeof errors.playgroundTownErr != "undefined" ||
+            typeof errors.dateTimeErr != "undefined" ||
+            typeof errors.endTimeErr != "undefined" ||
+            typeof errors.amountOfLotusVictimsErr != "undefined" ||
+            typeof errors.billingEmailAddressErr != "undefined"
+        ) {
+            res.render("assignment", { pageName: "Formulier", session: req.session, ...errors, url: req.session.originalUrl, assignmentId, assignmentStatus });
+        } else {
+            (async () => {
+                if (req.session.user.roles === "coordinator" || assignmentStatus === "In behandeling") {
+                    await Assignment.findOneAndUpdate({ _id: assignmentId }, { ...assignment });
+                    res.redirect("/assignment");
+                } else {
+                    const request = await new Request({
+                        userId: req.session.user.userId,
+                        assignmentId: assignmentId.toString(),
+                        type: "updateAssignment",
+                        updatedAssignment: { ...req.body },
+                    });
+                    // Save request
+                    request.save();
+
+                    res.redirect("/assignment");
+                }
+            })();
+        }
+    })();
 };
 
 exports.getAssignmentPage = (req, res) => {
@@ -1163,29 +1205,16 @@ exports.sendPDFdata = async (req, res, next) => {
     const assignmentId = req.query.assignmentId;
     let assignment = await Assignment.find({ _id: assignmentId }).exec();
 
-    let isRegistratedMember = false;
+    let request = await Request.find({ assignmentId: assignmentId, type: "enrollment", status: "Goedgekeurd" }).exec();
 
-    for await (let member of assignment[0].participatingLotusVictims) {
-        if (member._id == req.session.user.userId) {
-            isRegistratedMember = true;
-        }
-    }
+    assignment = {
+        ...assignment[0]._doc,
+        request: { ...request[0]._doc }
+    };
 
-    if (isRegistratedMember) {
-        let request = await Request.find({ assignmentId: assignmentId, userId: req.session.user.userId, type: "enrollment", status: "Goedgekeurd" }).exec();
+    console.log(assignment);
 
-        assignment = {
-            ...assignment[0]._doc,
-            request: { ...request[0]._doc },
-            user: { ...req.session.user },
-        };
-
-        console.log(assignment)
-
-        await this.getPDF(req, res, assignment);
-    } else {
-        return next();
-    }
+    await this.getPDF(req, res, assignment);
 };
 
 exports.getPDF = async (req, res, assignment) => {

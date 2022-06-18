@@ -1,22 +1,24 @@
 const bcrypt = require("bcrypt");
 const mongoose = require("./../../database/dbconnection");
-const { sendMemberInviteMail } = require("./../controllers/mail.controller");
+const { sendMemberInviteMail, notifyUserThroughMail } = require("./../controllers/mail.controller");
 const userController = require("./../controllers/user.controller");
 const { userModel } = require("./../models/user.model");
 const passGenerator = require("generate-password");
+const { phone } = require("phone");
 
 const User = userModel;
 
 // Functionality for creating an user
 exports.createUser = (req, res) => {
     // Declare all variables out of req.body
-    let { firstName, lastName, emailAddress, password, confirmPassword, street, houseNumber, houseNumberAddition, postalCode, town } = req.body;
+    let { firstName, lastName, emailAddress, phoneNumber, password, confirmPassword, street, houseNumber, houseNumberAddition, postalCode, town } = req.body;
     emailAddress = emailAddress.toLowerCase();
     // Create new user object
     const user = new User({
         firstName: firstName,
         lastName: lastName,
         emailAddress: emailAddress,
+        phoneNumber: phoneNumber,
         password: password,
         confirmPassword: confirmPassword,
         street: street,
@@ -55,6 +57,12 @@ exports.createUser = (req, res) => {
                     errors.emailAddressErr = err.errors.emailAddress.properties.message;
                 } else {
                     oldValues.emailAddress = emailAddress;
+                }
+
+                if (err.errors.phoneNumber) {
+                    errors.phoneNumberErr = err.errors.phoneNumber.properties.message;
+                } else {
+                    oldValues.phoneNumber = phoneNumber;
                 }
 
                 if (err.errors.password) {
@@ -154,9 +162,7 @@ exports.createMember = (req, res) => {
 
                 if (result.length === 0) {
                     const password = await insertMember(emailAddress);
-                    console.log(password);
                     const sendStatus = await sendMemberInviteMail(emailAddress, password);
-                    console.log(sendStatus);
 
                     if (sendStatus) {
                         console.log("Send");
@@ -173,6 +179,20 @@ exports.createMember = (req, res) => {
             res.render("user_overview", { pageName: "Gebruikers", session: req.session, emailAddressErr: "Het ingevulde e-mailadres is ongeldig!", allMembers, allClients, allInvitedMembers });
         }
     })();
+};
+
+exports.notifyInvitedMember = async (req, res) => {
+    const { emailAddress } = req.body;
+
+    const sendStatus = await notifyUserThroughMail(emailAddress, "", "remindInvitedMember", "Account activatie (herinnering)");
+
+    if (sendStatus) {
+        console.log("Invited member reminded");
+    } else {
+        console.log("Mail did not send");
+    }
+
+    return res.redirect("/user");
 };
 
 const insertMember = async (emailAddress) => {
@@ -197,7 +217,7 @@ exports.getUserProfile = (req, res) => {
 };
 
 exports.changeUserProfileDetails = (req, res) => {
-    let { firstName, lastName, emailAddress, type, street, houseNumber, houseNumberAddition, town, postalCode } = req.body;
+    let { firstName, lastName, emailAddress, phoneNumber, type, street, houseNumber, houseNumberAddition, town, postalCode } = req.body;
     emailAddress = emailAddress.toLowerCase();
 
     const errors = {};
@@ -231,6 +251,14 @@ exports.changeUserProfileDetails = (req, res) => {
     }
 
     if (req.session.user.roles == "client") {
+        if (!phoneNumber || phoneNumber.length === 0) {
+            errors.phoneNumberErr = "Telefoonnummer is verplicht!";
+        } else if (!phone(phoneNumber, { country: "NL" }).isValid) {
+            errors.phoneNumberErr = "Gebruik een geldig telefoonnummer";
+        } else {
+            oldValues.phoneNumber = phoneNumber;
+        }
+
         if (!street || street.length === 0) {
             errors.streetErr = "Straat is verplicht!";
         } else if (!isNaN(street) || /\d/.test(street)) {
@@ -275,7 +303,7 @@ exports.changeUserProfileDetails = (req, res) => {
             errors.emailAddressErr = "E-mailadres is al in gebruik!";
         }
 
-        if (typeof errors.firstNameErr != "undefined" || typeof errors.lastNameErr != "undefined" || typeof errors.emailAddressErr != "undefined" || typeof errors.streetErr != "undefined" || typeof errors.houseNumberErr != "undefined" || typeof errors.houseNumberAdditionErr != "undefined" || typeof errors.townErr != "undefined" || (typeof errors.postalCodeErr != "undefined" && req.session.user.roles == "client")) {
+        if (typeof errors.firstNameErr != "undefined" || typeof errors.lastNameErr != "undefined" || typeof errors.emailAddressErr != "undefined" || typeof errors.phoneNumberErr != "undefined" || typeof errors.streetErr != "undefined" || typeof errors.houseNumberErr != "undefined" || typeof errors.houseNumberAdditionErr != "undefined" || typeof errors.townErr != "undefined" || (typeof errors.postalCodeErr != "undefined" && req.session.user.roles == "client")) {
             res.render("user_profile", { pageName: "Mijn profiel", session: req.session, ...errors, type });
         } else if (typeof errors.firstNameErr != "undefined" || typeof errors.lastNameErr != "undefined" || (typeof errors.emailAddressErr != "undefined" && req.session.user.roles != "client")) {
             res.render("user_profile", { pageName: "Mijn profiel", session: req.session, ...errors, type });
@@ -286,7 +314,7 @@ exports.changeUserProfileDetails = (req, res) => {
                 let updateInfo = {};
 
                 if (user.roles == "client") {
-                    updateInfo = { oldMail: user.emailAddress, firstName, lastName, emailAddress, street, houseNumber, houseNumberAddition, town, postalCode };
+                    updateInfo = { oldMail: user.emailAddress, firstName, lastName, emailAddress, phoneNumber, street, houseNumber, houseNumberAddition, town, postalCode };
                 } else {
                     updateInfo = { oldMail: user.emailAddress, firstName, lastName, emailAddress };
                 }
@@ -297,6 +325,7 @@ exports.changeUserProfileDetails = (req, res) => {
                 user.emailAddress = emailAddress;
 
                 if (user.roles == "client") {
+                    user.phoneNumber = phoneNumber;
                     user.street = street;
                     user.houseNumber = houseNumber;
                     user.houseNumberAddition = houseNumberAddition;

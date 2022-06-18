@@ -80,24 +80,24 @@
                             <% switch(requests[i].type) { 
                                 case "createAssignment":   
                                     requestTitle = "Opdracht aanmaken"; 
-                                    requestMessage = requests[i].user.firstName + " wilt een opdracht aanmaken";
+                                    requestMessage = requests[i].user.firstName + " wil een opdracht aanmaken";
  
                                     break; 
                                 case "updateAssignment": 
                                     requestTitle = "Opdracht bewerken"; 
-                                    requestMessage = requests[i].user.firstName + " wilt een opdracht bewerken";
+                                    requestMessage = requests[i].user.firstName + " wil een opdracht bewerken";
                                     break; 
                                 case "deleteAssignment": 
                                     requestTitle = "Opdracht verwijderen";
-                                    requestMessage = requests[i].user.firstName + " wilt een opdracht verwijderen";
+                                    requestMessage = requests[i].user.firstName + " wil een opdracht verwijderen";
                                     break; 
                                 case "cancelEnrollment": 
                                     requestTitle = "Uitschrijving"; 
-                                    requestMessage = requests[i].user.firstName + " wilt zich uitschrijven voor een opdracht";
+                                    requestMessage = requests[i].user.firstName + " wil zich uitschrijven voor een opdracht";
                                     break; 
                                 case "enrollment": 
                                     requestTitle = "Inschrijving"; 
-                                    requestMessage = requests[i].user.firstName + " wilt zich inschrijven voor een opdracht";
+                                    requestMessage = requests[i].user.firstName + " wil zich inschrijven voor een opdracht";
                                     break;
           
                             } %>

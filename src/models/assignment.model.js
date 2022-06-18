@@ -1,6 +1,7 @@
 const mongoose = require("../../database/dbconnection");
 const ObjectId = mongoose.Schema.Types.ObjectId;
 const { userSchema } = require("./user.model");
+const { phone } = require("phone");
 
 // Create assignmentSchema with all fields
 exports.assignmentSchema = new mongoose.Schema({
@@ -21,6 +22,17 @@ exports.assignmentSchema = new mongoose.Schema({
             message: `Gebruik een geldig e-mailadres zoals j.doe@gmail.com!`,
         },
         required: [true, "E-mailadres is verplicht!"],
+    },
+    phoneNumber: {
+        type: String,
+        validate: {
+            validator: function (v) {
+                const validNumber = phone(v, { country: "NL" });
+                return validNumber.isValid;
+            },
+            message: `Gebruik een geldig telefoonnummer`,
+        },
+        required: [true, "Telefoonnummer is verplicht!"],
     },
     // Personal address
     street: {
@@ -61,12 +73,22 @@ exports.assignmentSchema = new mongoose.Schema({
     },
     dateTime: {
         type: String,
-        required: [true, "Datum en tijd is verplicht!"],
+        required: [true, "Begindatum en begintijd zijn verplicht!"],
         validate: {
             validator: function (v) {
                 return v > new Date().toISOString();
             },
             message: `De ingevoerde datum is verstreken!`,
+        },
+    },
+    endTime: {
+        type: String,
+        required: [true, "Einddatum en eindtijd zijn verplicht!"],
+        validate: {
+            validator: function (v) {
+                return v > this.dateTime;
+            },
+            message: `De eindtijd moet plaatsvinden na de begintijd!`,
         },
     },
     // Playground address
@@ -123,7 +145,7 @@ exports.assignmentSchema = new mongoose.Schema({
     },
     amountOfLotusVictims: {
         type: Number,
-        min: [1, "Aantal LOTUS slachtoffers moet minimaal 1 zijn!"],
+        min: [1, "Aantal LOTUSslachtoffers moet minimaal 1 zijn!"],
         required: [true, "Aantal LOTUS slachtoffers is verplicht!"],
     },
     comments: {
