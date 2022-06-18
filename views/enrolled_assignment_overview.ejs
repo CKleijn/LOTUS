@@ -235,9 +235,11 @@
                                     <div class="modal-footer">
                                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Sluiten</button>
                                         <% if(assignment.status == "Ingeschreven voltooid" && assignment.cancelStatus != "Uitschrijfverzoek ingediend") { %>
+                                            <% if(assignment.participatingLotusVictims.length == assignment.amountOfLotusVictims) { %>
                                             <a href="assignment/pdf?assignmentId=<%= assignment._id %>">
                                                 <button type="button" class="btn btn-primary" style="color: white;">Download contract</button>
                                             </a>
+                                            <% } %>
                                             <form action="/assignment/cancel" method="POST">
                                                 <input type="hidden" name="status" value="<%= assignment.status %>">
                                                 <input type="hidden" name="requestType" value="cancelEnrollment">
