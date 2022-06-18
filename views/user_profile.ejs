@@ -79,12 +79,13 @@
                                     <div class="col-lg-9 col-md-8"><%= session.user.emailAddress %></div>
                                 </div>
 
-                                <div class="row">
-                                    <div class="col-lg-3 col-md-4 label">Telefoonnummer</div>
-                                    <div class="col-lg-9 col-md-8"><%= session.user.phoneNumber %></div>
-                                </div>
-
                                 <% if(session.user.roles == "client") { %> 
+
+                                    <div class="row">
+                                        <div class="col-lg-3 col-md-4 label">Telefoonnummer</div>
+                                        <div class="col-lg-9 col-md-8"><%= session.user.phoneNumber %></div>
+                                    </div>
+
                                     <div class="row">
                                         <div class="col-lg-3 col-md-4 label">Straat</div>
                                         <div class="col-lg-9 col-md-8"><%= session.user.street %></div>
