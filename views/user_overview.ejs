@@ -14,8 +14,9 @@
 
     <section class="section dashboard">
         <div class="row">
+
             <!-- Left side columns -->
-            <div class="col-lg-8">
+            <div class="col-lg-12">
                 <div class="row">
                     <div class="col-12">
                         <div class="card">
@@ -26,8 +27,8 @@
                                         <tr>
                                             <th scope="col">Naam</th>
                                             <th scope="col">E-mailadres</th>
-                                            <th scope="col">Straat</th>
-                                            <th scope="col">Huisnummer</th>
+                                            <th scope="col">Telefoonnummer</th>
+                                            <th scope="col">Adres</th>
                                             <th scope="col">Plaats</th>
                                             <th scope="col">Postcode</th>
                                             <th scope="col">Acties</th>
@@ -39,8 +40,8 @@
                                             <td><%=user.firstName + " " + user.lastName%></td>
                                             <% let role = ""; switch(user.roles[0]) { case "coordinator": role = "Coördinator"; break; case "client" : role = "Opdrachtgever"; break; case "member": role = "LOTUSslachtoffer"; break; } %>
                                             <td><%=user.emailAddress%></td>
-                                            <td><%=user.street%></td>
-                                            <td><%if(isNaN(user.houseNumber)){%><%}else{%><%= user.houseNumber + user.houseNumberAddition%><%}%></td>
+                                            <td><%=user.phoneNumber%></td>
+                                            <td><%=user.street + " "%><%if(isNaN(user.houseNumber)){%><%}else{%><%= user.houseNumber + user.houseNumberAddition%><%}%></td>
                                             <td><%=user.town%></td>
                                             <td><%=user.postalCode%></td>
                                             <td><a href="#" data-bs-toggle="modal" data-bs-target="#user<%= user._id %>">
@@ -78,6 +79,15 @@
                         </div>
                     </div>
 
+                    <!-- End Recent Sales -->
+                </div>
+            </div>
+            <!-- End Left side columns -->
+
+
+            <!-- Left side columns -->
+            <div class="col-lg-8">
+                <div class="row">
                     <div class="col-12">
                         <div class="card">
                             <div class="card-body">
@@ -163,12 +173,19 @@
                             <thead>
                                 <tr>
                                     <th scope="col">E-mailadres</th>
+                                    <th scope="col">Acties</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 <% allInvitedMembers.forEach(user => { %>
                                 <tr>
                                     <td><%=user.emailAddress%></td>
+                                    <td>
+                                        <form action="/user/create/notify" method="POST">
+                                            <input type="hidden" name="emailAddress" value="<%= user.emailAddress %>" />
+                                            <button class="btn btn-primary">Stuur herinnering</button>
+                                        </form>
+                                    </td>
                                 </tr>
                                 <% }); %>
                             </tbody>

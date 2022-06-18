@@ -145,7 +145,7 @@ exports.assignmentSchema = new mongoose.Schema({
     },
     amountOfLotusVictims: {
         type: Number,
-        min: [1, "Aantal LOTUS slachtoffers moet minimaal 1 zijn!"],
+        min: [1, "Aantal LOTUSslachtoffers moet minimaal 1 zijn!"],
         required: [true, "Aantal LOTUS slachtoffers is verplicht!"],
     },
     comments: {

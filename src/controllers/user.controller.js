@@ -1,6 +1,6 @@
 const bcrypt = require("bcrypt");
 const mongoose = require("./../../database/dbconnection");
-const { sendMemberInviteMail } = require("./../controllers/mail.controller");
+const { sendMemberInviteMail, notifyUserThroughMail } = require("./../controllers/mail.controller");
 const userController = require("./../controllers/user.controller");
 const { userModel } = require("./../models/user.model");
 const passGenerator = require("generate-password");
@@ -162,9 +162,7 @@ exports.createMember = (req, res) => {
 
                 if (result.length === 0) {
                     const password = await insertMember(emailAddress);
-                    console.log(password);
                     const sendStatus = await sendMemberInviteMail(emailAddress, password);
-                    console.log(sendStatus);
 
                     if (sendStatus) {
                         console.log("Send");
@@ -181,6 +179,20 @@ exports.createMember = (req, res) => {
             res.render("user_overview", { pageName: "Gebruikers", session: req.session, emailAddressErr: "Het ingevulde e-mailadres is ongeldig!", allMembers, allClients, allInvitedMembers });
         }
     })();
+};
+
+exports.notifyInvitedMember = async (req, res) => {
+    const { emailAddress } = req.body;
+
+    const sendStatus = await notifyUserThroughMail(emailAddress, "", "remindInvitedMember", "Account activatie (herinnering)");
+
+    if (sendStatus) {
+        console.log("Invited member reminded");
+    } else {
+        console.log("Mail did not send");
+    }
+
+    return res.redirect("/user");
 };
 
 const insertMember = async (emailAddress) => {

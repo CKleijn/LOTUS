@@ -9,6 +9,8 @@ router.post("/user/roles", isLoggedIn, loadPendingRequests, userController.chang
 
 router.post("/user/create", isLoggedIn, loadPendingRequests, userController.createMember);
 
+router.post("/user/create/notify", isLoggedIn, loadPendingRequests, userController.notifyInvitedMember);
+
 router.get("/user/profile", isLoggedIn, loadPendingRequests, userController.getUserProfile);
 
 router.post("/user/profile/edit", isLoggedIn, loadPendingRequests, userController.changeUserProfileDetails);
