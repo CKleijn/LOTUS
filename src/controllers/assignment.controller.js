@@ -1196,29 +1196,16 @@ exports.sendPDFdata = async (req, res, next) => {
     const assignmentId = req.query.assignmentId;
     let assignment = await Assignment.find({ _id: assignmentId }).exec();
 
-    let isRegistratedMember = false;
+    let request = await Request.find({ assignmentId: assignmentId, type: "enrollment", status: "Goedgekeurd" }).exec();
 
-    for await (let member of assignment[0].participatingLotusVictims) {
-        if (member._id == req.session.user.userId) {
-            isRegistratedMember = true;
-        }
-    }
+    assignment = {
+        ...assignment[0]._doc,
+        request: { ...request[0]._doc }
+    };
 
-    if (isRegistratedMember) {
-        let request = await Request.find({ assignmentId: assignmentId, userId: req.session.user.userId, type: "enrollment", status: "Goedgekeurd" }).exec();
+    console.log(assignment);
 
-        assignment = {
-            ...assignment[0]._doc,
-            request: { ...request[0]._doc },
-            user: { ...req.session.user },
-        };
-
-        console.log(assignment);
-
-        await this.getPDF(req, res, assignment);
-    } else {
-        return next();
-    }
+    await this.getPDF(req, res, assignment);
 };
 
 exports.getPDF = async (req, res, assignment) => {

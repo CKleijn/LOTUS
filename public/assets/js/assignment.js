@@ -125,6 +125,7 @@ function validate(sesFirstName, sesLastName, sesEmailAddress, sesPhoneNumber, se
             firstName.setAttribute("readonly", true);
             lastName.setAttribute("readonly", true);
             emailAddress.setAttribute("readonly", true);
+            phoneNumber.setAttribute("readonly", true);
             street.setAttribute("readonly", true);
             houseNumber.setAttribute("readonly", true);
             houseNumberAddition.setAttribute("readonly", true);

@@ -20,48 +20,32 @@ exports.buildPDF = async (dataCallback, endCallback, assignment) => {
   const logo = await fetchImage(url);
 
   generateHeader(doc, logo);
-  generatePersonalInfo(doc, assignment);
-  generateAssignmentData(doc, assignment);
+  generateAssignmentInfo(doc, assignment);
   generateBillingData(doc, assignment);
-  generateExtraData(doc, assignment);
-  generateFooter(doc, assignment);
+  generateTable(doc, assignment);
   doc.end();
 
   return doc;
 }
 
-function generatePersonalInfo(doc, assignment) {
+function generateHeader(doc, logo) {
+	doc
+    .image(logo, 170, 45, { width: 50 })
+		.fontSize(16)
+    .font("Helvetica")
+		.text("LOTUS-Kring Here We Go", 230, 65)
+		.moveDown();
+}
+
+function generateAssignmentInfo(doc, assignment) {
   doc
     .fillColor("#444444")
     .fontSize(14)
-    .text("Persoonlijke gegevens", 50, 160);
+    .text("Opdrachtgegevens", 50, 160);
 
   generateHr(doc, 185);
 
-  const personalInfoTop = 200;
-
-  doc
-    .fontSize(10)
-    .font("Helvetica-Bold")
-    .text("Volledige naam:", 50, personalInfoTop)
-    .font("Helvetica")
-    .text(assignment.user.firstName + " " + assignment.user.lastName, 200, personalInfoTop)
-    .font("Helvetica-Bold")
-    .text("E-mailadres", 50, personalInfoTop + 15)
-    .font("Helvetica")
-    .text(assignment.user.emailAddress, 200, personalInfoTop + 15)
-    .moveDown();
-}
-
-function generateAssignmentData(doc, assignment) {
-  doc
-    .fillColor("#444444")
-    .fontSize(14)
-    .text("Opdrachtgegevens", 50, 260);
-
-  generateHr(doc, 285);
-
-  const assignmentDataInfo = 300;
+  const assignmentDataInfo = 200;
 
   if (assignment.makeUpHouseNumber || assignment.makeUpHouseNumberAddition || assignment.makeUpPostalCode || assignment.makeUpTown) {
     doc
@@ -79,15 +63,27 @@ function generateAssignmentData(doc, assignment) {
     doc
       .fontSize(10)
       .font("Helvetica-Bold")
-      .text("Datum/tijd: ", 50, assignmentDataInfo + 30)
+      .text("Begindatum/tijd: ", 50, assignmentDataInfo + 30)
       .font("Helvetica")
       .text(formatDate(new Date(assignment.dateTime)), 200, assignmentDataInfo + 30)
     doc
       .fontSize(10)
       .font("Helvetica-Bold")
-      .text("Contact: ", 50, assignmentDataInfo + 45)
+      .text("Einddatum/tijd: ", 50, assignmentDataInfo + 45)
       .font("Helvetica")
-      .text(assignment.billingEmailAddress, 200, assignmentDataInfo + 45)
+      .text(formatDate(new Date(assignment.endTime)), 200, assignmentDataInfo + 45)
+      doc
+      .fontSize(10)
+      .font("Helvetica-Bold")
+      .text("Opdrachtgever: ", 50, assignmentDataInfo + 60)
+      .font("Helvetica")
+      .text(assignment.firstName + " " + assignment.lastName, 200, assignmentDataInfo + 60)
+    doc
+      .fontSize(10)
+      .font("Helvetica-Bold")
+      .text("Telefoonnummer: ", 50, assignmentDataInfo + 75)
+      .font("Helvetica")
+      .text(assignment.phoneNumber, 200, assignmentDataInfo + 75)
       .moveDown()
   } else {
     doc
@@ -105,9 +101,21 @@ function generateAssignmentData(doc, assignment) {
     doc
       .fontSize(10)
       .font("Helvetica-Bold")
-      .text("Contact: ", 50, assignmentDataInfo + 30)
+      .text("Einddatum/tijd: ", 50, assignmentDataInfo + 30)
       .font("Helvetica")
-      .text(assignment.emailAddress, 200, assignmentDataInfo + 30)
+      .text(formatDate(new Date(assignment.endTime)), 200, assignmentDataInfo + 30)
+    doc
+      .fontSize(10)
+      .font("Helvetica-Bold")
+      .text("Opdrachtgever: ", 50, assignmentDataInfo + 45)
+      .font("Helvetica")
+      .text(assignment.firstName + " " + assignment.lastName, 200, assignmentDataInfo + 45)
+    doc
+      .fontSize(10)
+      .font("Helvetica-Bold")
+      .text("Telefoonnummer: ", 50, assignmentDataInfo + 60)
+      .font("Helvetica")
+      .text(assignment.phoneNumber, 200, assignmentDataInfo + 60)
       .moveDown()
   }
 }
@@ -116,11 +124,11 @@ function generateBillingData(doc, assignment) {
   doc
     .fillColor("#444444")
     .fontSize(14)
-    .text("Factuurgegevens", 50, 385);
+    .text("Factuurgegevens", 50, 320);
 
-  generateHr(doc, 410);
+  generateHr(doc, 345);
 
-  const extraBillingInfo = 425;
+  const extraBillingInfo = 360;
 
   doc
     .fontSize(10)
@@ -128,42 +136,91 @@ function generateBillingData(doc, assignment) {
     .text("E-mailadres: ", 50, extraBillingInfo)
     .font("Helvetica")
     .text(assignment.billingEmailAddress, 200, extraBillingInfo)
-    .moveDown()
 }
 
-function generateExtraData(doc, assignment) {
+function generateTable(doc, assignment) {
+  let i;
+
   doc
     .fillColor("#444444")
     .fontSize(14)
-    .text("Overig", 50, 465);
+    .text("Inschrijvingen", 50, 405);
 
-  generateHr(doc, 490);
+  generateHr(doc, 430);
 
-  const extraDataInfo = 505;
-
-  doc
-    .fontSize(10)
-    .font("Helvetica-Bold")
-    .text("Aantal gereden kilometers: ", 50, extraDataInfo)
-    .font("Helvetica")
-    .text("___________ km", 200, extraDataInfo)
+  const table = 445;
+  let tableAfterFor;
     
-  doc
-    .fontSize(10)
-    .font("Helvetica-Bold")
-    .text("Opmerkingen: ", 50, extraDataInfo + 15)
-    .font("Helvetica")
-    .text("__________________________________________________________________________________________________________________________________________________________________________________________", 200, extraDataInfo + 15)
-    .moveDown();
+  doc.font("Helvetica-Bold");
+
+  generateTableRow(
+      doc,
+      table,
+      "Volledige naam",
+      "Aantal gereden kilometers"
+  );  
+
+  generateTableHr(doc, table + 20);
+
+  for (i = 0; i < assignment.participatingLotusVictims.length; i++) {
+    const participant = assignment.participatingLotusVictims[i];
+    const position = table + (i + 1) * 30;
+    tableAfterFor = position;
+    doc.font("Helvetica");
+    generateTableRow(
+      doc,
+      position,
+      participant.firstName + " " + participant.lastName,
+      "_______________________"
+    );
+    generateTableHr(doc, position + 20);
+  }
+
+  generateExtraData(doc, assignment, tableAfterFor)
 }
 
-function generateHeader(doc, logo) {
-	doc
-    .image(logo, 50, 45, { width: 50 })
-		.fontSize(16)
+function generateExtraData(doc, assignment, tableAfterFor) {
+  let tableAfter = tableAfterFor;
+
+  if((tableAfter + 50) > 650) {
+    doc.addPage();
+    tableAfter = 0;
+  }
+
+  doc
+    .fillColor("#444444")
+    .fontSize(14)
+    .text("Overige", 50, tableAfter + 50);
+
+  generateHr(doc, tableAfter + 75);
+
+  doc
+    .fontSize(10)
+    .font("Helvetica-Bold")
+    .text("Opmerkingen: ", 50, tableAfter + 90)
     .font("Helvetica")
-		.text("LOTUS-Kring Here We Go", 110, 65)
-		.moveDown();
+    .text("__________________________________________________________________________________________________________________________________________________________________________________________", 200, tableAfter + 90)
+    .moveDown();
+
+  generateFooter(doc, assignment, tableAfter)
+}
+
+function generateFooter(doc, assignment, tableAfterFor) {
+  let tableAfter = tableAfterFor;
+
+  if((tableAfter + 160) > 650) {
+    doc.addPage();
+    tableAfter = 0;
+  }
+
+  doc
+    .fontSize(10)
+    .font("Helvetica-Bold")
+    .text("Handtekening opdrachtgever/instructeur:", 50, tableAfter + 160)
+    .font("Helvetica")
+    .text("___________________________________", 50, tableAfter + 195)
+    .font("Helvetica-Oblique")
+    .text(assignment.firstName + " " + assignment.lastName, 50, tableAfter + 215)
 }
 
 function generateHr(doc, y) {
@@ -173,6 +230,22 @@ function generateHr(doc, y) {
     .moveTo(50, y)
     .lineTo(550, y)
     .stroke();
+}
+
+function generateTableHr(doc, y) {
+  doc
+    .strokeColor("#aaaaaa")
+    .lineWidth(.2)
+    .moveTo(50, y)
+    .lineTo(550, y)
+    .stroke();
+}
+
+function generateTableRow(doc, y, participant, countKM) {
+  doc
+    .fontSize(10)
+    .text(participant, 50, y)
+    .text(countKM, 400, y)
 }
 
 function formatDate(inputDate) {
@@ -193,24 +266,4 @@ function formatDate(inputDate) {
   }
 
   return `${date}/${month}/${year} ${hour}:${minute}`;
-}
-
-function generateFooter(doc, assignment) {
-  doc
-    .fontSize(10)
-    .font("Helvetica-Bold")
-    .text("Handtekening opdrachtgever:", 50, 635)
-    .font("Helvetica")
-    .text("________________________", 50, 680)
-    .font("Helvetica-Oblique")
-    .text(assignment.firstName + " " + assignment.lastName, 50, 700)
-
-  doc
-    .fontSize(10)
-    .font("Helvetica-Bold")
-    .text("Handtekening LOTUSslachtoffer:", 260, 635)
-    .font("Helvetica")
-    .text("_____________________________", 260, 680)
-    .font("Helvetica-Oblique")
-    .text(assignment.user.firstName + " " + assignment.user.lastName, 260, 700)
 }
