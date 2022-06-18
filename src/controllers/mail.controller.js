@@ -53,6 +53,9 @@ exports.notifyUserThroughMail = async (email, firstName, type, subject) => {
             case "deleteAssignment":
                 context = `<p>Goedendag ${firstName},</p> <p>Hierbij willen we je laten weten dat de coördinator jouw opdracht heeft verwijderd.</p>`;
                 break;
+            case "remindInvitedMember":
+                context = `<p>Goedendag LOTUSslachtoffer,</p> <p>Vergeet niet jouw account te activeren d.m.v. de voorgaande email!</p>`;
+                break;
         }
 
         let options = {
