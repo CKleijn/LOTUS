@@ -17,4 +17,6 @@ router.post("/user/profile/edit", isLoggedIn, loadPendingRequests, userControlle
 
 router.post("/user/profile/password", isLoggedIn, loadPendingRequests, userController.changePassword);
 
+router.post("/user/delete/member", isLoggedIn, loadPendingRequests, userController.deleteMember);
+
 module.exports = router;

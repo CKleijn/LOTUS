@@ -137,25 +137,25 @@
                                             </div>
                                         </div>
 
-                                        <form action="/user/delete" method="POST">
-                                            <div class="modal fade" id="confirmation_remove_member" tabindex="-1">
-                                                <div class="modal-dialog modal-dialog-centered">
-                                                    <div class="modal-content">
-                                                        <div class="modal-header">
-                                                            <h5 class="modal-title">Bevestigen</h5>
-                                                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                                                        </div>
-                                                        <div class="modal-body">
-                                                            Weet je zeker dat je het lid wil verwijderen?
-                                                        </div>
+                                        <div class="modal fade" id="confirmation_remove_member" tabindex="-1">
+                                            <div class="modal-dialog modal-dialog-centered">
+                                                <div class="modal-content">
+                                                    <div class="modal-header">
+                                                        <h5 class="modal-title">Bevestigen</h5>
+                                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                                    </div>
+                                                    <div class="modal-body">
+                                                        Weet je zeker dat je het lid wil verwijderen?
+                                                    </div>
+                                                    <form action="/user/delete/member?id=<%=user._id%>" method="POST">
                                                         <div class="modal-footer">
                                                             <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuleren</button>
                                                             <button type="submit" class="btn btn-primary">Bevestig</button>
                                                         </div>
-                                                    </div>
+                                                    </form>
                                                 </div>
                                             </div>
-                                        </form>
+                                        </div>
                                         <% }) %>
                                     </tbody>
                                 </table>

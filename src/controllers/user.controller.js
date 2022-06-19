@@ -5,7 +5,9 @@ const userController = require("./../controllers/user.controller");
 const { userModel } = require("./../models/user.model");
 const passGenerator = require("generate-password");
 const { phone } = require("phone");
-
+const { assignmentModel } = require("../models/assignment.model");
+const Assignment = assignmentModel;
+const Request = require("../models/request.model");
 const User = userModel;
 
 // Functionality for creating an user
@@ -395,6 +397,34 @@ exports.changeRoles = async (req, res) => {
 
     res.redirect("/user");
 };
+
+exports.deleteMember = async (req, res) => {
+    const memberId = req.query.id;
+    let assignments = [];
+
+    // Delete all the requests from the member
+    await Request.deleteMany({ userId: memberId });
+
+    // Delete the member from all assignments
+    assignments = await Assignment.find({ isApproved: true });
+
+    for await (let assignment of assignments) {
+        for await (let victim of assignment.participatingLotusVictims) {
+            if (victim._id == memberId) {
+                await Assignment.updateOne({ _id: assignment._id }, { $pull: { participatingLotusVictims: { _id: memberId } } });
+
+                if (assignment.amountOfLotusVictims === assignment.participatingLotusVictims.length) {
+                    await Request.findOneAndUpdate({ assignmentId: assignment._id }, { $set: { status: "Openstaand" } });
+                }
+            }
+        };
+    };
+
+    // Delete the member
+    await User.findOneAndDelete({ _id: memberId });
+
+    res.redirect("/user");
+}
 
 const updateUserByEmail = async (user) => {
     try {
