@@ -204,6 +204,9 @@ exports.createAssignment = (req, res) => {
             res.render("assignment", { pageName: "Opdracht aanmaken", session: req.session, ...errors, checkedOrNotProfile, checkedOrNotPlayground, checkedOrNotMakeUp, url: req.session.originalUrl });
         } else {
             (async () => {
+                // Redirect to the overview
+                res.redirect("/assignment");
+
                 if (session.user.roles === "client") {
                     const objectId = savedAssignment._id;
                     // Create a request
@@ -219,8 +222,6 @@ exports.createAssignment = (req, res) => {
                         console.log("Mail not send");
                     }
                 }
-                // Redirect to the overview
-                res.redirect("/assignment");
             })();
         }
     });
@@ -423,6 +424,7 @@ exports.updateAssignment = async (req, res) => {
                     request.save();
 
                     (async () => {
+                        res.redirect("/assignment");
                         const sendStatus = await notifyCoordinatorRequest(req, res, "updateAssignment");
 
                         if (sendStatus) {
@@ -430,8 +432,6 @@ exports.updateAssignment = async (req, res) => {
                         } else {
                             console.log("Mail not send");
                         }
-
-                        res.redirect("/assignment");
                     })();
                 }
             })();
@@ -1150,6 +1150,7 @@ exports.deleteAssignment = async (req, res) => {
     }
 
     if (session.user.roles === "client") {
+        res.redirect("/assignment");
         if (status == "Afgewezen" || status == "In behandeling") {
             await Assignment.deleteOne({ _id: req.query.id });
             await Request.deleteMany({ assignmentId: req.query.id });
@@ -1168,8 +1169,6 @@ exports.deleteAssignment = async (req, res) => {
                 console.log("Mail not send");
             }
         }
-
-        res.redirect("/assignment");
     }
 };
 
@@ -1188,6 +1187,9 @@ exports.enrollAssignment = (req, res) => {
     request.save();
 
     (async () => {
+        // Redirect
+        res.redirect("/assignment");
+
         const sendStatus = await notifyCoordinatorRequest(req, res, "enrollment");
 
         if (sendStatus) {
@@ -1195,9 +1197,6 @@ exports.enrollAssignment = (req, res) => {
         } else {
             console.log("Mail not send");
         }
-
-        // Redirect
-        res.redirect("/assignment");
     })();
 };
 
@@ -1228,6 +1227,9 @@ exports.cancelEnrollment = (req, res) => {
                 request.save();
 
                 (async () => {
+                    // Redirect
+                    res.redirect("/member/assignment");
+
                     const sendStatus = await notifyCoordinatorRequest(req, res, "cancelEnrollment");
 
                     if (sendStatus) {
@@ -1235,9 +1237,6 @@ exports.cancelEnrollment = (req, res) => {
                     } else {
                         console.log("Mail not send");
                     }
-
-                    // Redirect
-                    res.redirect("/member/assignment");
                 })();
             } else {
                 // Redirect
