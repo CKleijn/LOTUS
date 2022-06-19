@@ -404,15 +404,21 @@ exports.updateAssignment = async (req, res) => {
         } else {
             (async () => {
                 if (req.session.user.roles === "coordinator" || assignmentStatus === "In behandeling") {
-                    await Assignment.findOneAndUpdate({ _id: assignmentId }, { ...assignment });
+                    const updatedAssignment = await Assignment.findOneAndUpdate({ _id: assignmentId }, { ...assignment }, { new: true });
 
                     //TODO: when max participants is increased check if assignment was complete. If so set the status to open
 
-                    if (req.session.user.roles === "coordinator") {
-                        //TODO: notfiy client that assignment has been changed by coordinator
-                    }
-
                     res.redirect("/assignment");
+
+                    if (req.session.user.roles === "coordinator") {
+                        const sendStatus = await notifyUserThroughMail(updatedAssignment.emailAddress, updatedAssignment.firstName, "clientAssignmentUpdated", "Jouw opdracht is bewerkt");
+
+                        if (sendStatus) {
+                            console.log("Client notified (Updated assignment)");
+                        } else {
+                            console.log("Email not send");
+                        }
+                    }
                 } else {
                     const request = await new Request({
                         userId: req.session.user.userId,
@@ -1138,10 +1144,10 @@ exports.deleteAssignment = async (req, res) => {
         await Assignment.deleteOne({ _id: req.query.id });
         await Request.deleteMany({ assignmentId: req.query.id });
 
-        const sendStatus = await notifyUserThroughMail(req.query.emailAddress, req.query.firstName, "deleteAssignment", "Jouw opdracht is verwijderd");
+        const sendStatus = await notifyUserThroughMail(req.query.emailAddress, req.query.firstName, "clientAssignmentDeleted", "Jouw opdracht is verwijderd");
 
         if (sendStatus) {
-            console.log("Client notified (through email)");
+            console.log("Client notified (Deleted assignment)");
         } else {
             console.log("Email not send");
         }
@@ -1255,6 +1261,17 @@ exports.deleteMemberFromAssignment = async (req, res) => {
     await Request.findOneAndUpdate({ assignmentId: assignmentId, type: "createAssignment" }, { $set: { status: "Openstaand" } });
 
     res.redirect("/assignment");
+
+    let victimData = await User.find({ _id: victimId });
+    victimData = victimData[0];
+
+    const sendStatus = await notifyUserThroughMail(victimData.emailAddress, victimData.firstName, "removeMemberFromAssignment", "Je bent uitgeschreven");
+
+    if (sendStatus) {
+        console.log("Client notified (Removed member from assignment)");
+    } else {
+        console.log("Email not send");
+    }
 };
 
 exports.sendPDFdata = async (req, res, next) => {
