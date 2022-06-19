@@ -143,6 +143,9 @@ exports.approveRequest = async (req, res) => {
 exports.declineRequest = async (req, res) => {
     const { requestType, requestId, assignmentId, userId } = req.body;
 
+    let userData = await User.find({ _id: userId });
+    userData = userData[0];
+
     if (requestType === "createAssignment") {
         req.session.requests = await req.session.requests.filter((request) => request._id != requestId);
         await Request.findOneAndUpdate({ _id: requestId }, { $set: { status: "Afgewezen" } });
