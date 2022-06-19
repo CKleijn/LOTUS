@@ -129,11 +129,11 @@
 
                                                     <div class="rightBtnBlock">
                                                         <form action="/assignment/delete?id=<%= assignment._id %>&emailAddress=<%= assignment.emailAddress %>&firstName=<%= assignment.firstName %>" method="POST">
-                                                            <a data-bs-toggle="modal" data-bs-target="#confirmation_remove_assignment_coordinator">
+                                                            <a data-bs-toggle="modal" data-bs-target="#confirmation_remove_assignment_coordinator_<%= assignment._id %>">
                                                                 <button class="btn btn-danger">Verwijderen</button>
                                                             </a>
 
-                                                            <div class="modal fade" id="confirmation_remove_assignment_coordinator" tabindex="-1">
+                                                            <div class="modal fade" id="confirmation_remove_assignment_coordinator_<%= assignment._id %>" tabindex="-1">
                                                                 <div class="modal-dialog modal-dialog-centered">
                                                                     <div class="modal-content">
                                                                         <div class="modal-header">
@@ -273,14 +273,14 @@
                                                                 </div>
 
                                                                 <div>
-                                                                    <form id="remove_registration_form" action="/assignment/member/delete?victimId=<%= victim._id %>&assignmentId=<%= a._id %>" method="POST">
-                                                                        <a data-bs-toggle="modal" data-bs-target="#confirmation_remove_registration">
+                                                                    <form id="remove_registration_form_<%= victim._id %>" action="/assignment/member/delete?victimId=<%= victim._id %>&assignmentId=<%= a._id %>" method="POST">
+                                                                        <a data-bs-toggle="modal" data-bs-target="#confirmation_remove_registration_<%= victim._id %>">
                                                                             <button class="btn btn-danger">Uitschrijven</button>
                                                                         </a>
                                                                     </form>
                                                                 </div>
                                                             </div>
-                                                            
+                                                        
         
                                                         <% }); %> 
                                                     <% } %> 
@@ -293,35 +293,17 @@
                                                 <button type="submit" class="btn btn-primary">Bewerken</button>
                                             </form>
 
-                                            <form action="/assignment/delete?id=<%= assignment._id %>&emailAddress=<%= assignment.emailAddress %>&firstName=<%= assignment.firstName %>" method="POST">
-                                                <a data-bs-toggle="modal" data-bs-target="#confirmation_remove_assignment_coordinator">
+                                            <form id="remove_registration_form_<%= assignment._id %>" action="/assignment/delete?id=<%= assignment._id %>&emailAddress=<%= assignment.emailAddress %>&firstName=<%= assignment.firstName %>" method="POST">
+                                                <a data-bs-toggle="modal" data-bs-target="#confirmation_remove_assignment_coordinator_detail_<%=assignment._id %>">
                                                     <button class="btn btn-danger">Verwijderen</button>
                                                 </a>
-
-                                                <div class="modal fade" id="confirmation_remove_assignment_coordinator" tabindex="-1">
-                                                    <div class="modal-dialog modal-dialog-centered">
-                                                        <div class="modal-content">
-                                                            <div class="modal-header">
-                                                                <h5 class="modal-title">Bevestigen</h5>
-                                                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                                                            </div>
-                                                            <div class="modal-body">
-                                                                Weet je zeker dat je de opdracht wil verwijderen?
-                                                            </div>
-                                                            <div class="modal-footer">
-                                                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuleren</button>
-                                                                <button type="submit" class="btn btn-primary">Bevestig</button>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </div>
                                             </form>
                                         </div>
                                       </div>
                                     </div>
                                   </div>
 
-                                <div class="modal fade" id="confirmation_remove_registration" tabindex="-1">
+                                <div class="modal fade" id="confirmation_remove_assignment_coordinator_detail_<%=assignment._id %>" tabindex="-1">
                                     <div class="modal-dialog modal-dialog-centered">
                                         <div class="modal-content">
                                             <div class="modal-header">
@@ -329,15 +311,34 @@
                                                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                                             </div>
                                             <div class="modal-body">
-                                                Weet je zeker dat je het lid uit wil schrijven?
+                                                Weet je zeker dat je de opdracht wil verwijderen?
                                             </div>
                                             <div class="modal-footer">
                                                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuleren</button>
-                                                <button form="remove_registration_form" type="submit" class="btn btn-primary">Bevestig</button>
+                                                <button form="remove_registration_form_<%= assignment._id %>" type="submit" class="btn btn-primary">Bevestig</button>
                                             </div>
                                         </div>
                                     </div>
                                 </div>
+                                <% a.participatingLotusVictims.forEach(victim => { %>
+                                    <div class="modal fade" id="confirmation_remove_registration_<%= victim._id %>" tabindex="-1">
+                                        <div class="modal-dialog modal-dialog-centered">
+                                            <div class="modal-content">
+                                                <div class="modal-header">
+                                                    <h5 class="modal-title">Bevestigen</h5>
+                                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                                </div>
+                                                <div class="modal-body">
+                                                    Weet je zeker dat je het lid uit wil schrijven?
+                                                </div>
+                                                <div class="modal-footer">
+                                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuleren</button>
+                                                    <button form="remove_registration_form_<%= victim._id %>" type="submit" class="btn btn-primary">Bevestig</button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                <% }); %>
                             <% }); %>
                             <% } else { %> 
                                 <div class="col-lg-6">

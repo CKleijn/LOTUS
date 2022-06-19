@@ -560,18 +560,18 @@
                             </div>
                             <div class="modal-footer">
                                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Sluiten</button>
-                                <form id="reject_request_form" action="/request/decline" method="POST">
+                                <form id="reject_request_form_<%= request._id %>" action="/request/decline" method="POST">
                                     <input type="hidden" name="userId" value="<%= request.userId %>" />
                                     <input type="hidden" name="requestType" value="<%= request.type %>" />
                                     <input type="hidden" name="requestId" value="<%= request._id %>" />
                                     <input type="hidden" name="assignmentId" value="<%= request.assignment._id %>" />
 
-                                    <a data-bs-toggle="modal" data-bs-target="#confirmation_reject_request">
+                                    <a data-bs-toggle="modal" data-bs-target="#confirmation_reject_request_<%= request._id %>">
                                         <button class="btn btn-danger">Afwijzen</button>
                                     </a>
                                 </form>
 
-                                <form id="approve_request_form" action="/request/approve" method="POST">
+                                <form id="approve_request_form_<%= request._id %>" action="/request/approve" method="POST">
                                     <input type="hidden" name="userId" value="<%= request.userId %>" />
                                     <input type="hidden" name="requestType" value="<%= request.type %>" />
                                     <input type="hidden" name="requestId" value="<%= request._id %>" />
@@ -602,7 +602,7 @@
                                         <input type="hidden" name="comments" value="<%= request.updatedAssignment.comments %>" />
                                     <% } %> 
 
-                                    <a data-bs-toggle="modal" data-bs-target="#confirmation_approve_request">
+                                    <a data-bs-toggle="modal" data-bs-target="#confirmation_approve_request_<%= request._id %>">
                                         <button class="btn btn-success">Goedkeuren</button>
                                     </a>
                                 </form>
@@ -612,8 +612,8 @@
                 </div>
                 <% }); %>
             </div>
-
-            <div class="modal fade" id="confirmation_approve_request" tabindex="-1">
+            <% requests.reverse().forEach(request => { %>
+            <div class="modal fade" id="confirmation_approve_request_<%= request._id %>" tabindex="-1">
                 <div class="modal-dialog modal-dialog-centered">
                     <div class="modal-content">
                         <div class="modal-header">
@@ -625,13 +625,13 @@
                         </div>
                         <div class="modal-footer">
                             <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuleren</button>
-                            <button form="approve_request_form" type="submit" class="btn btn-primary">Bevestig</button>
+                            <button form="approve_request_form_<%= request._id %>" type="submit" class="btn btn-primary">Bevestig</button>
                         </div>
                     </div>
                 </div>
             </div>
 
-            <div class="modal fade" id="confirmation_reject_request" tabindex="-1">
+            <div class="modal fade" id="confirmation_reject_request_<%= request._id %>" tabindex="-1">
                 <div class="modal-dialog modal-dialog-centered">
                     <div class="modal-content">
                         <div class="modal-header">
@@ -643,11 +643,13 @@
                         </div>
                         <div class="modal-footer">
                             <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuleren</button>
-                            <button form="reject_request_form" type="submit" class="btn btn-primary">Bevestig</button>
+                            <button form="reject_request_form_<%= request._id %>" type="submit" class="btn btn-primary">Bevestig</button>
                         </div>
                     </div>
                 </div>
             </div>
+
+            <% }); %>
         </div>
     </section>
 </main>
