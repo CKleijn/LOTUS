@@ -214,8 +214,9 @@ const insertMember = async (emailAddress) => {
     return password;
 };
 
-exports.getUserProfile = (req, res) => {
-    res.render("user_profile", { pageName: "Mijn profiel", session: req.session });
+exports.getUserProfile = async (req, res) => {
+    const roleRequest = await Request.find({ userId: req.session.user.userId, type: "addClientRole", status: { "$ne": "Afgewezen" }})
+    res.render("user_profile", { pageName: "Mijn profiel", session: req.session, roleRequest });
 };
 
 exports.changeUserProfileDetails = (req, res) => {
@@ -385,6 +386,34 @@ exports.changePassword = (req, res) => {
     })();
 };
 
+exports.requestRole = async (req, res) => {
+    const userId = req.session.user.userId;
+
+    const oldRequest = await Request.find({ userId: userId, type: "addClientRole", status: "Afgewezen" })
+
+    if(oldRequest.length > 0) {
+        const oldRequestId = oldRequest[0]._id;
+        await Request.findOneAndUpdate({ _id: oldRequestId }, {$set: { requestDate: Date.now(), status: "In behandeling" } })
+    } else {
+        const request = new Request({
+            userId: userId,
+            type: "addClientRole",
+        });
+
+        request.save();
+    }
+
+    const sendStatus = await notifyCoordinatorRequest(req, res, "addClientRole");
+
+    if (sendStatus) {
+        console.log("Coordinator notified (Add client role)");
+    } else {
+        console.log("Mail not send");
+    }
+
+    res.redirect("/user/profile")
+}
+
 exports.changeRoles = async (req, res) => {
     const userId = req.query.id;
     const clientRole = req.body.client;
@@ -396,10 +425,26 @@ exports.changeRoles = async (req, res) => {
         if ("client" != userInfo.roles[0] && "client" != userInfo.roles[1]) {
             if(clientRole == "on") {
                 await User.findOneAndUpdate({ _id: userId }, { $push: { roles: "client" } });
+
+                const oldRequest = await Request.find({ userId: userId, type: "addClientRole" })
+            
+                if(oldRequest.length > 0) {
+                    const oldRequestId = oldRequest[0]._id;
+                    await Request.findOneAndUpdate({ _id: oldRequestId }, {$set: { status: "Goedgekeurd" } })
+                } else {
+                    const request = new Request({
+                        userId: userId,
+                        type: "addClientRole",
+                        status: "Goedgekeurd"
+                    });
+            
+                    request.save();
+                }
             }
         } else {
             if(typeof clientRole == "undefined" || clientRole == "off") {
                 await User.findOneAndUpdate({ _id: userId }, { $pull: { roles: "client" } });
+                await Request.findOneAndDelete({ userId: userId, type: "addClientRole" })
             }
         }
 
