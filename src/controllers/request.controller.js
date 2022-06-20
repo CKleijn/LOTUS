@@ -22,9 +22,15 @@ exports.createRequest = async (req, res, objectId, type) => {
 };
 
 exports.getAllRequests = async (req, res) => {
+    let alertText = "";
+    if (req.query.declinedRequest) {
+        alertText = "Aanvraag afgewezen!";
+    } else if (req.query.approvedRequest) {
+        alertText = "Aanvraag goedgekeurd!"
+    } 
     const requests = await Request.find({ status: "In behandeling" });
     const parsedRequests = await parseRequest(requests);
-    return res.render("request_overview", { pageName: "Verzoeken", session: req.session, requests: parsedRequests });
+    return res.render("request_overview", { pageName: "Verzoeken", session: req.session, requests: parsedRequests, alertText });
 };
 
 async function parseRequest(results) {
@@ -60,7 +66,7 @@ exports.approveRequest = async (req, res) => {
         req.session.requests = await req.session.requests.filter((request) => request._id != requestId);
         await Assignment.findOneAndUpdate({ _id: assignmentId }, { $set: { isApproved: true } });
         await Request.findOneAndUpdate({ _id: requestId }, { $set: { status: "Openstaand" } });
-        res.redirect("/request");
+        res.redirect("/request?approvedRequest=true");
 
         const sendStatus = await notifyUserThroughMail(userData.emailAddress, userData.firstName, "approvedCreateAssignment", "Aanvraag opdracht aanmaken goedgekeurd");
 
@@ -101,7 +107,7 @@ exports.approveRequest = async (req, res) => {
         req.session.requests = await req.session.requests.filter((request) => request._id != requestId);
         await Assignment.findOneAndUpdate({ _id: assignmentId }, { $set: { ...updatedAssignment } });
         await Request.findOneAndUpdate({ _id: requestId }, { $set: { status: "Openstaand" } });
-        res.redirect("/request");
+        res.redirect("/request?approvedRequest=true");
 
         const sendStatus = await notifyUserThroughMail(userData.emailAddress, userData.firstName, "approvedUpdateAssignment", "Aanvraag opdracht wijzigen goedgekeurd");
 
@@ -116,7 +122,7 @@ exports.approveRequest = async (req, res) => {
         req.session.requests = await req.session.requests.filter((request) => request._id != requestId);
         await Assignment.deleteOne({ _id: assignmentId });
         await Request.deleteMany({ assignmentId: assignmentId });
-        res.redirect("/request");
+        res.redirect("/request?approvedRequest=true");
 
         const sendStatus = await notifyUserThroughMail(userData.emailAddress, userData.firstName, "approvedDeleteAssignment", "Aanvraag opdracht verwijderen goedgekeurd");
 
@@ -143,7 +149,7 @@ exports.approveRequest = async (req, res) => {
             await Request.findOneAndUpdate({ assignmentId: assignmentId, type: "createAssignment" }, { $set: { status: "Openstaand" } });
         }
 
-        res.redirect("/request");
+        res.redirect("/request?approvedRequest=true");
 
         const sendStatus = await notifyUserThroughMail(userData.emailAddress, userData.firstName, "approvedEnrollment", "Inschrijving goedgekeurd");
 
@@ -171,7 +177,7 @@ exports.approveRequest = async (req, res) => {
         await Request.deleteMany({ assignmentId: assignmentId, userId: userId, type: "enrollment", status: "Goedgekeurd" });
         await Request.deleteMany({ assignmentId: assignmentId, userId: userId, type: "cancelEnrollment", status: "Goedgekeurd" });
 
-        res.redirect("/request");
+        res.redirect("/request?approvedRequest=true");
 
         const sendStatus = await notifyUserThroughMail(userData.emailAddress, userData.firstName, "approvedCancelEnrollment", "Uitschrijving goedgekeurd");
 
@@ -193,7 +199,7 @@ exports.declineRequest = async (req, res) => {
         req.session.requests = await req.session.requests.filter((request) => request._id != requestId);
         await Request.findOneAndUpdate({ _id: requestId }, { $set: { status: "Afgewezen" } });
 
-        res.redirect("/request");
+        res.redirect("/request?declinedRequest=true");
 
         const sendStatus = await notifyUserThroughMail(userData.emailAddress, userData.firstName, "deniedCreateAssignment", "Aanvraag opdracht aanmaken afgewezen");
 
@@ -208,7 +214,7 @@ exports.declineRequest = async (req, res) => {
         req.session.requests = await req.session.requests.filter((request) => request._id != requestId);
         await Request.findOneAndUpdate({ _id: requestId }, { $set: { status: "Afgewezen" } });
         await Request.deleteOne({ assignmentId: assignmentId, userId: userId, type: "updateAssignment", status: "Afgewezen" });
-        res.redirect("/request");
+        res.redirect("/request?declinedRequest=true");
 
         const sendStatus = await notifyUserThroughMail(userData.emailAddress, userData.firstName, "deniedUpdateAssignment", "Aanvraag opdracht wijzigen afgewezen");
 
@@ -223,7 +229,7 @@ exports.declineRequest = async (req, res) => {
         req.session.requests = await req.session.requests.filter((request) => request._id != requestId);
         await Request.findOneAndUpdate({ _id: requestId }, { $set: { status: "Afgewezen" } });
         await Request.deleteOne({ assignmentId: assignmentId, userId: userId, type: "deleteAssignment", status: "Afgewezen" });
-        res.redirect("/request");
+        res.redirect("/request?declinedRequest=true");
 
         const sendStatus = await notifyUserThroughMail(userData.emailAddress, userData.firstName, "deniedDeleteAssignment", "Aanvraag opdracht verwijderen afgewezen");
 
@@ -237,7 +243,7 @@ exports.declineRequest = async (req, res) => {
     if (requestType === "enrollment") {
         req.session.requests = await req.session.requests.filter((request) => request._id != requestId);
         await Request.findOneAndUpdate({ _id: requestId }, { $set: { status: "Afgewezen" } });
-        res.redirect("/request");
+        res.redirect("/request?declinedRequest=true");
 
         const sendStatus = await notifyUserThroughMail(userData.emailAddress, userData.firstName, "deniedEnrollment", "Inschrijving afgewezen");
 
@@ -252,7 +258,7 @@ exports.declineRequest = async (req, res) => {
         req.session.requests = await req.session.requests.filter((request) => request._id != requestId);
         await Request.findOneAndUpdate({ _id: requestId }, { $set: { status: "Afgewezen" } });
         await Request.deleteOne({ assignmentId: assignmentId, userId: userId, type: "cancelEnrollment", status: "Afgewezen" });
-        res.redirect("/request");
+        res.redirect("/request?declinedRequest=true");
 
         const sendStatus = await notifyUserThroughMail(userData.emailAddress, userData.firstName, "deniedCancelEnrollment", "Uitschrijving afgewezen");
 

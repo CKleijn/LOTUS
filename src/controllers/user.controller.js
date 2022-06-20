@@ -122,6 +122,7 @@ exports.createUser = (req, res) => {
                     firstName: user.firstName,
                     lastName: user.lastName,
                     emailAddress: user.emailAddress,
+                    phoneNumber: user.phoneNumber,
                     street: user.street,
                     houseNumber: user.houseNumber,
                     houseNumberAddition: user.houseNumberAddition,
@@ -215,7 +216,11 @@ const insertMember = async (emailAddress) => {
 };
 
 exports.getUserProfile = (req, res) => {
-    res.render("user_profile", { pageName: "Mijn profiel", session: req.session });
+    let alertText = "";
+    if (req.query.changedProfile) {
+        alertText = "Gegevens zijn succesvol gewijzigd!";
+    } 
+    res.render("user_profile", { pageName: "Mijn profiel", session: req.session, alertText });
 };
 
 exports.changeUserProfileDetails = (req, res) => {
@@ -335,7 +340,9 @@ exports.changeUserProfileDetails = (req, res) => {
                     user.postalCode = postalCode;
                 }
 
-                return res.redirect("/user/profile");
+              
+
+                return res.redirect("/user/profile?changedProfile=true");
             })();
         }
     })();
