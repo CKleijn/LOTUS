@@ -21,7 +21,7 @@ exports.sendMemberInviteMail = async (email, password) => {
             from: process.env.MAILING_EMAIL_FROM,
             to: email,
             subject: "Accountgegevens",
-            html: "<!DOCTYPE html>" + "<html><head><title>Accountgegevens</title>" + "</head><body><div>" + "<p>Goedendag LOTUSslachtoffer,</p>" + "<p>hierbij jouw inloggegevens:</p>" + `<p>E-mailadres: ${email}<br>Wachtwoord: ${password}</p>` + `<p>Klik <a href='${process.env.HOSTING_URL}/login'>hier</a> om in te loggen</p>` + "<p>Met vriendelijke groet,<br>LOTUS-Kring Here We Go Team</p>" + "</div></body></html>",
+            html: "<!DOCTYPE html>" + "<html><head><title>Accountgegevens</title>" + "</head><body><div>" + "<p>Goedendag LOTUSslachtoffer,</p>" + "<p>Hierbij jouw inloggegevens:</p>" + `<p>E-mailadres: ${email}<br>Wachtwoord: ${password}</p>` + `<p>Klik <a href='${process.env.HOSTING_URL}/login'>hier</a> om in te loggen</p>` + "<p>Met vriendelijke groet,<br>LOTUS-Kring Here We Go Team</p>" + "</div></body></html>",
         };
 
         transporter.sendMail(options, (err, data) => {
@@ -53,43 +53,43 @@ exports.notifyUserThroughMail = async (email, firstName, type, subject) => {
 
         switch (type) {
             case "clientAssignmentDeleted":
-                context = `<p>Goedendag ${firstName},</p> <p>hierbij willen we je laten weten dat de coördinator jouw opdracht heeft verwijderd.</p>`;
+                context = `<p>Goedendag ${firstName},</p> <p>Hierbij willen we je laten weten dat de coördinator jouw opdracht heeft verwijderd.</p>`;
                 break;
             case "clientAssignmentUpdated":
-                context = `<p>Goedendag ${firstName},</p> <p>hierbij willen we je laten weten dat de coördinator één van jouw opdrachten heeft aangepast.</p>`;
+                context = `<p>Goedendag ${firstName},</p> <p>Hierbij willen we je laten weten dat de coördinator één van jouw opdrachten heeft aangepast.</p>`;
                 break;
             case "removeMemberFromAssignment":
-                context = `<p>Goedendag ${firstName},</p> <p>hierbij willen we je laten weten dat de coördinator je voor een opdracht heeft uitgeschreven.</p>`;
+                context = `<p>Goedendag ${firstName},</p> <p>Hierbij willen we je laten weten dat de coördinator je voor een opdracht heeft uitgeschreven.</p>`;
                 break;
             case "approvedCreateAssignment":
-                context = `<p>Goedendag ${firstName},</p> <p>hierbij willen we je laten weten dat de coördinator je aanvraag voor het aanmaken van jouw opdracht heeft goedgekeurd.</p>`;
+                context = `<p>Goedendag ${firstName},</p> <p>Hierbij willen we je laten weten dat de coördinator je aanvraag voor het aanmaken van jouw opdracht heeft goedgekeurd.</p>`;
                 break;
             case "deniedCreateAssignment":
-                context = `<p>Goedendag ${firstName},</p> <p>hierbij willen we je laten weten dat de coördinator je aanvraag voor het aanmaken van jouw opdracht heeft afgewezen.</p>`;
+                context = `<p>Goedendag ${firstName},</p> <p>Hierbij willen we je laten weten dat de coördinator je aanvraag voor het aanmaken van jouw opdracht heeft afgewezen.</p>`;
                 break;
             case "approvedUpdateAssignment":
-                context = `<p>Goedendag ${firstName},</p> <p>hierbij willen we je laten weten dat de coördinator je aanvraag voor het bewerken van jouw opdracht heeft goedgekeurd.</p>`;
+                context = `<p>Goedendag ${firstName},</p> <p>Hierbij willen we je laten weten dat de coördinator je aanvraag voor het bewerken van jouw opdracht heeft goedgekeurd.</p>`;
                 break;
             case "deniedUpdateAssignment":
-                context = `<p>Goedendag ${firstName},</p> <p>hierbij willen we je laten weten dat de coördinator je aanvraag voor het bewerken van jouw opdracht heeft afgewezen.</p>`;
+                context = `<p>Goedendag ${firstName},</p> <p>Hierbij willen we je laten weten dat de coördinator je aanvraag voor het bewerken van jouw opdracht heeft afgewezen.</p>`;
                 break;
             case "approvedDeleteAssignment":
-                context = `<p>Goedendag ${firstName},</p> <p>hierbij willen we je laten weten dat de coördinator je aanvraag voor het verwijderen van jouw opdracht heeft goedgekeurd.</p>`;
+                context = `<p>Goedendag ${firstName},</p> <p>Hierbij willen we je laten weten dat de coördinator je aanvraag voor het verwijderen van jouw opdracht heeft goedgekeurd.</p>`;
                 break;
             case "deniedDeleteAssignment":
-                context = `<p>Goedendag ${firstName},</p> <p>hierbij willen we je laten weten dat de coördinator je aanvraag voor het verwijderen van jouw opdracht heeft afgewezen.</p>`;
+                context = `<p>Goedendag ${firstName},</p> <p>Hierbij willen we je laten weten dat de coördinator je aanvraag voor het verwijderen van jouw opdracht heeft afgewezen.</p>`;
                 break;
             case "approvedEnrollment":
-                context = `<p>Goedendag ${firstName},</p> <p>hierbij willen we je laten weten dat de coördinator je inschrijving heeft goedgekeurd.</p>`;
+                context = `<p>Goedendag ${firstName},</p> <p>Hierbij willen we je laten weten dat de coördinator je inschrijving heeft goedgekeurd.</p>`;
                 break;
             case "deniedEnrollment":
-                context = `<p>Goedendag ${firstName},</p> <p>hierbij willen we je laten weten dat de coördinator je inschrijving heeft afgewezen.</p>`;
+                context = `<p>Goedendag ${firstName},</p> <p>Hierbij willen we je laten weten dat de coördinator je inschrijving heeft afgewezen.</p>`;
                 break;
             case "approvedCancelEnrollment":
-                context = `<p>Goedendag ${firstName},</p> <p>hierbij willen we je laten weten dat de coördinator je uitschrijving heeft goedgekeurd.</p>`;
+                context = `<p>Goedendag ${firstName},</p> <p>Hierbij willen we je laten weten dat de coördinator je uitschrijving heeft goedgekeurd.</p>`;
                 break;
             case "deniedCancelEnrollment":
-                context = `<p>Goedendag ${firstName},</p> <p>hierbij willen we je laten weten dat de coördinator je uitschrijving heeft afgewezen.</p>`;
+                context = `<p>Goedendag ${firstName},</p> <p>Hierbij willen we je laten weten dat de coördinator je uitschrijving heeft afgewezen.</p>`;
                 break;
             case "remindInvitedMember":
                 context = `<p>Goedendag LOTUSslachtoffer,</p> <p>Vergeet niet jouw account te activeren d.m.v. de voorgaande email!</p>`;
@@ -128,7 +128,7 @@ exports.sendRecoveryMailWithLink = async (token, emailAddress) => {
             },
         });
 
-        let context = `<p>klik <a href="${process.env.HOSTING_URL}/user/forgot/password/reset?token=${token}">hier</a> om jouw wachtwoord te veranderen!</p>`;
+        let context = `<p>Klik <a href="${process.env.HOSTING_URL}/user/forgot/password/reset?token=${token}">hier</a> om jouw wachtwoord te veranderen!</p>`;
 
         let options = {
             from: process.env.MAILING_EMAIL_FROM,
