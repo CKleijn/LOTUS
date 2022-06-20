@@ -58,9 +58,17 @@ exports.getHomepage = (req, res) => {
 
 exports.getUserOverview = (req, res) => {
     (async () => {
+        let alertText = "";
+
+        if (req.query.invitedMember) {
+            alertText = "Lid is succesvol uitgenodigd!";
+        } else if (req.query.remindedMember) {
+            alertText = "Herinnering verstuurd!";
+        }
+
         const allMembers = await getAllValidMembers();
         const allClients = await getAllValidClients();
         const allInvitedMembers = await getAllInvitedMembers();
-        return res.render("user_overview", { pageName: "Gebruikers", session: req.session, allMembers, allClients, allInvitedMembers });
+        return res.render("user_overview", { pageName: "Gebruikers", session: req.session, allMembers, allClients, allInvitedMembers, alertText });
     })();
 };

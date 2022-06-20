@@ -14,6 +14,21 @@
 
     <section class="section profile">
         <div class="row">
+
+            <% if(alertText !== "") { %>
+
+                <div class="d-flex justify-content-center">
+                    <div class="col-md-8 col-lg-6">
+                        <div class="alert alert-success alert-dismissible fade show" role="alert">
+                            <i class="bi bi-check-circle me-1"></i>
+                            <%= alertText %>
+                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                          </div>
+                    </div>
+                </div>
+        
+                <% } %>
+
             <div class="col-xl-4">
                 <div class="card">
                     <div class="card-body profile-card pt-4 d-flex flex-column align-items-center">
@@ -390,6 +405,8 @@
         confirmNewPassword.setAttribute("type", type);
         this.classList.toggle("bi-eye");
     });
+
+    history.pushState(null, "", location.href.split("?")[0]);
 </script>
 
 <%- include("footer/footer") %>
