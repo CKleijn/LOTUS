@@ -243,7 +243,12 @@
                 
                 <% } %> <% if(session.user.roles == "member") { %>
                     <li class="nav-item">
-                        <a class="nav-link collapsed" href="/member/assignment">
+                            <% if(pageName === "Mijn opdrachten") { %> 
+                                <a class="nav-link" href="/member/assignment">
+                            <% } else {  %> 
+                                <a class="nav-link collapsed" href="/member/assignment">
+                            <% } %> 
+
                             <i class="bi bi-archive"></i>
                             <span>Mijn opdrachten</span>
                         </a>

@@ -5,7 +5,7 @@ const Request = require("../models/request.model");
 const { createRequest } = require("./request.controller");
 const pdfService = require("../services/pdf-service");
 const { phone } = require("phone");
-const { notifyUserThroughMail } = require("./mail.controller");
+const { notifyUserThroughMail, notifyCoordinatorRequest } = require("./mail.controller");
 
 const Assignment = assignmentModel;
 const User = userModel;
@@ -204,15 +204,24 @@ exports.createAssignment = (req, res) => {
             res.render("assignment", { pageName: "Opdracht aanmaken", session: req.session, ...errors, checkedOrNotProfile, checkedOrNotPlayground, checkedOrNotMakeUp, url: req.session.originalUrl });
         } else {
             (async () => {
+                // Redirect to the overview
+                res.redirect("/assignment");
+
                 if (session.user.roles === "client") {
                     const objectId = savedAssignment._id;
                     // Create a request
                     const request = await createRequest(req, res, objectId, "createAssignment");
                     // Update assignment
                     await Assignment.findOneAndUpdate({ _id: request.assignmentId }, { $set: { requestId: request._id } });
+
+                    const sendStatus = await notifyCoordinatorRequest(req, res, "createAssignment");
+
+                    if (sendStatus) {
+                        console.log("Coordinator notified (Create assignment)");
+                    } else {
+                        console.log("Mail not send");
+                    }
                 }
-                // Redirect to the overview
-                res.redirect("/assignment");
             })();
         }
     });
@@ -395,8 +404,21 @@ exports.updateAssignment = async (req, res) => {
         } else {
             (async () => {
                 if (req.session.user.roles === "coordinator" || assignmentStatus === "In behandeling") {
-                    await Assignment.findOneAndUpdate({ _id: assignmentId }, { ...assignment });
+                    const updatedAssignment = await Assignment.findOneAndUpdate({ _id: assignmentId }, { ...assignment }, { new: true });
+
+                    //TODO: when max participants is increased check if assignment was complete. If so set the status to open
+
                     res.redirect("/assignment");
+
+                    if (req.session.user.roles === "coordinator") {
+                        const sendStatus = await notifyUserThroughMail(updatedAssignment.emailAddress, updatedAssignment.firstName, "clientAssignmentUpdated", "Jouw opdracht is bewerkt");
+
+                        if (sendStatus) {
+                            console.log("Client notified (Updated assignment)");
+                        } else {
+                            console.log("Email not send");
+                        }
+                    }
                 } else {
                     const request = await new Request({
                         userId: req.session.user.userId,
@@ -407,7 +429,16 @@ exports.updateAssignment = async (req, res) => {
                     // Save request
                     request.save();
 
-                    res.redirect("/assignment");
+                    (async () => {
+                        res.redirect("/assignment");
+                        const sendStatus = await notifyCoordinatorRequest(req, res, "updateAssignment");
+
+                        if (sendStatus) {
+                            console.log("Coordinator notified (Update assignment)");
+                        } else {
+                            console.log("Mail not send");
+                        }
+                    })();
                 }
             })();
         }
@@ -1112,10 +1143,11 @@ exports.deleteAssignment = async (req, res) => {
     if (session.user.roles === "coordinator") {
         await Assignment.deleteOne({ _id: req.query.id });
         await Request.deleteMany({ assignmentId: req.query.id });
-        const sendStatus = await notifyUserThroughMail(req.query.emailAddress, req.query.firstName, "deleteAssignment", "Jouw opdracht is verwijderd");
+
+        const sendStatus = await notifyUserThroughMail(req.query.emailAddress, req.query.firstName, "clientAssignmentDeleted", "Jouw opdracht is verwijderd");
 
         if (sendStatus) {
-            console.log("Client notified (through email)");
+            console.log("Client notified (Deleted assignment)");
         } else {
             console.log("Email not send");
         }
@@ -1124,6 +1156,7 @@ exports.deleteAssignment = async (req, res) => {
     }
 
     if (session.user.roles === "client") {
+        res.redirect("/assignment");
         if (status == "Afgewezen" || status == "In behandeling") {
             await Assignment.deleteOne({ _id: req.query.id });
             await Request.deleteMany({ assignmentId: req.query.id });
@@ -1133,8 +1166,15 @@ exports.deleteAssignment = async (req, res) => {
             await Request.deleteMany({ requestType: "updateAssignment", assignmentId: req.query.id, status: "In behandeling" });
         } else {
             await createRequest(req, res, req.query.id, "deleteAssignment");
+
+            const sendStatus = await notifyCoordinatorRequest(req, res, "deleteAssignment");
+
+            if (sendStatus) {
+                console.log("Coordinator notified (Delete assignment)");
+            } else {
+                console.log("Mail not send");
+            }
         }
-        res.redirect("/assignment");
     }
 };
 
@@ -1151,8 +1191,19 @@ exports.enrollAssignment = (req, res) => {
     });
     // Save request
     request.save();
-    // Redirect
-    res.redirect("/assignment");
+
+    (async () => {
+        // Redirect
+        res.redirect("/assignment");
+
+        const sendStatus = await notifyCoordinatorRequest(req, res, "enrollment");
+
+        if (sendStatus) {
+            console.log("Coordinator notified (Enrollment)");
+        } else {
+            console.log("Mail not send");
+        }
+    })();
 };
 
 exports.cancelEnrollment = (req, res) => {
@@ -1180,8 +1231,19 @@ exports.cancelEnrollment = (req, res) => {
                 });
                 // Save request
                 request.save();
-                // Redirect
-                res.redirect("/member/assignment");
+
+                (async () => {
+                    // Redirect
+                    res.redirect("/member/assignment");
+
+                    const sendStatus = await notifyCoordinatorRequest(req, res, "cancelEnrollment");
+
+                    if (sendStatus) {
+                        console.log("Coordinator notified (Cancel enrollment)");
+                    } else {
+                        console.log("Mail not send");
+                    }
+                })();
             } else {
                 // Redirect
                 res.redirect("/assignment");
@@ -1199,6 +1261,17 @@ exports.deleteMemberFromAssignment = async (req, res) => {
     await Request.findOneAndUpdate({ assignmentId: assignmentId, type: "createAssignment" }, { $set: { status: "Openstaand" } });
 
     res.redirect("/assignment");
+
+    let victimData = await User.find({ _id: victimId });
+    victimData = victimData[0];
+
+    const sendStatus = await notifyUserThroughMail(victimData.emailAddress, victimData.firstName, "removeMemberFromAssignment", "Je bent uitgeschreven");
+
+    if (sendStatus) {
+        console.log("Client notified (Removed member from assignment)");
+    } else {
+        console.log("Email not send");
+    }
 };
 
 exports.sendPDFdata = async (req, res, next) => {
@@ -1209,7 +1282,7 @@ exports.sendPDFdata = async (req, res, next) => {
 
     assignment = {
         ...assignment[0]._doc,
-        request: { ...request[0]._doc }
+        request: { ...request[0]._doc },
     };
 
     console.log(assignment);

@@ -3,7 +3,7 @@ const Request = require("../models/request.model");
 const { assignmentModel } = require("../models/assignment.model");
 const Assignment = assignmentModel;
 const { userModel } = require("../models/user.model");
-const session = require("express-session");
+const { notifyUserThroughMail } = require("../controllers/mail.controller");
 const User = userModel;
 
 exports.createRequest = async (req, res, objectId, type) => {
@@ -53,11 +53,22 @@ async function parseRequest(results) {
 exports.approveRequest = async (req, res) => {
     const { requestType, requestId, assignmentId, userId } = req.body;
 
+    let userData = await User.find({ _id: userId });
+    userData = userData[0];
+
     if (requestType === "createAssignment") {
         req.session.requests = await req.session.requests.filter((request) => request._id != requestId);
         await Assignment.findOneAndUpdate({ _id: assignmentId }, { $set: { isApproved: true } });
         await Request.findOneAndUpdate({ _id: requestId }, { $set: { status: "Openstaand" } });
         res.redirect("/request");
+
+        const sendStatus = await notifyUserThroughMail(userData.emailAddress, userData.firstName, "approvedCreateAssignment", "Aanvraag opdracht aanmaken goedgekeurd");
+
+        if (sendStatus) {
+            console.log("Client notified (Approved assignment create)");
+        } else {
+            console.log("Email not send");
+        }
     }
 
     if (requestType === "updateAssignment") {
@@ -91,6 +102,14 @@ exports.approveRequest = async (req, res) => {
         await Assignment.findOneAndUpdate({ _id: assignmentId }, { $set: { ...updatedAssignment } });
         await Request.findOneAndUpdate({ _id: requestId }, { $set: { status: "Openstaand" } });
         res.redirect("/request");
+
+        const sendStatus = await notifyUserThroughMail(userData.emailAddress, userData.firstName, "approvedUpdateAssignment", "Aanvraag opdracht wijzigen goedgekeurd");
+
+        if (sendStatus) {
+            console.log("Client notified (Approved assignment update)");
+        } else {
+            console.log("Email not send");
+        }
     }
 
     if (requestType === "deleteAssignment") {
@@ -98,6 +117,14 @@ exports.approveRequest = async (req, res) => {
         await Assignment.deleteOne({ _id: assignmentId });
         await Request.deleteMany({ assignmentId: assignmentId });
         res.redirect("/request");
+
+        const sendStatus = await notifyUserThroughMail(userData.emailAddress, userData.firstName, "approvedDeleteAssignment", "Aanvraag opdracht verwijderen goedgekeurd");
+
+        if (sendStatus) {
+            console.log("Client notified (Approved assignment delete)");
+        } else {
+            console.log("Email not send");
+        }
     }
 
     if (requestType === "enrollment") {
@@ -117,6 +144,14 @@ exports.approveRequest = async (req, res) => {
         }
 
         res.redirect("/request");
+
+        const sendStatus = await notifyUserThroughMail(userData.emailAddress, userData.firstName, "approvedEnrollment", "Inschrijving goedgekeurd");
+
+        if (sendStatus) {
+            console.log("Client notified (Approved enrollment)");
+        } else {
+            console.log("Email not send");
+        }
     }
 
     if (requestType === "cancelEnrollment") {
@@ -137,16 +172,36 @@ exports.approveRequest = async (req, res) => {
         await Request.deleteMany({ assignmentId: assignmentId, userId: userId, type: "cancelEnrollment", status: "Goedgekeurd" });
 
         res.redirect("/request");
+
+        const sendStatus = await notifyUserThroughMail(userData.emailAddress, userData.firstName, "approvedCancelEnrollment", "Uitschrijving goedgekeurd");
+
+        if (sendStatus) {
+            console.log("Client notified (Approved cancel enrollment)");
+        } else {
+            console.log("Email not send");
+        }
     }
 };
 
 exports.declineRequest = async (req, res) => {
     const { requestType, requestId, assignmentId, userId } = req.body;
 
+    let userData = await User.find({ _id: userId });
+    userData = userData[0];
+
     if (requestType === "createAssignment") {
         req.session.requests = await req.session.requests.filter((request) => request._id != requestId);
         await Request.findOneAndUpdate({ _id: requestId }, { $set: { status: "Afgewezen" } });
+
         res.redirect("/request");
+
+        const sendStatus = await notifyUserThroughMail(userData.emailAddress, userData.firstName, "deniedCreateAssignment", "Aanvraag opdracht aanmaken afgewezen");
+
+        if (sendStatus) {
+            console.log("Client notified (Denied assignment create)");
+        } else {
+            console.log("Email not send");
+        }
     }
 
     if (requestType === "updateAssignment") {
@@ -154,6 +209,14 @@ exports.declineRequest = async (req, res) => {
         await Request.findOneAndUpdate({ _id: requestId }, { $set: { status: "Afgewezen" } });
         await Request.deleteOne({ assignmentId: assignmentId, userId: userId, type: "updateAssignment", status: "Afgewezen" });
         res.redirect("/request");
+
+        const sendStatus = await notifyUserThroughMail(userData.emailAddress, userData.firstName, "deniedUpdateAssignment", "Aanvraag opdracht wijzigen afgewezen");
+
+        if (sendStatus) {
+            console.log("Client notified (Denied assignment update)");
+        } else {
+            console.log("Email not send");
+        }
     }
 
     if (requestType === "deleteAssignment") {
@@ -161,12 +224,28 @@ exports.declineRequest = async (req, res) => {
         await Request.findOneAndUpdate({ _id: requestId }, { $set: { status: "Afgewezen" } });
         await Request.deleteOne({ assignmentId: assignmentId, userId: userId, type: "deleteAssignment", status: "Afgewezen" });
         res.redirect("/request");
+
+        const sendStatus = await notifyUserThroughMail(userData.emailAddress, userData.firstName, "deniedDeleteAssignment", "Aanvraag opdracht verwijderen afgewezen");
+
+        if (sendStatus) {
+            console.log("Client notified (Denied assignment delete)");
+        } else {
+            console.log("Email not send");
+        }
     }
 
     if (requestType === "enrollment") {
         req.session.requests = await req.session.requests.filter((request) => request._id != requestId);
         await Request.findOneAndUpdate({ _id: requestId }, { $set: { status: "Afgewezen" } });
         res.redirect("/request");
+
+        const sendStatus = await notifyUserThroughMail(userData.emailAddress, userData.firstName, "deniedEnrollment", "Inschrijving afgewezen");
+
+        if (sendStatus) {
+            console.log("Client notified (Denied enrollment)");
+        } else {
+            console.log("Email not send");
+        }
     }
 
     if (requestType === "cancelEnrollment") {
@@ -174,5 +253,13 @@ exports.declineRequest = async (req, res) => {
         await Request.findOneAndUpdate({ _id: requestId }, { $set: { status: "Afgewezen" } });
         await Request.deleteOne({ assignmentId: assignmentId, userId: userId, type: "cancelEnrollment", status: "Afgewezen" });
         res.redirect("/request");
+
+        const sendStatus = await notifyUserThroughMail(userData.emailAddress, userData.firstName, "deniedCancelEnrollment", "Uitschrijving afgewezen");
+
+        if (sendStatus) {
+            console.log("Client notified (Denied cancel enrollment)");
+        } else {
+            console.log("Email not send");
+        }
     }
 };
