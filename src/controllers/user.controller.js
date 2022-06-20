@@ -387,12 +387,31 @@ exports.changePassword = (req, res) => {
 
 exports.changeRoles = async (req, res) => {
     const userId = req.query.id;
-    const postedRole = req.body;
+    const clientRole = req.body.client;
+    const memberRole = req.body.member;
 
     const userInfo = await User.findById({ _id: userId });
 
-    if (postedRole != userInfo.roles) {
-        await User.findOneAndUpdate({ _id: userId }, { $set: { roles: postedRole.roles } });
+    if(typeof clientRole != "undefined" || typeof memberRole != "undefined") {
+        if ("client" != userInfo.roles[0] && "client" != userInfo.roles[1]) {
+            if(clientRole == "on") {
+                await User.findOneAndUpdate({ _id: userId }, { $push: { roles: "client" } });
+            }
+        } else {
+            if(typeof clientRole == "undefined" || clientRole == "off") {
+                await User.findOneAndUpdate({ _id: userId }, { $pull: { roles: "client" } });
+            }
+        }
+
+        if ("member" != userInfo.roles[0] && "member" != userInfo.roles[1]) {
+            if(memberRole == "on") {
+                await User.findOneAndUpdate({ _id: userId }, { $push: { roles: "member" } });
+            }
+        } else {
+            if(typeof memberRole == "undefined" || memberRole == "off") {
+                await User.findOneAndUpdate({ _id: userId }, { $pull: { roles: "member" } });
+            }
+        }
     }
 
     res.redirect("/user");
