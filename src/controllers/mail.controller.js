@@ -91,6 +91,12 @@ exports.notifyUserThroughMail = async (email, firstName, type, subject) => {
             case "deniedCancelEnrollment":
                 context = `<p>Goedendag ${firstName},</p> <p>Hierbij willen we je laten weten dat de coördinator je uitschrijving heeft afgewezen.</p>`;
                 break;
+            case "approvedAddClientRole":
+                context = `<p>Goedendag ${firstName},</p> <p>hierbij willen we je laten weten dat de coördinator je verzoek tot opdrachtgever heeft goedgekeurd.</p>`;
+                break;
+            case "deniedAddClientRole":
+                context = `<p>Goedendag ${firstName},</p> <p>hierbij willen we je laten weten dat de coördinator je verzoek tot opdrachtgever heeft afgewezen.</p>`;
+                break;
             case "remindInvitedMember":
                 context = `<p>Goedendag LOTUSslachtoffer,</p> <p>Vergeet niet jouw account te activeren d.m.v. de voorgaande email!</p>`;
                 break;
@@ -179,6 +185,9 @@ exports.notifyCoordinatorRequest = async (req, res, requestType) => {
                 break;
             case "enrollment":
                 context = req.session.user.firstName + " " + req.session.user.lastName + " wil zich inschrijven voor een opdracht.";
+                break;
+            case "addClientRole":
+                context = req.session.user.firstName + " " + req.session.user.lastName + " wil ook een opdrachtgever worden.";
                 break;
         }
 

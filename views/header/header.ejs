@@ -99,12 +99,16 @@
                                     requestTitle = "Inschrijving"; 
                                     requestMessage = requests[i].user.firstName + " wil zich inschrijven voor een opdracht";
                                     break;
+                                case "addClientRole": 
+                                    requestTitle = "Rol toevoegen"; 
+                                    requestMessage = requests[i].user.firstName + " wil ook een opdrachtgever worden";
+                                    break;
           
                             } %>
                             <a href="/request">
                             <li class="notification-item">
                                 
-                                    <% if(requests[i].type === "enrollment" || requests[i].type === "createAssignment") { %>
+                                    <% if(requests[i].type === "enrollment" || requests[i].type === "createAssignment" || requests[i].type === "addClientRole") { %>
                                         <i class="bi bi-info-circle text-primary"></i>
                                     <% } else if(requests[i].type === "cancelEnrollment" || requests[i].type === "updateAssignment" ) { %>
                                         <i class="bi bi-exclamation-circle text-warning"></i>

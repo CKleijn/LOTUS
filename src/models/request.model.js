@@ -22,7 +22,7 @@ const requestSchema = new mongoose.Schema({
     type: {
         required: true,
         type: String,
-        enum: ["createAssignment", "enrollment", "cancelEnrollment", "deleteAssignment", "updateAssignment"],
+        enum: ["createAssignment", "enrollment", "cancelEnrollment", "deleteAssignment", "updateAssignment", "addClientRole"],
     },
     updatedAssignment: assignmentSchema,
 });

@@ -77,6 +77,21 @@ exports.approveRequest = async (req, res) => {
         }
     }
 
+    if (requestType === "addClientRole") {
+        req.session.requests = await req.session.requests.filter((request) => request._id != requestId);
+        await User.findOneAndUpdate({ _id: userId }, { $push: { roles: "client" } });
+        await Request.findOneAndUpdate({ _id: requestId }, { $set: { status: "Goedgekeurd" } });
+        res.redirect("/request");
+
+        const sendStatus = await notifyUserThroughMail(userData.emailAddress, userData.firstName, "approvedAddClientRole", "Aanvraag om opdrachtgever te worden goedgekeurd");
+
+        if (sendStatus) {
+            console.log("Client notified (Approved client role)");
+        } else {
+            console.log("Email not send");
+        }
+    }
+
     if (requestType === "updateAssignment") {
         const { firstName, lastName, emailAddress, street, houseNumber, houseNumberAddition, postalCode, town, billingEmailAddress, dateTime, playgroundStreet, playgroundHouseNumber, playgroundHouseNumberAddition, playgroundPostalCode, playgroundTown, makeUpStreet, makeUpHouseNumber, makeUpHouseNumberAddition, makeUpPostalCode, makeUpTown, amountOfLotusVictims, comments } = req.body;
 
@@ -205,6 +220,21 @@ exports.declineRequest = async (req, res) => {
 
         if (sendStatus) {
             console.log("Client notified (Denied assignment create)");
+        } else {
+            console.log("Email not send");
+        }
+    }
+
+    if (requestType === "addClientRole") {
+        req.session.requests = await req.session.requests.filter((request) => request._id != requestId);
+        await Request.findOneAndUpdate({ _id: requestId }, { $set: { status: "Afgewezen" } });
+
+        res.redirect("/request");
+
+        const sendStatus = await notifyUserThroughMail(userData.emailAddress, userData.firstName, "deniedAddClientRole", "Aanvraag om opdrachtgever te worden afgewezen");
+
+        if (sendStatus) {
+            console.log("Client notified (Denied client role)");
         } else {
             console.log("Email not send");
         }
