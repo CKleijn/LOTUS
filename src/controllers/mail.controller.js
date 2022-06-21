@@ -199,3 +199,56 @@ exports.notifyCoordinatorRequest = async (req, res, requestType) => {
         return false;
     }
 };
+
+exports.sendPDFMail = async (pdf, recipient, assignment) => {
+    function formatDate(inputDate) {
+        let date, month, year;
+
+        date = inputDate.getDate();
+        month = inputDate.getMonth() + 1;
+        year = inputDate.getFullYear();
+
+        date = date.toString().padStart(2, "0");
+
+        month = month.toString().padStart(2, "0");
+
+        return `${date}-${month}-${year}`;
+    }
+
+    try {
+        const transporter = nodemailer.createTransport({
+            host: process.env.MAILING_HOST,
+            secureConnection: false,
+            greetingTimeout: 2147483647,
+            port: 587,
+            tls: {
+                ciphers: "SSLv3",
+            },
+            auth: {
+                user: process.env.MAILING_EMAIL,
+                pass: process.env.MAILING_PASSWORD,
+            },
+        });
+
+        let options = {
+            from: process.env.MAILING_EMAIL_FROM,
+            to: recipient.emailAddress,
+            subject: "Je PDF contract",
+            html: "<!DOCTYPE html>" + "<html><head><title>Nieuw verzoek</title>" + "</head><body><div>" + `<p>Beste ${recipient.firstName},</p>` + `<p>Zie de bijlage voor het PDF contract van je ingeschreven opdracht.</p>` + "<p>Met vriendelijke groet,<br>LOTUS-Kring Here We Go Team</p>" + "</div></body></html>",
+            attachments: [{
+                filename: `LOTUS_${assignment.playgroundTown}_${formatDate(new Date(assignment.dateTime))}_contract.pdf`,
+                content: pdf,
+                contentType: "application/pdf",
+            }]
+        };
+
+        await transporter.sendMail(options);
+
+        console.log(`PDF send to ${recipient.emailAddress}`);
+        return true;
+    } catch (err) {
+        console.log("PDF not send, error:")
+        console.log(err)
+        return false;
+    }
+}

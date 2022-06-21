@@ -3,8 +3,9 @@ const Request = require("../models/request.model");
 const { assignmentModel } = require("../models/assignment.model");
 const Assignment = assignmentModel;
 const { userModel } = require("../models/user.model");
-const { notifyUserThroughMail } = require("../controllers/mail.controller");
+const { notifyUserThroughMail, sendPDFMail } = require("../controllers/mail.controller");
 const User = userModel;
+const { buildPDF } = require("../services/pdf-service");
 
 exports.createRequest = async (req, res, objectId, type) => {
     // Get session
@@ -139,11 +140,18 @@ exports.approveRequest = async (req, res) => {
 
         if (assignment.participatingLotusVictims.length === assignment.amountOfLotusVictims) {
             await Request.findOneAndUpdate({ assignmentId: assignmentId, type: "createAssignment" }, { $set: { status: "Compleet" } });
+
+            res.redirect("/request");
+
+            for await (let victim of assignment.participatingLotusVictims) {
+                const pdf = await buildPDF(undefined, undefined, assignment);
+                await sendPDFMail(pdf, victim, assignment);
+            }
         } else {
             await Request.findOneAndUpdate({ assignmentId: assignmentId, type: "createAssignment" }, { $set: { status: "Openstaand" } });
-        }
 
-        res.redirect("/request");
+            res.redirect("/request");
+        }
 
         const sendStatus = await notifyUserThroughMail(userData.emailAddress, userData.firstName, "approvedEnrollment", "Inschrijving goedgekeurd");
 
@@ -164,14 +172,21 @@ exports.approveRequest = async (req, res) => {
 
         if (assignment.participatingLotusVictims.length === assignment.amountOfLotusVictims) {
             await Request.findOneAndUpdate({ assignmentId: assignmentId, type: "createAssignment" }, { $set: { status: "Compleet" } });
+
+            res.redirect("/request");
+
+            for await (let victim of assignment.participatingLotusVictims) {
+                const pdf = await buildPDF(undefined, undefined, assignment);
+                await sendPDFMail(pdf, victim, assignment);
+            }
         } else {
             await Request.findOneAndUpdate({ assignmentId: assignmentId, type: "createAssignment" }, { $set: { status: "Openstaand" } });
+
+            res.redirect("/request");
         }
 
         await Request.deleteMany({ assignmentId: assignmentId, userId: userId, type: "enrollment", status: "Goedgekeurd" });
         await Request.deleteMany({ assignmentId: assignmentId, userId: userId, type: "cancelEnrollment", status: "Goedgekeurd" });
-
-        res.redirect("/request");
 
         const sendStatus = await notifyUserThroughMail(userData.emailAddress, userData.firstName, "approvedCancelEnrollment", "Uitschrijving goedgekeurd");
 
