@@ -221,6 +221,7 @@ const insertMember = async (emailAddress) => {
 exports.getUserProfile = async (req, res) => {
     const roleRequest = await Request.find({ userId: req.session.user.userId, type: "addClientRole", status: { $ne: "Afgewezen" } });
     const roleProcessingRequest = await Request.find({ userId: req.session.user.userId, type: "addClientRole", status: "In behandeling" });
+    let type = "";
 
     let alertText = "";
     if (req.query.changedProfile) {
@@ -228,7 +229,12 @@ exports.getUserProfile = async (req, res) => {
     } else if (req.query.requestRole) {
         alertText = "Nieuwe rol aangevraagd!";
     }
-    res.render("user_profile", { pageName: "Mijn profiel", session: req.session, alertText, roleRequest, roleProcessingRequest });
+
+    if (req.query.rolesUpdate) {
+        type = "roles_request";
+    }
+
+    res.render("user_profile", { pageName: "Mijn profiel", session: req.session, alertText, roleRequest, roleProcessingRequest, type });
 };
 
 exports.changeUserProfileDetails = (req, res) => {
@@ -319,9 +325,17 @@ exports.changeUserProfileDetails = (req, res) => {
         }
 
         if (typeof errors.firstNameErr != "undefined" || typeof errors.lastNameErr != "undefined" || typeof errors.emailAddressErr != "undefined" || typeof errors.phoneNumberErr != "undefined" || typeof errors.streetErr != "undefined" || typeof errors.houseNumberErr != "undefined" || typeof errors.houseNumberAdditionErr != "undefined" || typeof errors.townErr != "undefined" || (typeof errors.postalCodeErr != "undefined" && req.session.user.activeRole == "client")) {
-            res.render("user_profile", { pageName: "Mijn profiel", session: req.session, ...errors, type });
+            (async () => {
+                const roleRequest = await Request.find({ userId: req.session.user.userId, type: "addClientRole", status: { $ne: "Afgewezen" } });
+                const roleProcessingRequest = await Request.find({ userId: req.session.user.userId, type: "addClientRole", status: "In behandeling" });
+                res.render("user_profile", { pageName: "Mijn profiel", session: req.session, ...errors, type, roleRequest, roleProcessingRequest });
+            })();
         } else if (typeof errors.firstNameErr != "undefined" || typeof errors.lastNameErr != "undefined" || (typeof errors.emailAddressErr != "undefined" && req.session.user.activeRole != "client")) {
-            res.render("user_profile", { pageName: "Mijn profiel", session: req.session, ...errors, type });
+            (async () => {
+                const roleRequest = await Request.find({ userId: req.session.user.userId, type: "addClientRole", status: { $ne: "Afgewezen" } });
+                const roleProcessingRequest = await Request.find({ userId: req.session.user.userId, type: "addClientRole", status: "In behandeling" });
+                res.render("user_profile", { pageName: "Mijn profiel", session: req.session, ...errors, type, roleRequest, roleProcessingRequest });
+            })();
         } else {
             (async () => {
                 const user = req.session.user;
@@ -388,7 +402,11 @@ exports.changePassword = (req, res) => {
         }
 
         if (typeof errors.currentPasswordErr != "undefined" || typeof errors.newPasswordErr != "undefined" || typeof errors.confirmPasswordErr != "undefined") {
-            res.render("user_profile", { pageName: "Mijn profiel", session: req.session, ...errors, type });
+            (async () => {
+                const roleRequest = await Request.find({ userId: req.session.user.userId, type: "addClientRole", status: { $ne: "Afgewezen" } });
+                const roleProcessingRequest = await Request.find({ userId: req.session.user.userId, type: "addClientRole", status: "In behandeling" });
+                res.render("user_profile", { pageName: "Mijn profiel", session: req.session, ...errors, type, roleRequest, roleProcessingRequest });
+            })();
         } else {
             (async () => {
                 await User.updateOne({ _id: req.session.user.userId }, { $set: { password: bcrypt.hashSync(newPassword, bcrypt.genSaltSync()), confirmPassword: bcrypt.hashSync(newPassword, bcrypt.genSaltSync()) } });
@@ -415,6 +433,8 @@ exports.requestRole = async (req, res) => {
         request.save();
     }
 
+    res.redirect("/user/profile?requestRole=true&rolesUpdate=true");
+
     const sendStatus = await notifyCoordinatorRequest(req, res, "addClientRole");
 
     if (sendStatus) {
@@ -422,8 +442,6 @@ exports.requestRole = async (req, res) => {
     } else {
         console.log("Mail not send");
     }
-
-    res.redirect("/user/profile?requestRole=true");
 };
 
 exports.cancelRequestRole = async (req, res) => {
@@ -436,7 +454,7 @@ exports.cancelRequestRole = async (req, res) => {
         await Request.findOneAndDelete({ _id: requestId });
     }
 
-    res.redirect("/user/profile");
+    res.redirect("/user/profile?rolesUpdate=true");
 };
 
 exports.switchActiveRole = async (req, res) => {
