@@ -179,7 +179,7 @@
                                         <% if(typeof assignment != "undefined") { %>
                                             <input type="number" name="playgroundHouseNumber" id="playgroundHouseNumber" class="form-control" min="0" value="<%=assignment.playgroundHouseNumber%>"/>
                                         <% } else { %>
-                                            <input type="text" name="playgroundHouseNumber" id="playgroundHouseNumber" class="form-control" value="<% if(typeof oldValues != "undefined"){%><%=oldValues.playgroundHouseNumber%><%}%>"/>
+                                            <input type="number" name="playgroundHouseNumber" id="playgroundHouseNumber" class="form-control" value="<% if(typeof oldValues != "undefined"){%><%=oldValues.playgroundHouseNumber%><%}%>"/>
                                         <% } %>
                                         
                                         <label class="form-label form-error"><% if(typeof playgroundHouseNumberErr != "undefined"){%><%=playgroundHouseNumberErr%><%}else{%>&nbsp;<%}%></label>
