@@ -226,7 +226,7 @@ exports.getUserProfile = async (req, res) => {
     if (req.query.changedProfile) {
         alertText = "Gegevens zijn succesvol gewijzigd!";
     } 
-    res.render("user_profile", { pageName: "Mijn profiel", session: req.session, roleRequest, roleProcessingRequest });
+    res.render("user_profile", { pageName: "Mijn profiel", session: req.session, alertText, roleRequest, roleProcessingRequest });
 };
 
 exports.changeUserProfileDetails = (req, res) => {
