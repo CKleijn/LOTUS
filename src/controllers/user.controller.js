@@ -225,6 +225,8 @@ exports.getUserProfile = async (req, res) => {
     let alertText = "";
     if (req.query.changedProfile) {
         alertText = "Gegevens zijn succesvol gewijzigd!";
+    } else if (req.query.requestRole) {
+        alertText = "Nieuwe rol aangevraagd!";
     }
     res.render("user_profile", { pageName: "Mijn profiel", session: req.session, alertText, roleRequest, roleProcessingRequest });
 };
@@ -421,7 +423,7 @@ exports.requestRole = async (req, res) => {
         console.log("Mail not send");
     }
 
-    res.redirect("/user/profile");
+    res.redirect("/user/profile?requestRole=true");
 };
 
 exports.cancelRequestRole = async (req, res) => {
@@ -579,7 +581,6 @@ exports.getAllValidMembers = async () => {
             },
         },
     });
-
 };
 
 exports.getAllInvitedMembers = async () => {
