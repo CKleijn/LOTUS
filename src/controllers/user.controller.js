@@ -552,11 +552,11 @@ exports.getAllUsers = async () => {
 };
 
 exports.getAllValidClients = async () => {
-    return await User.find({ roles: "client", roles: { $ne: "coordinator" }});
+    return await User.find({ roles: "client", emailAddress: { $ne: "lotuscoordinator22@gmail.com" }});
 };
 
 exports.getAllValidMembers = async () => {
-    return await User.find({ firstName: { $ne: "" }, lastName: { $ne: "" }, roles: "member", roles: { $ne: "coordinator" } });
+    return await User.find({ firstName: { $ne: "" }, lastName: { $ne: "" }, roles: "member", emailAddress: { $ne: "lotuscoordinator22@gmail.com" }});
 };
 
 exports.getAllInvitedMembers = async () => {
