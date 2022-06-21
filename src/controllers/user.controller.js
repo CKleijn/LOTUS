@@ -122,6 +122,7 @@ exports.createUser = (req, res) => {
                     firstName: user.firstName,
                     lastName: user.lastName,
                     emailAddress: user.emailAddress,
+                    phoneNumber: user.phoneNumber,
                     street: user.street,
                     houseNumber: user.houseNumber,
                     houseNumberAddition: user.houseNumberAddition,
@@ -172,7 +173,7 @@ exports.createMember = (req, res) => {
                         console.log("Not send");
                     }
 
-                    res.redirect("/user");
+                    res.redirect("/user?invitedMember=true");
                 } else {
                     res.render("user_overview", { pageName: "Gebruikers", session: req.session, emailAddressErr: "Dit e-mailadres is al in gebruik!", allMembers, allClients, allInvitedMembers });
                 }
@@ -194,7 +195,7 @@ exports.notifyInvitedMember = async (req, res) => {
         console.log("Mail did not send");
     }
 
-    return res.redirect("/user");
+    return res.redirect("/user?remindedMember=true");
 };
 
 const insertMember = async (emailAddress) => {
@@ -214,8 +215,13 @@ const insertMember = async (emailAddress) => {
     return password;
 };
 
-exports.getUserProfile = (req, res) => {
-    res.render("user_profile", { pageName: "Mijn profiel", session: req.session });
+exports.getUserProfile = async (req, res) => {
+    const roleRequest = await Request.find({ userId: req.session.user.userId, type: "addClientRole", status: { "$ne": "Afgewezen" }})
+    let alertText = "";
+    if (req.query.changedProfile) {
+        alertText = "Gegevens zijn succesvol gewijzigd!";
+    } 
+    res.render("user_profile", { pageName: "Mijn profiel", session: req.session, alertText, roleRequest });
 };
 
 exports.changeUserProfileDetails = (req, res) => {
@@ -335,7 +341,9 @@ exports.changeUserProfileDetails = (req, res) => {
                     user.postalCode = postalCode;
                 }
 
-                return res.redirect("/user/profile");
+              
+
+                return res.redirect("/user/profile?changedProfile=true");
             })();
         }
     })();
@@ -385,14 +393,77 @@ exports.changePassword = (req, res) => {
     })();
 };
 
+exports.requestRole = async (req, res) => {
+    const userId = req.session.user.userId;
+
+    const oldRequest = await Request.find({ userId: userId, type: "addClientRole", status: "Afgewezen" })
+
+    if(oldRequest.length > 0) {
+        const oldRequestId = oldRequest[0]._id;
+        await Request.findOneAndUpdate({ _id: oldRequestId }, {$set: { requestDate: Date.now(), status: "In behandeling" } })
+    } else {
+        const request = new Request({
+            userId: userId,
+            type: "addClientRole",
+        });
+
+        request.save();
+    }
+
+    const sendStatus = await notifyCoordinatorRequest(req, res, "addClientRole");
+
+    if (sendStatus) {
+        console.log("Coordinator notified (Add client role)");
+    } else {
+        console.log("Mail not send");
+    }
+
+    res.redirect("/user/profile")
+}
+
 exports.changeRoles = async (req, res) => {
     const userId = req.query.id;
-    const postedRole = req.body;
+    const clientRole = req.body.client;
+    const memberRole = req.body.member;
 
     const userInfo = await User.findById({ _id: userId });
 
-    if (postedRole != userInfo.roles) {
-        await User.findOneAndUpdate({ _id: userId }, { $set: { roles: postedRole.roles } });
+    if(typeof clientRole != "undefined" || typeof memberRole != "undefined") {
+        if ("client" != userInfo.roles[0] && "client" != userInfo.roles[1]) {
+            if(clientRole == "on") {
+                await User.findOneAndUpdate({ _id: userId }, { $push: { roles: "client" } });
+
+                const oldRequest = await Request.find({ userId: userId, type: "addClientRole" })
+            
+                if(oldRequest.length > 0) {
+                    const oldRequestId = oldRequest[0]._id;
+                    await Request.findOneAndUpdate({ _id: oldRequestId }, {$set: { status: "Goedgekeurd" } })
+                } else {
+                    const request = new Request({
+                        userId: userId,
+                        type: "addClientRole",
+                        status: "Goedgekeurd"
+                    });
+            
+                    request.save();
+                }
+            }
+        } else {
+            if(typeof clientRole == "undefined" || clientRole == "off") {
+                await User.findOneAndUpdate({ _id: userId }, { $pull: { roles: "client" } });
+                await Request.findOneAndDelete({ userId: userId, type: "addClientRole" })
+            }
+        }
+
+        if ("member" != userInfo.roles[0] && "member" != userInfo.roles[1]) {
+            if(memberRole == "on") {
+                await User.findOneAndUpdate({ _id: userId }, { $push: { roles: "member" } });
+            }
+        } else {
+            if(typeof memberRole == "undefined" || memberRole == "off") {
+                await User.findOneAndUpdate({ _id: userId }, { $pull: { roles: "member" } });
+            }
+        }
     }
 
     res.redirect("/user");
@@ -417,14 +488,14 @@ exports.deleteMember = async (req, res) => {
                     await Request.findOneAndUpdate({ assignmentId: assignment._id }, { $set: { status: "Openstaand" } });
                 }
             }
-        };
-    };
+        }
+    }
 
     // Delete the member
     await User.findOneAndDelete({ _id: memberId });
 
     res.redirect("/user");
-}
+};
 
 const updateUserByEmail = async (user) => {
     try {

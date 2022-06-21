@@ -23,9 +23,15 @@ exports.createRequest = async (req, res, objectId, type) => {
 };
 
 exports.getAllRequests = async (req, res) => {
+    let alertText = "";
+    if (req.query.declinedRequest) {
+        alertText = "Aanvraag afgewezen!";
+    } else if (req.query.approvedRequest) {
+        alertText = "Aanvraag goedgekeurd!"
+    } 
     const requests = await Request.find({ status: "In behandeling" });
     const parsedRequests = await parseRequest(requests);
-    return res.render("request_overview", { pageName: "Verzoeken", session: req.session, requests: parsedRequests });
+    return res.render("request_overview", { pageName: "Verzoeken", session: req.session, requests: parsedRequests, alertText });
 };
 
 async function parseRequest(results) {
@@ -61,12 +67,27 @@ exports.approveRequest = async (req, res) => {
         req.session.requests = await req.session.requests.filter((request) => request._id != requestId);
         await Assignment.findOneAndUpdate({ _id: assignmentId }, { $set: { isApproved: true } });
         await Request.findOneAndUpdate({ _id: requestId }, { $set: { status: "Openstaand" } });
-        res.redirect("/request");
+        res.redirect("/request?approvedRequest=true");
 
         const sendStatus = await notifyUserThroughMail(userData.emailAddress, userData.firstName, "approvedCreateAssignment", "Aanvraag opdracht aanmaken goedgekeurd");
 
         if (sendStatus) {
             console.log("Client notified (Approved assignment create)");
+        } else {
+            console.log("Email not send");
+        }
+    }
+
+    if (requestType === "addClientRole") {
+        req.session.requests = await req.session.requests.filter((request) => request._id != requestId);
+        await User.findOneAndUpdate({ _id: userId }, { $push: { roles: "client" } });
+        await Request.findOneAndUpdate({ _id: requestId }, { $set: { status: "Goedgekeurd" } });
+        res.redirect("/request");
+
+        const sendStatus = await notifyUserThroughMail(userData.emailAddress, userData.firstName, "approvedAddClientRole", "Aanvraag om opdrachtgever te worden goedgekeurd");
+
+        if (sendStatus) {
+            console.log("Client notified (Approved client role)");
         } else {
             console.log("Email not send");
         }
@@ -102,7 +123,7 @@ exports.approveRequest = async (req, res) => {
         req.session.requests = await req.session.requests.filter((request) => request._id != requestId);
         await Assignment.findOneAndUpdate({ _id: assignmentId }, { $set: { ...updatedAssignment } });
         await Request.findOneAndUpdate({ _id: requestId }, { $set: { status: "Openstaand" } });
-        res.redirect("/request");
+        res.redirect("/request?approvedRequest=true");
 
         const sendStatus = await notifyUserThroughMail(userData.emailAddress, userData.firstName, "approvedUpdateAssignment", "Aanvraag opdracht wijzigen goedgekeurd");
 
@@ -117,7 +138,7 @@ exports.approveRequest = async (req, res) => {
         req.session.requests = await req.session.requests.filter((request) => request._id != requestId);
         await Assignment.deleteOne({ _id: assignmentId });
         await Request.deleteMany({ assignmentId: assignmentId });
-        res.redirect("/request");
+        res.redirect("/request?approvedRequest=true");
 
         const sendStatus = await notifyUserThroughMail(userData.emailAddress, userData.firstName, "approvedDeleteAssignment", "Aanvraag opdracht verwijderen goedgekeurd");
 
@@ -141,7 +162,7 @@ exports.approveRequest = async (req, res) => {
         if (assignment.participatingLotusVictims.length === assignment.amountOfLotusVictims) {
             await Request.findOneAndUpdate({ assignmentId: assignmentId, type: "createAssignment" }, { $set: { status: "Compleet" } });
 
-            res.redirect("/request");
+            res.redirect("/request?approvedRequest=true");
 
             for await (let victim of assignment.participatingLotusVictims) {
                 const pdf = await buildPDF(undefined, undefined, assignment);
@@ -150,9 +171,9 @@ exports.approveRequest = async (req, res) => {
         } else {
             await Request.findOneAndUpdate({ assignmentId: assignmentId, type: "createAssignment" }, { $set: { status: "Openstaand" } });
 
-            res.redirect("/request");
+            res.redirect("/request?approvedRequest=true");
         }
-
+      
         const sendStatus = await notifyUserThroughMail(userData.emailAddress, userData.firstName, "approvedEnrollment", "Inschrijving goedgekeurd");
 
         if (sendStatus) {
@@ -173,7 +194,7 @@ exports.approveRequest = async (req, res) => {
         if (assignment.participatingLotusVictims.length === assignment.amountOfLotusVictims) {
             await Request.findOneAndUpdate({ assignmentId: assignmentId, type: "createAssignment" }, { $set: { status: "Compleet" } });
 
-            res.redirect("/request");
+            res.redirect("/request?approvedRequest=true");
 
             for await (let victim of assignment.participatingLotusVictims) {
                 const pdf = await buildPDF(undefined, undefined, assignment);
@@ -182,7 +203,7 @@ exports.approveRequest = async (req, res) => {
         } else {
             await Request.findOneAndUpdate({ assignmentId: assignmentId, type: "createAssignment" }, { $set: { status: "Openstaand" } });
 
-            res.redirect("/request");
+            res.redirect("/request?approvedRequest=true");
         }
 
         await Request.deleteMany({ assignmentId: assignmentId, userId: userId, type: "enrollment", status: "Goedgekeurd" });
@@ -208,7 +229,7 @@ exports.declineRequest = async (req, res) => {
         req.session.requests = await req.session.requests.filter((request) => request._id != requestId);
         await Request.findOneAndUpdate({ _id: requestId }, { $set: { status: "Afgewezen" } });
 
-        res.redirect("/request");
+        res.redirect("/request?declinedRequest=true");
 
         const sendStatus = await notifyUserThroughMail(userData.emailAddress, userData.firstName, "deniedCreateAssignment", "Aanvraag opdracht aanmaken afgewezen");
 
@@ -219,11 +240,26 @@ exports.declineRequest = async (req, res) => {
         }
     }
 
+    if (requestType === "addClientRole") {
+        req.session.requests = await req.session.requests.filter((request) => request._id != requestId);
+        await Request.findOneAndUpdate({ _id: requestId }, { $set: { status: "Afgewezen" } });
+
+        res.redirect("/request");
+
+        const sendStatus = await notifyUserThroughMail(userData.emailAddress, userData.firstName, "deniedAddClientRole", "Aanvraag om opdrachtgever te worden afgewezen");
+
+        if (sendStatus) {
+            console.log("Client notified (Denied client role)");
+        } else {
+            console.log("Email not send");
+        }
+    }
+
     if (requestType === "updateAssignment") {
         req.session.requests = await req.session.requests.filter((request) => request._id != requestId);
         await Request.findOneAndUpdate({ _id: requestId }, { $set: { status: "Afgewezen" } });
         await Request.deleteOne({ assignmentId: assignmentId, userId: userId, type: "updateAssignment", status: "Afgewezen" });
-        res.redirect("/request");
+        res.redirect("/request?declinedRequest=true");
 
         const sendStatus = await notifyUserThroughMail(userData.emailAddress, userData.firstName, "deniedUpdateAssignment", "Aanvraag opdracht wijzigen afgewezen");
 
@@ -238,7 +274,7 @@ exports.declineRequest = async (req, res) => {
         req.session.requests = await req.session.requests.filter((request) => request._id != requestId);
         await Request.findOneAndUpdate({ _id: requestId }, { $set: { status: "Afgewezen" } });
         await Request.deleteOne({ assignmentId: assignmentId, userId: userId, type: "deleteAssignment", status: "Afgewezen" });
-        res.redirect("/request");
+        res.redirect("/request?declinedRequest=true");
 
         const sendStatus = await notifyUserThroughMail(userData.emailAddress, userData.firstName, "deniedDeleteAssignment", "Aanvraag opdracht verwijderen afgewezen");
 
@@ -252,7 +288,7 @@ exports.declineRequest = async (req, res) => {
     if (requestType === "enrollment") {
         req.session.requests = await req.session.requests.filter((request) => request._id != requestId);
         await Request.findOneAndUpdate({ _id: requestId }, { $set: { status: "Afgewezen" } });
-        res.redirect("/request");
+        res.redirect("/request?declinedRequest=true");
 
         const sendStatus = await notifyUserThroughMail(userData.emailAddress, userData.firstName, "deniedEnrollment", "Inschrijving afgewezen");
 
@@ -267,7 +303,7 @@ exports.declineRequest = async (req, res) => {
         req.session.requests = await req.session.requests.filter((request) => request._id != requestId);
         await Request.findOneAndUpdate({ _id: requestId }, { $set: { status: "Afgewezen" } });
         await Request.deleteOne({ assignmentId: assignmentId, userId: userId, type: "cancelEnrollment", status: "Afgewezen" });
-        res.redirect("/request");
+        res.redirect("/request?declinedRequest=true");
 
         const sendStatus = await notifyUserThroughMail(userData.emailAddress, userData.firstName, "deniedCancelEnrollment", "Uitschrijving afgewezen");
 
