@@ -3,9 +3,9 @@
 <main id="main" class="main">
     <div class="pagetitle">
 
-        <% if (session.user.roles == "coordinator" || session.user.roles == "member") { %>
+        <% if (session.user.activeRole == "coordinator" || session.user.activeRole == "member") { %>
             <h1>Opdrachten</h1>
-        <% } else if (session.user.roles == "client") { %>
+        <% } else if (session.user.activeRole == "client") { %>
             <h1>Mijn opdrachten</h1>
         <% } %>
         
@@ -13,9 +13,9 @@
             <ol class="breadcrumb">
                 <li class="breadcrumb-item"><a href="/">Dashboard</a></li>
 
-                <% if (session.user.roles == "coordinator" || session.user.roles == "member") { %>
+                <% if (session.user.activeRole == "coordinator" || session.user.activeRole == "member") { %>
                     <li class="breadcrumb-item active">Opdrachten</li>
-                <% } else if (session.user.roles == "client") { %>
+                <% } else if (session.user.activeRole == "client") { %>
                     <li class="breadcrumb-item active">Mijn opdrachten</li>
                 <% } %>
             </ol>
@@ -102,7 +102,7 @@
     <section class="section">
         <div class="row">
             <div class="col-lg-12">
-                <% if (session.user.roles == "coordinator") { %>
+                <% if (session.user.activeRole == "coordinator") { %>
                     <div>
                         <div class="row">
                             <% if(assignments.length > 0) { %>
@@ -192,6 +192,8 @@
                                                     <b>Achternaam:</b> <%= a.lastName %>
                                                     <br>
                                                     <b>E-mailadres:</b> <%= a.emailAddress %> 
+                                                    <br>
+                                                    <b>Telefoonnummer:</b> <%= a.phoneNumber %> 
                                                     <br>
                                                     <b>Straat:</b> <%= a.street %> 
                                                     <br>
@@ -368,7 +370,7 @@
                             <% } %> 
                         </div>
                     </div>
-                <% } else if (session.user.roles == "client") { %>
+                <% } else if (session.user.activeRole == "client") { %>
                     <div>
                         <div class="row">
                             <% if(assignments.length > 0) { %>
@@ -491,6 +493,8 @@
                                                     <b>Achternaam:</b> <%= a.lastName %>
                                                     <br>
                                                     <b>E-mailadres:</b> <%= a.emailAddress %> 
+                                                    <br>
+                                                    <b>Telefoonnummer:</b> <%= a.phoneNumber %> 
                                                     <br>
                                                     <b>Straat:</b> <%= a.street %> 
                                                     <br>
@@ -635,7 +639,7 @@
                             <% } %> 
                         </div>
                     </div>
-                <% } else if (session.user.roles == "member") { %>
+                <% } else if (session.user.activeRole == "member") { %>
                 <div>
                     <div class="row">
                     <% if(assignments.length > 0) { %>
@@ -713,6 +717,8 @@
                                                 <b>Achternaam:</b> <%= a.lastName %>
                                                 <br>
                                                 <b>E-mailadres:</b> <%= a.emailAddress %> 
+                                                <br>
+                                                <b>Telefoonnummer:</b> <%= a.phoneNumber %> 
                                                 <br>
                                                 <b>Straat:</b> <%= a.street %> 
                                                 <br>

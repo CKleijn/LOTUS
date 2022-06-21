@@ -36,7 +36,7 @@ exports.isNotLoggedIn = (req, res, next) => {
 exports.isCoordinator = (req, res, next) => {
     const session = req.session;
 
-    if (session.user.roles === "coordinator") {
+    if (session.user.activeRole === "coordinator") {
         next();
     } else {
         res.redirect("back");
@@ -46,7 +46,7 @@ exports.isCoordinator = (req, res, next) => {
 exports.isClient = (req, res, next) => {
     const session = req.session;
 
-    if (session.user.roles === "client") {
+    if (session.user.activeRole === "client") {
         next();
     } else {
         res.redirect("back");
@@ -56,7 +56,7 @@ exports.isClient = (req, res, next) => {
 exports.isMember = (req, res, next) => {
     const session = req.session;
 
-    if (session.user.roles === "member") {
+    if (session.user.activeRole === "member") {
         next();
     } else {
         res.redirect("back");
@@ -90,7 +90,7 @@ exports.login = (req, res) => {
                             if (err) throw err;
                             let session = req.session;
 
-                            if (currentUser.roles[0] == "client") {
+                            if (currentUser.activeRole[0] == "client") {
                                 session.user = {
                                     userId: currentUser._id,
                                     firstName: currentUser.firstName,
@@ -102,19 +102,21 @@ exports.login = (req, res) => {
                                     houseNumberAddition: currentUser.houseNumberAddition,
                                     postalCode: currentUser.postalCode,
                                     town: currentUser.town,
-                                    roles: currentUser.roles[0],
+                                    roles: currentUser.roles,
+                                    activeRole: currentUser.activeRole[0],
                                     createdDate: currentUser.createdDate,
                                     lastLoginDate: currentUser.lastLoginDate,
                                 };
                                 return res.redirect("/");
-                            } else if (currentUser.roles[0] == "coordinator") {
+                            } else if (currentUser.activeRole[0] == "coordinator") {
                                 (async () => {
                                     session.user = {
                                         userId: currentUser._id,
                                         firstName: currentUser.firstName,
                                         lastName: currentUser.lastName,
                                         emailAddress: currentUser.emailAddress,
-                                        roles: currentUser.roles[0],
+                                        roles: currentUser.roles,
+                                        activeRole: currentUser.activeRole[0],
                                         createdDate: currentUser.createdDate,
                                         lastLoginDate: currentUser.lastLoginDate,
                                     };
@@ -149,7 +151,8 @@ exports.login = (req, res) => {
                                     firstName: currentUser.firstName,
                                     lastName: currentUser.lastName,
                                     emailAddress: currentUser.emailAddress,
-                                    roles: currentUser.roles[0],
+                                    roles: currentUser.roles,
+                                    activeRole: currentUser.activeRole[0],
                                     createdDate: currentUser.createdDate,
                                     lastLoginDate: currentUser.lastLoginDate,
                                 };
@@ -170,7 +173,7 @@ exports.login = (req, res) => {
 };
 
 exports.loadPendingRequests = async (req, res, next) => {
-    if (req.session.user.roles === "coordinator") {
+    if (req.session.user.activeRole === "coordinator") {
         let requests = await Request.find({ status: "In behandeling" });
         let parsedRequests = [];
 
@@ -245,7 +248,8 @@ exports.setupMember = (req, res) => {
                 firstName: updatedUser.firstName,
                 lastName: updatedUser.lastName,
                 emailAddress: updatedUser.emailAddress,
-                roles: updatedUser.roles[0],
+                roles: updatedUser.roles,
+                activeRole: updatedUser.activeRole[0],
                 createdDate: updatedUser.createdDate,
                 lastLoginDate: updatedUser.lastLoginDate,
             };

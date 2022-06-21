@@ -4,8 +4,10 @@ const axios = require("axios");
 exports.buildPDF = async (dataCallback, endCallback, assignment) => {
   const doc = new PDFDocument({ bufferPages: true, size: "A4", margin: 50 });
 
-  doc.on('data', dataCallback);
-  doc.on('end', endCallback);
+  if (dataCallback != undefined && endCallback != undefined) {
+    doc.on('data', dataCallback);
+    doc.on('end', endCallback);
+  }
 
   const url = "https://www.organisatielotus.nl/wp-content/uploads/2018/10/LOTUS_Logo_10_2018-e1543227820406.jpg"
 

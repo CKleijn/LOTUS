@@ -3,8 +3,9 @@ const Request = require("../models/request.model");
 const { assignmentModel } = require("../models/assignment.model");
 const Assignment = assignmentModel;
 const { userModel } = require("../models/user.model");
-const { notifyUserThroughMail } = require("../controllers/mail.controller");
+const { notifyUserThroughMail, sendPDFMail } = require("../controllers/mail.controller");
 const User = userModel;
+const { buildPDF } = require("../services/pdf-service");
 
 exports.createRequest = async (req, res, objectId, type) => {
     // Get session
@@ -72,6 +73,21 @@ exports.approveRequest = async (req, res) => {
 
         if (sendStatus) {
             console.log("Client notified (Approved assignment create)");
+        } else {
+            console.log("Email not send");
+        }
+    }
+
+    if (requestType === "addClientRole") {
+        req.session.requests = await req.session.requests.filter((request) => request._id != requestId);
+        await User.findOneAndUpdate({ _id: userId }, { $push: { roles: "client" } });
+        await Request.findOneAndUpdate({ _id: requestId }, { $set: { status: "Goedgekeurd" } });
+        res.redirect("/request");
+
+        const sendStatus = await notifyUserThroughMail(userData.emailAddress, userData.firstName, "approvedAddClientRole", "Aanvraag om opdrachtgever te worden goedgekeurd");
+
+        if (sendStatus) {
+            console.log("Client notified (Approved client role)");
         } else {
             console.log("Email not send");
         }
@@ -145,12 +161,19 @@ exports.approveRequest = async (req, res) => {
 
         if (assignment.participatingLotusVictims.length === assignment.amountOfLotusVictims) {
             await Request.findOneAndUpdate({ assignmentId: assignmentId, type: "createAssignment" }, { $set: { status: "Compleet" } });
+
+            res.redirect("/request?approvedRequest=true");
+
+            for await (let victim of assignment.participatingLotusVictims) {
+                const pdf = await buildPDF(undefined, undefined, assignment);
+                await sendPDFMail(pdf, victim, assignment);
+            }
         } else {
             await Request.findOneAndUpdate({ assignmentId: assignmentId, type: "createAssignment" }, { $set: { status: "Openstaand" } });
+
+            res.redirect("/request?approvedRequest=true");
         }
-
-        res.redirect("/request?approvedRequest=true");
-
+      
         const sendStatus = await notifyUserThroughMail(userData.emailAddress, userData.firstName, "approvedEnrollment", "Inschrijving goedgekeurd");
 
         if (sendStatus) {
@@ -170,14 +193,21 @@ exports.approveRequest = async (req, res) => {
 
         if (assignment.participatingLotusVictims.length === assignment.amountOfLotusVictims) {
             await Request.findOneAndUpdate({ assignmentId: assignmentId, type: "createAssignment" }, { $set: { status: "Compleet" } });
+
+            res.redirect("/request?approvedRequest=true");
+
+            for await (let victim of assignment.participatingLotusVictims) {
+                const pdf = await buildPDF(undefined, undefined, assignment);
+                await sendPDFMail(pdf, victim, assignment);
+            }
         } else {
             await Request.findOneAndUpdate({ assignmentId: assignmentId, type: "createAssignment" }, { $set: { status: "Openstaand" } });
+
+            res.redirect("/request?approvedRequest=true");
         }
 
         await Request.deleteMany({ assignmentId: assignmentId, userId: userId, type: "enrollment", status: "Goedgekeurd" });
         await Request.deleteMany({ assignmentId: assignmentId, userId: userId, type: "cancelEnrollment", status: "Goedgekeurd" });
-
-        res.redirect("/request?approvedRequest=true");
 
         const sendStatus = await notifyUserThroughMail(userData.emailAddress, userData.firstName, "approvedCancelEnrollment", "Uitschrijving goedgekeurd");
 
@@ -205,6 +235,21 @@ exports.declineRequest = async (req, res) => {
 
         if (sendStatus) {
             console.log("Client notified (Denied assignment create)");
+        } else {
+            console.log("Email not send");
+        }
+    }
+
+    if (requestType === "addClientRole") {
+        req.session.requests = await req.session.requests.filter((request) => request._id != requestId);
+        await Request.findOneAndUpdate({ _id: requestId }, { $set: { status: "Afgewezen" } });
+
+        res.redirect("/request");
+
+        const sendStatus = await notifyUserThroughMail(userData.emailAddress, userData.firstName, "deniedAddClientRole", "Aanvraag om opdrachtgever te worden afgewezen");
+
+        if (sendStatus) {
+            console.log("Client notified (Denied client role)");
         } else {
             console.log("Email not send");
         }

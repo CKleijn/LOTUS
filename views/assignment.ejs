@@ -366,7 +366,7 @@
                                     </div>
                                 <% } else if (url.includes("/assignment/update")) { %>
                                     <div class="col-12">
-                                        <button type="submit" class="btn btn-primary w-100">Opdracht bewerken<%if(session.user.roles === "client") { %> <%= "aanvragen" %> <% } %></button>
+                                        <button type="submit" class="btn btn-primary w-100">Opdracht bewerken<%if(session.user.activeRole === "client") { %> <%= "aanvragen" %> <% } %></button>
                                     </div>
                                 <% } %>
                             </div>

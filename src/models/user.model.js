@@ -83,6 +83,11 @@ exports.userSchema = new mongoose.Schema({
         enum: ["coordinator", "client", "member"],
         required: [true, "Minstens één rol verplicht!"],
     },
+    activeRole: {
+        type: [String],
+        enum: ["coordinator", "client", "member"],
+        required: [true, "Minstens één rol verplicht!"],
+    },
     createdDate: {
         type: Date,
         default: Date.now,
