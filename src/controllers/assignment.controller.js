@@ -487,7 +487,11 @@ exports.getAllAssignments = (req, res) => {
         alertText = "Wijzigen van opdracht succesvol aangevraagd!"
     } else if (req.query.acceptEnroll) {
         alertText = "Inschrijving voor opdracht is succesvol aangevraagd!"
-    }
+    } else if (req.query.cancelRequest) {
+        alertText = "Aanvraag succesvol geannuleerd!"
+    } else if (req.query.deleteAssignment) {
+        alertText = "Opdracht succesvol verwijderd!"
+    } 
 
     if (url.includes("sortPlayground")) {
         sortPlaygroundValue = req.query.sortPlayground;
@@ -1173,7 +1177,7 @@ exports.deleteAssignment = async (req, res) => {
             console.log("Email not send");
         }
 
-        res.redirect("/assignment");
+        res.redirect("/assignment?deleteAssignment=true");
     }
 
     if (session.user.roles === "client") {
@@ -1235,7 +1239,7 @@ exports.cancelEnrollment = (req, res) => {
     if (status == "Ingeschreven") {
         Request.deleteOne({ requestType: "enrollment", assignmentId: assignmentId, userId: session.user.userId }, function (err, results) {
             Assignment.findOneAndUpdate({ assignmentId: assignmentId }, { status: "Niet ingeschreven" });
-            res.redirect("/assignment");
+            res.redirect("/assignment?cancelRequest=true");
         });
     } else if (cancelStatus == "Uitschrijfverzoek ingediend") {
         Request.deleteOne({ requestType: "cancelEnrollment", assignmentId: assignmentId, userId: session.user.userId, status: "In behandeling" }, function (err, results) {
