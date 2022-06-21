@@ -34,7 +34,7 @@
                     <div class="card-body profile-card pt-4 d-flex flex-column align-items-center">
                         <img src="/assets/img/avatar.jpg" alt="Profile" class="rounded-circle" />
                         <h2><%= session.user.firstName + " " + session.user.lastName%></h2>
-                        <% let role = ""; switch(session.user.roles) { case "coordinator": role = "Coördinator"; break; case "client" : role = "Opdrachtgever"; break; case "member": role = "LOTUSslachtoffer"; break; } %>
+                        <% let role = ""; switch(session.user.activeRole) { case "coordinator": role = "Coördinator"; break; case "client" : role = "Opdrachtgever"; break; case "member": role = "LOTUSslachtoffer"; break; } %>
 
                         <h3><%=role%></h3>
                     </div>
@@ -67,9 +67,19 @@
                                 <button id="passwordTab" class="nav-link active" data-bs-toggle="tab" data-bs-target="#profile-change-password">Wachtwoord veranderen</button>
                                 <% } else {%>
                                 <button id="passwordTab" class="nav-link" data-bs-toggle="tab" data-bs-target="#profile-change-password">Wachtwoord veranderen</button>
-
                                 <% } %>
                             </li>
+                            <% if (session.user.activeRole == "member" && session.user.roles[1] != "client") { %>
+                                <% if(roleRequest.length == 0 || roleProcessingRequest.length > 0) { %> 
+                                <li class="nav-item">
+                                    <% if(typeof type != "undefined" && type == "roles_request") { %>
+                                    <button id="rolesTab" class="nav-link active" data-bs-toggle="tab" data-bs-target="#profile-roles-request">Rol aanvragen</button>
+                                    <% } else {%>
+                                    <button id="rolesTab" class="nav-link" data-bs-toggle="tab" data-bs-target="#profile-roles-request">Rol aanvragen</button>
+                                    <% } %>
+                                </li>
+                                <% } %>
+                            <% } %>
                         </ul>
                         <div class="tab-content pt-2"> 
                             <% if(typeof type == "undefined") { %>
@@ -94,7 +104,7 @@
                                     <div class="col-lg-9 col-md-8"><%= session.user.emailAddress %></div>
                                 </div>
 
-                                <% if(session.user.roles == "client") { %> 
+                                <% if(session.user.activeRole == "client") { %> 
 
                                     <div class="row">
                                         <div class="col-lg-3 col-md-4 label">Telefoonnummer</div>
@@ -175,7 +185,7 @@
                                         </div>
                                     </div>
 
-                                   <% if(session.user.roles == "client") { %>
+                                   <% if(session.user.activeRole == "client") { %>
 
                                     <div class="row mb-3">
                                         <label for="Email" class="col-md-4 col-lg-3 col-form-label">Telefoonnummer</label>
@@ -324,7 +334,48 @@
                                         <button type="submit" class="btn btn-primary">Wachtwoord wijzigen</button>
                                     </div>
                                 </form>
-                                <!-- End Change Password Form -->
+                            </div>
+                            <!-- End Change Password Form -->
+                            <% if (session.user.activeRole == "member" && session.user.roles[1] != "client") { %>
+                                <% if(roleRequest.length == 0 && roleProcessingRequest.length == 0) { %> 
+                                    <% if(typeof type != "undefined" && type == "roles_request") { %>
+                                        <div class="tab-pane fade pt-3 active show" id="profile-roles-request">
+                                    <% } else { %> 
+                                        <div class="tab-pane fade pt-3" id="profile-roles-request">
+                                    <% } %> 
+                                    <!-- Request Role Form -->
+                                    <form action="/user/profile/roles" method="POST">
+                                        <div class="row mb-3">
+                                            <div class="col-md-8 col-lg-9">
+                                                <h5 class="card-title">Beschikbare rol</h5>
+                                                <div class="form-group">
+                                                    <div class="form-check">
+                                                        <input class="form-check-input" type="checkbox" id="client" name="client" checked disabled>
+                                                        <label class="form-check-label" style="font-size: 14px;">Opdrachtgever</label>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <button type="submit" class="btn btn-primary">Rol aanvragen</button>
+                                    </form>
+                                <% } else if (roleProcessingRequest.length > 0) { %> 
+                                    <% if(typeof type != "undefined" && type == "roles_request") { %>
+                                        <div class="tab-pane fade pt-3 active show" id="profile-roles-request">
+                                    <% } else { %> 
+                                        <div class="tab-pane fade pt-3" id="profile-roles-request">
+                                    <% } %> 
+                                    <div class="row mb-3">
+                                        <div class="col-md-12 col-lg-12">
+                                            <h5 class="card-title">Verzoek in behandeling <i class="bi bi-hourglass-split" style="float: right; font-size: 30px; color: #435df1;"></i></h5>
+                                            <p>Je hebt een verzoek gedaan om een opdrachtgever te worden!</p>
+                                            <form action="/user/profile/roles/cancel" method="POST">
+                                                <button type="submit" class="btn btn-danger">Verzoek annuleren</button>
+                                            </form>
+                                        </div>
+                                    </div>
+                                <% } %> 
+                            <% } %> 
+                            <!-- End Request Role Form Form -->
                             </div>
                         </div>
                         <!-- End Bordered Tabs -->

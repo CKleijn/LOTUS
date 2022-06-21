@@ -17,14 +17,14 @@
                 <div class="card">
                     <div class="card-body">
                         <h5 class="card-title">Welkom <%= session.user.firstName %></h5>
-                        <% let role = ""; switch(session.user.roles) { case "coordinator": role = "Coördinator"; break; case "client" : role = "Opdrachtgever"; break; case "member": role = "LOTUSslachtoffer"; break; } %>
+                        <% let role = ""; switch(session.user.activeRole) { case "coordinator": role = "Coördinator"; break; case "client" : role = "Opdrachtgever"; break; case "member": role = "LOTUSslachtoffer"; break; } %>
                         <p>Wat is het toch een mooie dag om een <%= role %> te zijn!</p>
                     </div>
                 </div>
             </div>
         </div>
         <div class="row">
-                <% if (session.user.roles == "coordinator") { %>
+                <% if (session.user.activeRole == "coordinator") { %>
                     <div class="col-lg-3">
                         <div class="card info-card sales-card">
         
@@ -89,7 +89,7 @@
                     </div>
                 <% } %>
 
-                <% if (session.user.roles == "client") { %>
+                <% if (session.user.activeRole == "client") { %>
                     <div class="col-lg-3">
                         <div class="card info-card sales-card">
         
@@ -115,7 +115,7 @@
                     </div>
                 <% } %>
 
-                <% if (session.user.roles == "member") { %>
+                <% if (session.user.activeRole == "member") { %>
                     <div class="col-lg-3">
                         <div class="card info-card sales-card">
         

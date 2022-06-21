@@ -53,31 +53,39 @@
                                         <% allClients.forEach(user => { %>
                                         <tr>
                                             <td><%=user.firstName + " " + user.lastName%></td>
-                                            <% let role = ""; switch(user.roles[0]) { case "coordinator": role = "Coördinator"; break; case "client" : role = "Opdrachtgever"; break; case "member": role = "LOTUSslachtoffer"; break; } %>
+                                            <% let role = ""; switch(user.activeRole[0]) { case "coordinator": role = "Coördinator"; break; case "client" : role = "Opdrachtgever"; break; case "member": role = "LOTUSslachtoffer"; break; } %>
                                             <td><%=user.emailAddress%></td>
                                             <td><%=user.phoneNumber%></td>
-                                            <td><%=user.street + " "%><%if(isNaN(user.houseNumber)){%><%}else{%><%= user.houseNumber + user.houseNumberAddition%><%}%></td>
+                                            <td><% if(!user.street || !user.houseNumber) { %><% } else { %><%=user.street + " "%><%if(isNaN(user.houseNumber)){%><%}else{%><%= user.houseNumber + user.houseNumberAddition%><%}%><%}%></td>
                                             <td><%=user.town%></td>
                                             <td><%=user.postalCode%></td>
-                                            <td><a href="#" data-bs-toggle="modal" data-bs-target="#user<%= user._id %>">
+                                            <td><a href="#" data-bs-toggle="modal" data-bs-target="#client<%= user._id %>">
                                                 <button type="button" class="btn btn-primary"><i class="bi bi-pencil"></i></button>
                                             </a></td>
                                         </tr>
 
-                                        <div class="modal fade" id="user<%= user._id %>" tabindex="-1">
+                                        <div class="modal fade" id="client<%= user._id %>" tabindex="-1">
                                             <div class="modal-dialog modal-dialog-centered modal-lg modal-dialog-scrollable">
                                                 <div class="modal-content">
                                                     <div class="modal-header">
-                                                        <h5 class="modal-title">Verander rol van <%=user.firstName + " " + user.lastName%></h5>
+                                                        <h5 class="modal-title">Verander de rollen van <%=user.firstName + " " + user.lastName%></h5>
                                                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                                                     </div>
                                                     <div class="modal-body">
                                                         <form action="/user/roles/?id=<%= user._id %>" method="POST">
-                                                            <b>Rol:</b> 
-                                                            <select name="roles" id="roles" class="form-select">
-                                                                <option value="client" <% if(user.roles == "client") { %> selected <% } %>>Opdrachtgever</option>
-                                                                <option value="member" <% if(user.roles == "member") { %> selected <% } %>>LOTUSslachtoffer</option>
-                                                            </select>
+                                                            <b>Rollen:</b> 
+                                                            <div class="form-group">
+                                                                <div class="form-check">
+                                                                    <input class="form-check-input" type="checkbox" id="client" name="client" <% if(user.roles[0] == "client" || user.roles[1] == "client") { %> checked <% } %>>
+                                                                    <label class="form-check-label" style="font-size: 14px;">Opdrachtgever</label>
+                                                                </div>
+                                                            </div>
+                                                            <div class="form-group">
+                                                                <div class="form-check">
+                                                                    <input class="form-check-input" type="checkbox" id="member" name="member" <% if(user.roles[0] == "member" || user.roles[1] == "member") { %> checked <% } %>>
+                                                                    <label class="form-check-label" style="font-size: 14px;">LOTUSslachtoffer</label>
+                                                                </div>
+                                                            </div>
                                                             <div class="modal-footer mt-4">
                                                                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Sluiten</button>
                                                                 <button type="submit" class="btn btn-success">Bevestigen</button>
@@ -119,29 +127,37 @@
                                         <% allMembers.forEach(user => { %>
                                         <tr>
                                             <td><%=user.firstName + " " + user.lastName%></td>
-                                            <% let role = ""; switch(user.roles[0]) { case "coordinator": role = "Coördinator"; break; case "client" : role = "Opdrachtgever"; break; case "member": role = "LOTUSslachtoffer"; break; } %>
+                                            <% let role = ""; switch(user.activeRole[0]) { case "coordinator": role = "Coördinator"; break; case "client" : role = "Opdrachtgever"; break; case "member": role = "LOTUSslachtoffer"; break; } %>
                                             <td><%=user.emailAddress%></td>
-                                            <td><a href="#" data-bs-toggle="modal" data-bs-target="#user<%= user._id %>">
+                                            <td><a href="#" data-bs-toggle="modal" data-bs-target="#member<%= user._id %>">
                                                 <button type="button" class="btn btn-primary"><i class="bi bi-pencil"></i></button>
                                             </a>
                                             <a href="#" data-bs-toggle="modal" data-bs-target="#confirmation_remove_member_<%=user._id%>">
                                                 <button type="button" class="btn btn-danger"><i class="bi bi-trash"></i></button>
                                             </a></td>
                                         </tr>
-                                        <div class="modal fade" id="user<%= user._id %>" tabindex="-1">
+                                        <div class="modal fade" id="member<%= user._id %>" tabindex="-1">
                                             <div class="modal-dialog modal-dialog-centered modal-lg modal-dialog-scrollable">
                                                 <div class="modal-content">
                                                     <div class="modal-header">
-                                                        <h5 class="modal-title">Verander rol van <%=user.firstName + " " + user.lastName%></h5>
+                                                        <h5 class="modal-title">Verander de rollen van <%=user.firstName + " " + user.lastName%></h5>
                                                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                                                     </div>
                                                     <div class="modal-body">
                                                         <form action="/user/roles/?id=<%= user._id %>" method="POST">
-                                                            <b>Rol:</b> 
-                                                            <select name="roles" id="roles" class="form-select">
-                                                                <option value="client" <% if(user.roles == "client") { %> selected <% } %>>Opdrachtgever</option>
-                                                                <option value="member" <% if(user.roles == "member") { %> selected <% } %>>LOTUSslachtoffer</option>
-                                                            </select>
+                                                            <b>Rollen:</b> 
+                                                            <div class="form-group">
+                                                                <div class="form-check">
+                                                                    <input class="form-check-input" type="checkbox" id="client" name="client" <% if(user.roles[0] == "client" || user.roles[1] == "client") { %> checked <% } %>>
+                                                                    <label class="form-check-label" style="font-size: 14px;">Opdrachtgever</label>
+                                                                </div>
+                                                            </div>
+                                                            <div class="form-group">
+                                                                <div class="form-check">
+                                                                    <input class="form-check-input" type="checkbox" id="member" name="member" <% if(user.roles[0] == "member" || user.roles[1] == "member") { %> checked <% } %>>
+                                                                    <label class="form-check-label" style="font-size: 14px;">LOTUSslachtoffer</label>
+                                                                </div>
+                                                            </div>
                                                             <div class="modal-footer mt-4">
                                                                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Sluiten</button>
                                                                 <button type="submit" class="btn btn-success">Bevestigen</button>

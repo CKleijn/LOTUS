@@ -39,7 +39,7 @@
                 </div>
             </div>
 
-            <% } %> <% requests.reverse().forEach(request => { %> <% let role = ""; switch(request.user.roles[0]) { case "coordinator": role = "Coördinator"; break; case "client" : role = "Opdrachtgever"; break; case "member": role = "LOTUSslachtoffer"; break; } %>
+            <% } %> <% requests.reverse().forEach(request => { %> <% let role = ""; switch(request.user.activeRole[0]) { case "coordinator": role = "Coördinator"; break; case "client" : role = "Opdrachtgever"; break; case "member": role = "LOTUSslachtoffer"; break; } %>
             <div class="col-sm-12 col-md-6 col-lg-4">
                 <a href="#" data-bs-toggle="modal" data-bs-target="#request_<%= request._id %>">
                     <div class="card">
@@ -78,7 +78,7 @@
                                 <%= request.user.emailAddress %>
                                 <br />
                                 <b>Rol:</b>
-                                <%= role %>
+                                Opdrachtgever
                                 <br />
                                 <br />
                                 <b>Type:</b>
@@ -102,7 +102,7 @@
                                 <%= request.user.emailAddress %>
                                 <br />
                                 <b>Rol:</b>
-                                <%= role %>
+                                LOTUSlachtoffer
                                 <br />
                                 <br />
                                 <b>Type:</b>
@@ -125,7 +125,7 @@
                                 <%= request.user.emailAddress %>
                                 <br />
                                 <b>Rol:</b>
-                                <%= role %>
+                                LOTUSlachtoffer
                                 <br />
                                 <br />
                                 <b>Type:</b>
@@ -149,7 +149,7 @@
                                 <%= request.user.emailAddress %>
                                 <br />
                                 <b>Rol:</b>
-                                <%= role %>
+                                Opdrachtgever
                                 <br />
                                 <br />
                                 <b>Type:</b>
@@ -171,7 +171,7 @@
                                 <%= request.user.emailAddress %>
                                 <br />
                                 <b>Rol:</b>
-                                <%= role %>
+                                Opdrachtgever
                                 <br />
                                 <br />
                                 <b>Type:</b>
@@ -180,6 +180,33 @@
                                 <br />
                                 <i class="bi bi-clock"  style="font-size: 16px; color: #012970;"></i> <span><%= requestAge %> </span>
                             </p>
+                            <% } else if(request.type === "addClientRole") { %>
+                                <h5 class="card-title">
+                                    <i class="bi bi-person-bounding-box"></i>
+                                    <%= request.user.firstName + " wil ook een opdrachtgever worden" %>
+                                    
+                                </h5>
+                                <p style="margin-bottom:0">
+                                    <b>Naam:</b>
+                                    <%= request.user.firstName + " " + request.user.lastName %>
+                                    <br />
+                                    <b>E-mailadres:</b>
+                                    <%= request.user.emailAddress %>
+                                    <br />
+                                    <b>Huidige rol:</b>
+                                    LOTUSlachtoffer
+                                    <br />
+                                    <b>Gewenste rol:</b>
+                                    Opdrachtgever
+                                    <br />
+                                    <br />
+                                    <b>Type:</b>
+                                    Rol toevoegen
+                                    <br />
+                                    <br />
+                                    <i class="bi bi-clock"  style="font-size: 16px; color: #012970;"></i> <span><%= requestAge %> </span>
+                                    
+                                </p>
                             <% } else {%>
                             <p>pas request_overview.ejs aan</p>
                             <% } %>
@@ -571,15 +598,45 @@
                                 <%= new Date(a.dateTime).toLocaleString([], {year: 'numeric', month: 'numeric', day: 'numeric', hour: '2-digit', minute: '2-digit'}) %>
                                 <br />
                                 <b>Aantal LOTUSslachtoffers ingeschreven:</b>
-                                <%=a.participatingLotusVictims.length + "/" + a.amountOfLotusVictims %> <% } %>
+                                <%=a.participatingLotusVictims.length + "/" + a.amountOfLotusVictims %> 
+                                <% } else if(request.type === "addClientRole") { %>
+                                <h6>Persoonlijke gegevens</h6>
+                                <% const u = request.user %>
+                                <b>Voornaam:</b>
+                                <%= u.firstName %>
+                                <br />
+                                <b>Achternaam:</b>
+                                <%= u.lastName %>
+                                <br />
+                                <b>E-mailadres:</b>
+                                <%= u.emailAddress %>
+                                <br />
+                                <hr />
+
+                                <b>Huidige rol:</b>
+                                LOTUSslachtoffer
+                                <br />
+                                <b>Gewenste rol:</b>
+                                Opdrachtgever
+                                <br />
+                                <b>Resultaat rollen:</b>
+                                LOTUSlachtoffer, Opdrachtgever
+                                <br />
+                                <% } %>
                             </div>
                             <div class="modal-footer">
                                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Sluiten</button>
                                 <form id="reject_request_form_<%= request._id %>" action="/request/decline" method="POST">
-                                    <input type="hidden" name="userId" value="<%= request.userId %>" />
-                                    <input type="hidden" name="requestType" value="<%= request.type %>" />
-                                    <input type="hidden" name="requestId" value="<%= request._id %>" />
-                                    <input type="hidden" name="assignmentId" value="<%= request.assignment._id %>" />
+                                    <% if(request.type === "addClientRole") { %> 
+                                        <input type="hidden" name="userId" value="<%= request.userId %>" />
+                                        <input type="hidden" name="requestType" value="<%= request.type %>" />
+                                        <input type="hidden" name="requestId" value="<%= request._id %>" />
+                                    <% } else { %>
+                                        <input type="hidden" name="userId" value="<%= request.userId %>" />
+                                        <input type="hidden" name="requestType" value="<%= request.type %>" />
+                                        <input type="hidden" name="requestId" value="<%= request._id %>" />
+                                        <input type="hidden" name="assignmentId" value="<%= request.assignment._id %>" />
+                                    <% } %>
 
                                     <a data-bs-toggle="modal" data-bs-target="#confirmation_reject_request_<%= request._id %>">
                                         <button class="btn btn-danger">Afwijzen</button>
@@ -587,10 +644,16 @@
                                 </form>
 
                                 <form id="approve_request_form_<%= request._id %>" action="/request/approve" method="POST">
-                                    <input type="hidden" name="userId" value="<%= request.userId %>" />
-                                    <input type="hidden" name="requestType" value="<%= request.type %>" />
-                                    <input type="hidden" name="requestId" value="<%= request._id %>" />
-                                    <input type="hidden" name="assignmentId" value="<%= request.assignment._id %>" />
+                                    <% if(request.type === "addClientRole") { %> 
+                                        <input type="hidden" name="userId" value="<%= request.userId %>" />
+                                        <input type="hidden" name="requestType" value="<%= request.type %>" />
+                                        <input type="hidden" name="requestId" value="<%= request._id %>" />
+                                    <% } else { %>
+                                        <input type="hidden" name="userId" value="<%= request.userId %>" />
+                                        <input type="hidden" name="requestType" value="<%= request.type %>" />
+                                        <input type="hidden" name="requestId" value="<%= request._id %>" />
+                                        <input type="hidden" name="assignmentId" value="<%= request.assignment._id %>" />
+                                    <% } %>
 
                                     <% if(request.type === "updateAssignment") { %> 
                                         <input type="hidden" name="firstName" value="<%= request.updatedAssignment.firstName %>" />
