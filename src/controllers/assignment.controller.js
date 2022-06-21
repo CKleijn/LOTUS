@@ -1306,8 +1306,6 @@ exports.sendPDFdata = async (req, res, next) => {
         request: { ...request[0]._doc },
     };
 
-    console.log(assignment);
-
     await this.getPDF(req, res, assignment);
 };
 
@@ -1331,7 +1329,7 @@ exports.getPDF = async (req, res, assignment) => {
         "Content-Disposition": `attachment;filename=LOTUS_${assignment.playgroundTown}_${formatDate(new Date(assignment.dateTime))}_contract.pdf`,
     });
 
-    const pdf = await pdfService.buildPDF(
+    await pdfService.buildPDF(
         (chunk) => stream.write(chunk),
         () => stream.end(),
         assignment
