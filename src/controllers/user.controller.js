@@ -579,6 +579,7 @@ exports.getAllValidMembers = async () => {
             },
         },
     });
+
 };
 
 exports.getAllInvitedMembers = async () => {
