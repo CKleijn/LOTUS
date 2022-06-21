@@ -205,7 +205,12 @@ exports.createAssignment = (req, res) => {
         } else {
             (async () => {
                 // Redirect to the overview
-                res.redirect("/assignment");
+                if (session.user.roles === "coordinator") {
+                    res.redirect("/assignment?assignmentCreate=true");
+                } else {
+                    res.redirect("/assignment?assignmentRequest=true");
+                }
+                
 
                 if (session.user.activeRole === "client") {
                     const objectId = savedAssignment._id;
@@ -407,8 +412,8 @@ exports.updateAssignment = async (req, res) => {
                     const updatedAssignment = await Assignment.findOneAndUpdate({ _id: assignmentId }, { ...assignment }, { new: true });
 
                     //TODO: when max participants is increased check if assignment was complete. If so set the status to open
-
-                    res.redirect("/assignment");
+                    
+                    res.redirect("/assignment?assignmentUpdate=true");
 
                     if (req.session.user.activeRole === "coordinator") {
                         const sendStatus = await notifyUserThroughMail(updatedAssignment.emailAddress, updatedAssignment.firstName, "clientAssignmentUpdated", "Jouw opdracht is bewerkt");
@@ -430,7 +435,9 @@ exports.updateAssignment = async (req, res) => {
                     request.save();
 
                     (async () => {
-                        res.redirect("/assignment");
+                      
+                        res.redirect("/assignment?assignmentUpdateRequest=true");
+
                         const sendStatus = await notifyCoordinatorRequest(req, res, "updateAssignment");
 
                         if (sendStatus) {
@@ -468,6 +475,20 @@ exports.getAllAssignments = (req, res) => {
     let sortDateValue;
     let searchValue;
 
+    
+    let alertText = "";
+    if (req.query.assignmentCreate) {
+        alertText = "Opdracht succesvol aangemaakt!";
+    } else if (req.query.assignmentRequest) {
+        alertText = "Aanmaken van opdracht succesvol aangevraagd!"
+    } else if (req.query.assignmentUpdate) {
+        alertText = "Opdracht succesvol gewijzigd!"
+    } else if (req.query.assignmentUpdateRequest) {
+        alertText = "Wijzigen van opdracht succesvol aangevraagd!"
+    } else if (req.query.acceptEnroll) {
+        alertText = "Inschrijving voor opdracht is succesvol aangevraagd!"
+    }
+
     if (url.includes("sortPlayground")) {
         sortPlaygroundValue = req.query.sortPlayground;
     }
@@ -504,27 +525,27 @@ exports.getAllAssignments = (req, res) => {
 
                 req.session.assignments_filtered = searchedAssignments;
 
-                res.render("assignment_overview", { pageName: "Opdrachten", session: req.session, assignments: searchedAssignments, sortPlaygroundValue: undefined, sortDateValue: undefined });
+                res.render("assignment_overview", { pageName: "Opdrachten", session: req.session, assignments: searchedAssignments, sortPlaygroundValue: undefined, sortDateValue: undefined, alertText });
             } else if (sortPlaygroundValue == "true") {
                 let alphabeticAssignments = [];
                 alphabeticAssignments = resultsSearchedFiltered.sort((a, b) => a.playgroundTown.localeCompare(b.playgroundTown));
 
-                res.render("assignment_overview", { pageName: "Opdrachten", session: req.session, assignments: alphabeticAssignments, sortPlaygroundValue, sortDateValue: undefined });
+                res.render("assignment_overview", { pageName: "Opdrachten", session: req.session, assignments: alphabeticAssignments, sortPlaygroundValue, sortDateValue: undefined, alertText });
             } else if (sortDateValue == "true") {
                 let dateAssignments = [];
                 dateAssignments = resultsSearchedFiltered.sort((a, b) => a.dateTime.localeCompare(b.dateTime));
 
-                res.render("assignment_overview", { pageName: "Opdrachten", session: req.session, assignments: dateAssignments, sortPlaygroundValue: undefined, sortDateValue });
+                res.render("assignment_overview", { pageName: "Opdrachten", session: req.session, assignments: dateAssignments, sortPlaygroundValue: undefined, sortDateValue, alertText });
             } else if (sortPlaygroundValue == "false") {
                 let alphabeticAssignments = [];
                 alphabeticAssignments = resultsSearchedFiltered.sort((a, b) => b.playgroundTown.localeCompare(a.playgroundTown));
 
-                res.render("assignment_overview", { pageName: "Opdrachten", session: req.session, assignments: alphabeticAssignments, sortPlaygroundValue, sortDateValue: undefined });
+                res.render("assignment_overview", { pageName: "Opdrachten", session: req.session, assignments: alphabeticAssignments, sortPlaygroundValue, sortDateValue: undefined, alertText });
             } else if (sortDateValue == "false") {
                 let dateAssignments = [];
                 dateAssignments = resultsSearchedFiltered.sort((a, b) => b.dateTime.localeCompare(a.dateTime));
 
-                res.render("assignment_overview", { pageName: "Opdrachten", session: req.session, assignments: dateAssignments, sortPlaygroundValue: undefined, sortDateValue });
+                res.render("assignment_overview", { pageName: "Opdrachten", session: req.session, assignments: dateAssignments, sortPlaygroundValue: undefined, sortDateValue, alertText });
             } else if (sortPlaygroundValue == undefined && sortDateValue == undefined) {
                 Assignment.find({ isApproved: true }, async function (err, results) {
                     for (let result of results) {
@@ -557,7 +578,7 @@ exports.getAllAssignments = (req, res) => {
                     }
 
                     req.session.assignments_filtered = undefined;
-                    res.render("assignment_overview", { pageName: "Opdrachten", session: req.session, assignments: resultsFiltered, sortPlaygroundValue: undefined, sortDateValue: undefined });
+                    res.render("assignment_overview", { pageName: "Opdrachten", session: req.session, assignments: resultsFiltered, sortPlaygroundValue: undefined, sortDateValue: undefined, alertText });
                 });
             }
         } else {
@@ -604,30 +625,30 @@ exports.getAllAssignments = (req, res) => {
 
                     req.session.assignments_filtered = searchedAssignments;
 
-                    res.render("assignment_overview", { pageName: "Opdrachten", session: req.session, assignments: searchedAssignments, sortPlaygroundValue: undefined, sortDateValue: undefined });
+                    res.render("assignment_overview", { pageName: "Opdrachten", session: req.session, assignments: searchedAssignments, sortPlaygroundValue: undefined, sortDateValue: undefined, alertText });
                 } else if (sortPlaygroundValue == "true") {
                     let alphabeticAssignments = [];
                     alphabeticAssignments = resultsFiltered.sort((a, b) => a.playgroundTown.localeCompare(b.playgroundTown));
 
-                    res.render("assignment_overview", { pageName: "Opdrachten", session: req.session, assignments: alphabeticAssignments, sortPlaygroundValue, sortDateValue: undefined });
+                    res.render("assignment_overview", { pageName: "Opdrachten", session: req.session, assignments: alphabeticAssignments, sortPlaygroundValue, sortDateValue: undefined, alertText });
                 } else if (sortDateValue == "true") {
                     let dateAssignments = [];
                     dateAssignments = resultsFiltered.sort((a, b) => a.dateTime.localeCompare(b.dateTime));
 
-                    res.render("assignment_overview", { pageName: "Opdrachten", session: req.session, assignments: dateAssignments, sortPlaygroundValue: undefined, sortDateValue });
+                    res.render("assignment_overview", { pageName: "Opdrachten", session: req.session, assignments: dateAssignments, sortPlaygroundValue: undefined, sortDateValue, alertText });
                 } else if (sortPlaygroundValue == "false") {
                     let alphabeticAssignments = [];
                     alphabeticAssignments = resultsFiltered.sort((a, b) => b.playgroundTown.localeCompare(a.playgroundTown));
 
-                    res.render("assignment_overview", { pageName: "Opdrachten", session: req.session, assignments: alphabeticAssignments, sortPlaygroundValue, sortDateValue: undefined });
+                    res.render("assignment_overview", { pageName: "Opdrachten", session: req.session, assignments: alphabeticAssignments, sortPlaygroundValue, sortDateValue: undefined, alertText });
                 } else if (sortDateValue == "false") {
                     let dateAssignments = [];
                     dateAssignments = resultsFiltered.sort((a, b) => b.dateTime.localeCompare(a.dateTime));
 
-                    res.render("assignment_overview", { pageName: "Opdrachten", session: req.session, assignments: dateAssignments, sortPlaygroundValue: undefined, sortDateValue });
+                    res.render("assignment_overview", { pageName: "Opdrachten", session: req.session, assignments: dateAssignments, sortPlaygroundValue: undefined, sortDateValue, alertText });
                 } else if (sortPlaygroundValue == undefined && sortDateValue == undefined) {
                     req.session.assignments_filtered = undefined;
-                    res.render("assignment_overview", { pageName: "Opdrachten", session: req.session, assignments: resultsFiltered, sortPlaygroundValue: undefined, sortDateValue: undefined });
+                    res.render("assignment_overview", { pageName: "Opdrachten", session: req.session, assignments: resultsFiltered, sortPlaygroundValue: undefined, sortDateValue: undefined, alertText });
                 }
             });
         }
@@ -651,27 +672,27 @@ exports.getAllAssignments = (req, res) => {
 
                 req.session.assignments_filtered = searchedAssignments;
 
-                res.render("assignment_overview", { pageName: "Opdrachten", session: req.session, assignments: searchedAssignments, sortPlaygroundValue: undefined, sortDateValue: undefined });
+                res.render("assignment_overview", { pageName: "Opdrachten", session: req.session, assignments: searchedAssignments, sortPlaygroundValue: undefined, sortDateValue: undefined, alertText });
             } else if (sortPlaygroundValue == "true") {
                 let alphabeticAssignments = [];
                 alphabeticAssignments = resultsSearchedFiltered.sort((a, b) => a.playgroundTown.localeCompare(b.playgroundTown));
 
-                res.render("assignment_overview", { pageName: "Opdrachten", session: req.session, assignments: alphabeticAssignments, sortPlaygroundValue, sortDateValue: undefined });
+                res.render("assignment_overview", { pageName: "Opdrachten", session: req.session, assignments: alphabeticAssignments, sortPlaygroundValue, sortDateValue: undefined, alertText });
             } else if (sortDateValue == "true") {
                 let dateAssignments = [];
                 dateAssignments = resultsSearchedFiltered.sort((a, b) => a.dateTime.localeCompare(b.dateTime));
 
-                res.render("assignment_overview", { pageName: "Opdrachten", session: req.session, assignments: dateAssignments, sortPlaygroundValue: undefined, sortDateValue });
+                res.render("assignment_overview", { pageName: "Opdrachten", session: req.session, assignments: dateAssignments, sortPlaygroundValue: undefined, sortDateValue, alertText });
             } else if (sortPlaygroundValue == "false") {
                 let alphabeticAssignments = [];
                 alphabeticAssignments = resultsSearchedFiltered.sort((a, b) => b.playgroundTown.localeCompare(a.playgroundTown));
 
-                res.render("assignment_overview", { pageName: "Opdrachten", session: req.session, assignments: alphabeticAssignments, sortPlaygroundValue, sortDateValue: undefined });
+                res.render("assignment_overview", { pageName: "Opdrachten", session: req.session, assignments: alphabeticAssignments, sortPlaygroundValue, sortDateValue: undefined, alertText });
             } else if (sortDateValue == "false") {
                 let dateAssignments = [];
                 dateAssignments = resultsSearchedFiltered.sort((a, b) => b.dateTime.localeCompare(a.dateTime));
 
-                res.render("assignment_overview", { pageName: "Opdrachten", session: req.session, assignments: dateAssignments, sortPlaygroundValue: undefined, sortDateValue });
+                res.render("assignment_overview", { pageName: "Opdrachten", session: req.session, assignments: dateAssignments, sortPlaygroundValue: undefined, sortDateValue, alertText });
             } else if (sortPlaygroundValue == undefined && sortDateValue == undefined) {
                 Assignment.find(
                     {
@@ -715,7 +736,7 @@ exports.getAllAssignments = (req, res) => {
                         }
 
                         req.session.assignments_filtered = undefined;
-                        res.render("assignment_overview", { pageName: "Opdrachten", session: req.session, assignments: resultsFiltered, sortPlaygroundValue: undefined, sortDateValue: undefined });
+                        res.render("assignment_overview", { pageName: "Opdrachten", session: req.session, assignments: resultsFiltered, sortPlaygroundValue: undefined, sortDateValue: undefined, alertText });
                     }
                 );
             }
@@ -772,30 +793,30 @@ exports.getAllAssignments = (req, res) => {
 
                         req.session.assignments_filtered = searchedAssignments;
 
-                        res.render("assignment_overview", { pageName: "Opdrachten", session: req.session, assignments: searchedAssignments, sortPlaygroundValue: undefined, sortDateValue: undefined });
+                        res.render("assignment_overview", { pageName: "Opdrachten", session: req.session, assignments: searchedAssignments, sortPlaygroundValue: undefined, sortDateValue: undefined, alertText });
                     } else if (sortPlaygroundValue == "true") {
                         let alphabeticAssignments = [];
                         alphabeticAssignments = resultsFiltered.sort((a, b) => a.playgroundTown.localeCompare(b.playgroundTown));
 
-                        res.render("assignment_overview", { pageName: "Opdrachten", session: req.session, assignments: alphabeticAssignments, sortPlaygroundValue, sortDateValue: undefined });
+                        res.render("assignment_overview", { pageName: "Opdrachten", session: req.session, assignments: alphabeticAssignments, sortPlaygroundValue, sortDateValue: undefined, alertText });
                     } else if (sortDateValue == "true") {
                         let dateAssignments = [];
                         dateAssignments = resultsFiltered.sort((a, b) => a.dateTime.localeCompare(b.dateTime));
 
-                        res.render("assignment_overview", { pageName: "Opdrachten", session: req.session, assignments: dateAssignments, sortPlaygroundValue: undefined, sortDateValue });
+                        res.render("assignment_overview", { pageName: "Opdrachten", session: req.session, assignments: dateAssignments, sortPlaygroundValue: undefined, sortDateValue, alertText });
                     } else if (sortPlaygroundValue == "false") {
                         let alphabeticAssignments = [];
                         alphabeticAssignments = resultsFiltered.sort((a, b) => b.playgroundTown.localeCompare(a.playgroundTown));
 
-                        res.render("assignment_overview", { pageName: "Opdrachten", session: req.session, assignments: alphabeticAssignments, sortPlaygroundValue, sortDateValue: undefined });
+                        res.render("assignment_overview", { pageName: "Opdrachten", session: req.session, assignments: alphabeticAssignments, sortPlaygroundValue, sortDateValue: undefined, alertText });
                     } else if (sortDateValue == "false") {
                         let dateAssignments = [];
                         dateAssignments = resultsFiltered.sort((a, b) => b.dateTime.localeCompare(a.dateTime));
 
-                        res.render("assignment_overview", { pageName: "Opdrachten", session: req.session, assignments: dateAssignments, sortPlaygroundValue: undefined, sortDateValue });
+                        res.render("assignment_overview", { pageName: "Opdrachten", session: req.session, assignments: dateAssignments, sortPlaygroundValue: undefined, sortDateValue, alertText });
                     } else if (sortPlaygroundValue == undefined && sortDateValue == undefined) {
                         req.session.assignments_filtered = undefined;
-                        res.render("assignment_overview", { pageName: "Opdrachten", session: req.session, assignments: resultsFiltered, sortPlaygroundValue: undefined, sortDateValue: undefined });
+                        res.render("assignment_overview", { pageName: "Opdrachten", session: req.session, assignments: resultsFiltered, sortPlaygroundValue: undefined, sortDateValue: undefined, alertText });
                     }
                 }
             );
@@ -820,27 +841,27 @@ exports.getAllAssignments = (req, res) => {
 
                 req.session.assignments_filtered = searchedAssignments;
 
-                res.render("assignment_overview", { pageName: "Mijn opdrachten", session: req.session, assignments: searchedAssignments, sortPlaygroundValue: undefined, sortDateValue: undefined });
+                res.render("assignment_overview", { pageName: "Mijn opdrachten", session: req.session, assignments: searchedAssignments, sortPlaygroundValue: undefined, sortDateValue: undefined, alertText });
             } else if (sortPlaygroundValue == "true") {
                 let alphabeticAssignments = [];
                 alphabeticAssignments = resultsSearchedFiltered.sort((a, b) => a.playgroundTown.localeCompare(b.playgroundTown));
 
-                res.render("assignment_overview", { pageName: "Mijn opdrachten", session: req.session, assignments: alphabeticAssignments, sortPlaygroundValue, sortDateValue: undefined });
+                res.render("assignment_overview", { pageName: "Mijn opdrachten", session: req.session, assignments: alphabeticAssignments, sortPlaygroundValue, sortDateValue: undefined, alertText });
             } else if (sortDateValue == "true") {
                 let dateAssignments = [];
                 dateAssignments = resultsSearchedFiltered.sort((a, b) => a.dateTime.localeCompare(b.dateTime));
 
-                res.render("assignment_overview", { pageName: "Mijn opdrachten", session: req.session, assignments: dateAssignments, sortPlaygroundValue: undefined, sortDateValue });
+                res.render("assignment_overview", { pageName: "Mijn opdrachten", session: req.session, assignments: dateAssignments, sortPlaygroundValue: undefined, sortDateValue, alertText });
             } else if (sortPlaygroundValue == "false") {
                 let alphabeticAssignments = [];
                 alphabeticAssignments = resultsSearchedFiltered.sort((a, b) => b.playgroundTown.localeCompare(a.playgroundTown));
 
-                res.render("assignment_overview", { pageName: "Mijn opdrachten", session: req.session, assignments: alphabeticAssignments, sortPlaygroundValue, sortDateValue: undefined });
+                res.render("assignment_overview", { pageName: "Mijn opdrachten", session: req.session, assignments: alphabeticAssignments, sortPlaygroundValue, sortDateValue: undefined, alertText });
             } else if (sortDateValue == "false") {
                 let dateAssignments = [];
                 dateAssignments = resultsSearchedFiltered.sort((a, b) => b.dateTime.localeCompare(a.dateTime));
 
-                res.render("assignment_overview", { pageName: "Mijn opdrachten", session: req.session, assignments: dateAssignments, sortPlaygroundValue: undefined, sortDateValue });
+                res.render("assignment_overview", { pageName: "Mijn opdrachten", session: req.session, assignments: dateAssignments, sortPlaygroundValue: undefined, sortDateValue, alertText });
             } else if (sortPlaygroundValue == undefined && sortDateValue == undefined) {
                 Assignment.find(async function (err, results) {
                     for (let result of results) {
@@ -878,7 +899,7 @@ exports.getAllAssignments = (req, res) => {
                     }
 
                     req.session.assignments_filtered = undefined;
-                    res.render("assignment_overview", { pageName: "Mijn opdrachten", session: req.session, assignments: resultsFiltered, sortPlaygroundValue: undefined, sortDateValue: undefined });
+                    res.render("assignment_overview", { pageName: "Mijn opdrachten", session: req.session, assignments: resultsFiltered, sortPlaygroundValue: undefined, sortDateValue: undefined, alertText });
                 });
             }
         } else {
@@ -930,30 +951,30 @@ exports.getAllAssignments = (req, res) => {
 
                     req.session.assignments_filtered = searchedAssignments;
 
-                    res.render("assignment_overview", { pageName: "Mijn opdrachten", session: req.session, assignments: searchedAssignments, sortPlaygroundValue: undefined, sortDateValue: undefined });
+                    res.render("assignment_overview", { pageName: "Mijn opdrachten", session: req.session, assignments: searchedAssignments, sortPlaygroundValue: undefined, sortDateValue: undefined, alertText });
                 } else if (sortPlaygroundValue == "true") {
                     let alphabeticAssignments = [];
                     alphabeticAssignments = resultsFiltered.sort((a, b) => a.playgroundTown.localeCompare(b.playgroundTown));
 
-                    res.render("assignment_overview", { pageName: "Mijn opdrachten", session: req.session, assignments: alphabeticAssignments, sortPlaygroundValue, sortDateValue: undefined });
+                    res.render("assignment_overview", { pageName: "Mijn opdrachten", session: req.session, assignments: alphabeticAssignments, sortPlaygroundValue, sortDateValue: undefined, alertText });
                 } else if (sortDateValue == "true") {
                     let dateAssignments = [];
                     dateAssignments = resultsFiltered.sort((a, b) => a.dateTime.localeCompare(b.dateTime));
 
-                    res.render("assignment_overview", { pageName: "Mijn opdrachten", session: req.session, assignments: dateAssignments, sortPlaygroundValue: undefined, sortDateValue });
+                    res.render("assignment_overview", { pageName: "Mijn opdrachten", session: req.session, assignments: dateAssignments, sortPlaygroundValue: undefined, sortDateValue, alertText });
                 } else if (sortPlaygroundValue == "false") {
                     let alphabeticAssignments = [];
                     alphabeticAssignments = resultsFiltered.sort((a, b) => b.playgroundTown.localeCompare(a.playgroundTown));
 
-                    res.render("assignment_overview", { pageName: "Mijn opdrachten", session: req.session, assignments: alphabeticAssignments, sortPlaygroundValue, sortDateValue: undefined });
+                    res.render("assignment_overview", { pageName: "Mijn opdrachten", session: req.session, assignments: alphabeticAssignments, sortPlaygroundValue, sortDateValue: undefined, alertText });
                 } else if (sortDateValue == "false") {
                     let dateAssignments = [];
                     dateAssignments = resultsFiltered.sort((a, b) => b.dateTime.localeCompare(a.dateTime));
 
-                    res.render("assignment_overview", { pageName: "Mijn opdrachten", session: req.session, assignments: dateAssignments, sortPlaygroundValue: undefined, sortDateValue });
+                    res.render("assignment_overview", { pageName: "Mijn opdrachten", session: req.session, assignments: dateAssignments, sortPlaygroundValue: undefined, sortDateValue, alertText });
                 } else if (sortPlaygroundValue == undefined && sortDateValue == undefined) {
                     req.session.assignments_filtered = undefined;
-                    res.render("assignment_overview", { pageName: "Mijn opdrachten", session: req.session, assignments: resultsFiltered, sortPlaygroundValue: undefined, sortDateValue: undefined });
+                    res.render("assignment_overview", { pageName: "Mijn opdrachten", session: req.session, assignments: resultsFiltered, sortPlaygroundValue: undefined, sortDateValue: undefined, alertText });
                 }
             });
         }
@@ -1196,7 +1217,7 @@ exports.enrollAssignment = (req, res) => {
 
     (async () => {
         // Redirect
-        res.redirect("/assignment");
+        res.redirect("/assignment?acceptEnroll=true");
 
         const sendStatus = await notifyCoordinatorRequest(req, res, "enrollment");
 
@@ -1287,8 +1308,6 @@ exports.sendPDFdata = async (req, res, next) => {
         request: { ...request[0]._doc },
     };
 
-    console.log(assignment);
-
     await this.getPDF(req, res, assignment);
 };
 
@@ -1312,7 +1331,7 @@ exports.getPDF = async (req, res, assignment) => {
         "Content-Disposition": `attachment;filename=LOTUS_${assignment.playgroundTown}_${formatDate(new Date(assignment.dateTime))}_contract.pdf`,
     });
 
-    const pdf = await pdfService.buildPDF(
+    await pdfService.buildPDF(
         (chunk) => stream.write(chunk),
         () => stream.end(),
         assignment

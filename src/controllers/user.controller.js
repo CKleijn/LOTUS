@@ -123,6 +123,7 @@ exports.createUser = (req, res) => {
                     firstName: user.firstName,
                     lastName: user.lastName,
                     emailAddress: user.emailAddress,
+                    phoneNumber: user.phoneNumber,
                     street: user.street,
                     houseNumber: user.houseNumber,
                     houseNumberAddition: user.houseNumberAddition,
@@ -174,7 +175,7 @@ exports.createMember = (req, res) => {
                         console.log("Not send");
                     }
 
-                    res.redirect("/user");
+                    res.redirect("/user?invitedMember=true");
                 } else {
                     res.render("user_overview", { pageName: "Gebruikers", session: req.session, emailAddressErr: "Dit e-mailadres is al in gebruik!", allMembers, allClients, allInvitedMembers });
                 }
@@ -196,7 +197,7 @@ exports.notifyInvitedMember = async (req, res) => {
         console.log("Mail did not send");
     }
 
-    return res.redirect("/user");
+    return res.redirect("/user?remindedMember=true");
 };
 
 const insertMember = async (emailAddress) => {
@@ -220,6 +221,11 @@ const insertMember = async (emailAddress) => {
 exports.getUserProfile = async (req, res) => {
     const roleRequest = await Request.find({ userId: req.session.user.userId, type: "addClientRole", status: { "$ne": "Afgewezen" }})
     const roleProcessingRequest = await Request.find({ userId: req.session.user.userId, type: "addClientRole", status: "In behandeling" })
+    
+    let alertText = "";
+    if (req.query.changedProfile) {
+        alertText = "Gegevens zijn succesvol gewijzigd!";
+    } 
     res.render("user_profile", { pageName: "Mijn profiel", session: req.session, roleRequest, roleProcessingRequest });
 };
 
@@ -340,7 +346,9 @@ exports.changeUserProfileDetails = (req, res) => {
                     user.postalCode = postalCode;
                 }
 
-                return res.redirect("/user/profile");
+              
+
+                return res.redirect("/user/profile?changedProfile=true");
             })();
         }
     })();
@@ -519,14 +527,14 @@ exports.deleteMember = async (req, res) => {
                     await Request.findOneAndUpdate({ assignmentId: assignment._id }, { $set: { status: "Openstaand" } });
                 }
             }
-        };
-    };
+        }
+    }
 
     // Delete the member
     await User.findOneAndDelete({ _id: memberId });
 
     res.redirect("/user");
-}
+};
 
 const updateUserByEmail = async (user) => {
     try {
