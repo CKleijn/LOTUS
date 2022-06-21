@@ -46,7 +46,7 @@ exports.createAssignment = (req, res) => {
         requestId: requestId,
     });
     // Check if coordinator is trying to make an assignment
-    if (session.user.roles === "coordinator") {
+    if (session.user.activeRole === "coordinator") {
         assignment.isApproved = true;
     }
     // Save assignment object in database and show errors if they exists
@@ -212,7 +212,7 @@ exports.createAssignment = (req, res) => {
                 }
                 
 
-                if (session.user.roles === "client") {
+                if (session.user.activeRole === "client") {
                     const objectId = savedAssignment._id;
                     // Create a request
                     const request = await createRequest(req, res, objectId, "createAssignment");
@@ -408,14 +408,14 @@ exports.updateAssignment = async (req, res) => {
             res.render("assignment", { pageName: "Formulier", session: req.session, ...errors, url: req.session.originalUrl, assignmentId, assignmentStatus });
         } else {
             (async () => {
-                if (req.session.user.roles === "coordinator" || assignmentStatus === "In behandeling") {
+                if (req.session.user.activeRole === "coordinator" || assignmentStatus === "In behandeling") {
                     const updatedAssignment = await Assignment.findOneAndUpdate({ _id: assignmentId }, { ...assignment }, { new: true });
 
                     //TODO: when max participants is increased check if assignment was complete. If so set the status to open
                     
                     res.redirect("/assignment?assignmentUpdate=true");
 
-                    if (req.session.user.roles === "coordinator") {
+                    if (req.session.user.activeRole === "coordinator") {
                         const sendStatus = await notifyUserThroughMail(updatedAssignment.emailAddress, updatedAssignment.firstName, "clientAssignmentUpdated", "Jouw opdracht is bewerkt");
 
                         if (sendStatus) {
@@ -505,7 +505,7 @@ exports.getAllAssignments = (req, res) => {
         return new Date(inputDate).toLocaleString([], { year: "numeric", month: "numeric", day: "numeric", hour: "2-digit", minute: "2-digit" });
     }
 
-    if (req.session.user.roles == "coordinator") {
+    if (req.session.user.activeRole == "coordinator") {
         let resultsFiltered = [];
         let resultsSearchedFiltered = [];
 
@@ -566,6 +566,7 @@ exports.getAllAssignments = (req, res) => {
                                 formattedDateTime,
                                 status: "Ingeschreven voltooid",
                             };
+                            resultsFiltered.push(result);
                         } else {
                             result = {
                                 ...result._doc,
@@ -600,6 +601,7 @@ exports.getAllAssignments = (req, res) => {
                             formattedDateTime,
                             status: "Ingeschreven voltooid",
                         };
+                        resultsFiltered.push(result);
                     } else {
                         result = {
                             ...result._doc,
@@ -650,7 +652,7 @@ exports.getAllAssignments = (req, res) => {
                 }
             });
         }
-    } else if (req.session.user.roles == "member") {
+    } else if (req.session.user.activeRole == "member") {
         let resultsFiltered = [];
         let resultsSearchedFiltered = [];
 
@@ -819,7 +821,7 @@ exports.getAllAssignments = (req, res) => {
                 }
             );
         }
-    } else if (req.session.user.roles == "client") {
+    } else if (req.session.user.activeRole == "client") {
         let resultsFiltered = [];
         let resultsSearchedFiltered = [];
 
@@ -1011,7 +1013,7 @@ exports.getMemberAssignments = (req, res) => {
         return `${date}/${month}/${year}`;
     }
 
-    if (req.session.user.roles == "member") {
+    if (req.session.user.activeRole == "member") {
         let resultsFiltered = [];
         let resultsSearchedFiltered = [];
 
@@ -1161,7 +1163,7 @@ exports.deleteAssignment = async (req, res) => {
     // Get req body
     const { status, cancelStatus } = req.body;
 
-    if (session.user.roles === "coordinator") {
+    if (session.user.activeRole === "coordinator") {
         await Assignment.deleteOne({ _id: req.query.id });
         await Request.deleteMany({ assignmentId: req.query.id });
 
@@ -1176,7 +1178,7 @@ exports.deleteAssignment = async (req, res) => {
         res.redirect("/assignment");
     }
 
-    if (session.user.roles === "client") {
+    if (session.user.activeRole === "client") {
         res.redirect("/assignment");
         if (status == "Afgewezen" || status == "In behandeling") {
             await Assignment.deleteOne({ _id: req.query.id });

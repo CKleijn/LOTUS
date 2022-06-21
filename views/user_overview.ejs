@@ -53,10 +53,10 @@
                                         <% allClients.forEach(user => { %>
                                         <tr>
                                             <td><%=user.firstName + " " + user.lastName%></td>
-                                            <% let role = ""; switch(user.roles[0]) { case "coordinator": role = "Coördinator"; break; case "client" : role = "Opdrachtgever"; break; case "member": role = "LOTUSslachtoffer"; break; } %>
+                                            <% let role = ""; switch(user.activeRole[0]) { case "coordinator": role = "Coördinator"; break; case "client" : role = "Opdrachtgever"; break; case "member": role = "LOTUSslachtoffer"; break; } %>
                                             <td><%=user.emailAddress%></td>
                                             <td><%=user.phoneNumber%></td>
-                                            <td><%=user.street + " "%><%if(isNaN(user.houseNumber)){%><%}else{%><%= user.houseNumber + user.houseNumberAddition%><%}%></td>
+                                            <td><% if(!user.street || !user.houseNumber) { %><% } else { %><%=user.street + " "%><%if(isNaN(user.houseNumber)){%><%}else{%><%= user.houseNumber + user.houseNumberAddition%><%}%><%}%></td>
                                             <td><%=user.town%></td>
                                             <td><%=user.postalCode%></td>
                                             <td><a href="#" data-bs-toggle="modal" data-bs-target="#client<%= user._id %>">
@@ -127,7 +127,7 @@
                                         <% allMembers.forEach(user => { %>
                                         <tr>
                                             <td><%=user.firstName + " " + user.lastName%></td>
-                                            <% let role = ""; switch(user.roles[0]) { case "coordinator": role = "Coördinator"; break; case "client" : role = "Opdrachtgever"; break; case "member": role = "LOTUSslachtoffer"; break; } %>
+                                            <% let role = ""; switch(user.activeRole[0]) { case "coordinator": role = "Coördinator"; break; case "client" : role = "Opdrachtgever"; break; case "member": role = "LOTUSslachtoffer"; break; } %>
                                             <td><%=user.emailAddress%></td>
                                             <td><a href="#" data-bs-toggle="modal" data-bs-target="#member<%= user._id %>">
                                                 <button type="button" class="btn btn-primary"><i class="bi bi-pencil"></i></button>
