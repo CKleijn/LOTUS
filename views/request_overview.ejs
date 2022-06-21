@@ -24,7 +24,7 @@
                 </div>
             </div>
 
-            <% } %> <% requests.reverse().forEach(request => { %> <% let role = ""; switch(request.user.roles[0]) { case "coordinator": role = "Coördinator"; break; case "client" : role = "Opdrachtgever"; break; case "member": role = "LOTUSslachtoffer"; break; } %>
+            <% } %> <% requests.reverse().forEach(request => { %> <% let role = ""; switch(request.user.activeRole[0]) { case "coordinator": role = "Coördinator"; break; case "client" : role = "Opdrachtgever"; break; case "member": role = "LOTUSslachtoffer"; break; } %>
             <div class="col-sm-12 col-md-6 col-lg-4">
                 <a href="#" data-bs-toggle="modal" data-bs-target="#request_<%= request._id %>">
                     <div class="card">
@@ -63,7 +63,7 @@
                                 <%= request.user.emailAddress %>
                                 <br />
                                 <b>Rol:</b>
-                                <%= role %>
+                                Opdrachtgever
                                 <br />
                                 <br />
                                 <b>Type:</b>
@@ -87,7 +87,7 @@
                                 <%= request.user.emailAddress %>
                                 <br />
                                 <b>Rol:</b>
-                                <%= role %>
+                                LOTUSlachtoffer
                                 <br />
                                 <br />
                                 <b>Type:</b>
@@ -110,7 +110,7 @@
                                 <%= request.user.emailAddress %>
                                 <br />
                                 <b>Rol:</b>
-                                <%= role %>
+                                LOTUSlachtoffer
                                 <br />
                                 <br />
                                 <b>Type:</b>
@@ -134,7 +134,7 @@
                                 <%= request.user.emailAddress %>
                                 <br />
                                 <b>Rol:</b>
-                                <%= role %>
+                                Opdrachtgever
                                 <br />
                                 <br />
                                 <b>Type:</b>
@@ -156,7 +156,7 @@
                                 <%= request.user.emailAddress %>
                                 <br />
                                 <b>Rol:</b>
-                                <%= role %>
+                                Opdrachtgever
                                 <br />
                                 <br />
                                 <b>Type:</b>
@@ -179,7 +179,7 @@
                                     <%= request.user.emailAddress %>
                                     <br />
                                     <b>Huidige rol:</b>
-                                    <%= role %>
+                                    LOTUSlachtoffer
                                     <br />
                                     <b>Gewenste rol:</b>
                                     Opdrachtgever

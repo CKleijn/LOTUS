@@ -1197,3 +1197,11 @@ form i {
     font-size: 13px;
     color: #012970;
 }
+
+
+/* */
+#activeRoleSwitch:focus {
+    outline: 0 !important;
+    box-shadow: 0 0 0 0 #fff !important;
+    border-color: #fff !important;
+}
