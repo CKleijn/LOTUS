@@ -10,6 +10,24 @@
 }
 
 /*--------------------------------------------------------------
+# Filter
+--------------------------------------------------------------*/
+
+.filterSortSearch input {
+    margin-top: 5px;
+    width: 100% !important;
+    height: 40px;
+}
+
+.filterSortBtn button {
+    width: 100%;
+    text-align: left;
+    height: 40px;
+    font-size: 14px;
+    margin: 5px 0;
+}
+
+/*--------------------------------------------------------------
 # General
 --------------------------------------------------------------*/
 :root {
@@ -1197,7 +1215,6 @@ form i {
     font-size: 13px;
     color: #012970;
 }
-
 
 /* */
 #activeRoleSwitch:focus {
