@@ -228,8 +228,11 @@ exports.getUserProfile = async (req, res) => {
         alertText = "Gegevens zijn succesvol gewijzigd!";
     } else if (req.query.requestRole) {
         alertText = "Nieuwe rol aangevraagd!";
+    } else if (req.query.deleteMember) {
+        alertText = "Lid is succesvol verwijderd!"
     }
 
+    
     if (req.query.rolesUpdate) {
         type = "roles_request";
     }
@@ -551,7 +554,7 @@ exports.deleteMember = async (req, res) => {
     // Delete the member
     await User.findOneAndDelete({ _id: memberId });
 
-    res.redirect("/user");
+    res.redirect("/user?deleteMember=true");
 };
 
 const updateUserByEmail = async (user) => {

@@ -1172,7 +1172,7 @@ exports.deleteAssignment = async (req, res) => {
             console.log("Email not send");
         }
 
-        res.redirect("/assignment");
+        res.redirect("/assignment?deleteAssignment=true");
     }
 
     if (session.user.activeRole === "client") {
@@ -1234,7 +1234,7 @@ exports.cancelEnrollment = (req, res) => {
     if (status == "Ingeschreven") {
         Request.deleteOne({ requestType: "enrollment", assignmentId: assignmentId, userId: session.user.userId }, function (err, results) {
             Assignment.findOneAndUpdate({ assignmentId: assignmentId }, { status: "Niet ingeschreven" });
-            res.redirect("/assignment");
+            res.redirect("/assignment?cancelRequest=true");
         });
     } else if (cancelStatus == "Uitschrijfverzoek ingediend") {
         Request.deleteOne({ requestType: "cancelEnrollment", assignmentId: assignmentId, userId: session.user.userId, status: "In behandeling" }, function (err, results) {
