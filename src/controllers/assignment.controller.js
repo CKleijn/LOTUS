@@ -210,7 +210,6 @@ exports.createAssignment = (req, res) => {
                 } else {
                     res.redirect("/assignment?assignmentRequest=true");
                 }
-                
 
                 if (session.user.activeRole === "client") {
                     const objectId = savedAssignment._id;
@@ -412,7 +411,7 @@ exports.updateAssignment = async (req, res) => {
                     const updatedAssignment = await Assignment.findOneAndUpdate({ _id: assignmentId }, { ...assignment }, { new: true });
 
                     //TODO: when max participants is increased check if assignment was complete. If so set the status to open
-                    
+
                     res.redirect("/assignment?assignmentUpdate=true");
 
                     if (req.session.user.activeRole === "coordinator") {
@@ -435,7 +434,6 @@ exports.updateAssignment = async (req, res) => {
                     request.save();
 
                     (async () => {
-                      
                         res.redirect("/assignment?assignmentUpdateRequest=true");
 
                         const sendStatus = await notifyCoordinatorRequest(req, res, "updateAssignment");
@@ -454,7 +452,7 @@ exports.updateAssignment = async (req, res) => {
 
 exports.getAssignmentPage = (req, res) => {
     req.session.originalUrl = req.originalUrl;
-    res.render("assignment", { pageName: "Formulier", session: req.session, url: req.session.originalUrl, assignmentId: req.query.id });
+    res.render("assignment", { pageName: "Opdracht aanmaken", session: req.session, url: req.session.originalUrl, assignmentId: req.query.id });
 };
 
 exports.getAssignmentUpdatePage = async (req, res) => {
@@ -466,7 +464,7 @@ exports.getAssignmentUpdatePage = async (req, res) => {
     assignment = assignment[0];
 
     req.session.originalUrl = req.originalUrl;
-    res.render("assignment", { pageName: "Opdracht aanmaken", session: req.session, url: req.session.originalUrl, assignmentId: assignmentId, assignment, assignmentStatus });
+    res.render("assignment", { pageName: "Opdracht bewerken", session: req.session, url: req.session.originalUrl, assignmentId: assignmentId, assignment, assignmentStatus });
 };
 
 exports.getAllAssignments = (req, res) => {
@@ -475,23 +473,18 @@ exports.getAllAssignments = (req, res) => {
     let sortDateValue;
     let searchValue;
 
-    
     let alertText = "";
     if (req.query.assignmentCreate) {
         alertText = "Opdracht succesvol aangemaakt!";
     } else if (req.query.assignmentRequest) {
-        alertText = "Aanmaken van opdracht succesvol aangevraagd!"
+        alertText = "Aanmaken van opdracht succesvol aangevraagd!";
     } else if (req.query.assignmentUpdate) {
-        alertText = "Opdracht succesvol gewijzigd!"
+        alertText = "Opdracht succesvol gewijzigd!";
     } else if (req.query.assignmentUpdateRequest) {
-        alertText = "Wijzigen van opdracht succesvol aangevraagd!"
+        alertText = "Wijzigen van opdracht succesvol aangevraagd!";
     } else if (req.query.acceptEnroll) {
-        alertText = "Inschrijving voor opdracht is succesvol aangevraagd!"
-    } else if (req.query.cancelRequest) {
-        alertText = "Aanvraag succesvol geannuleerd!"
-    } else if (req.query.deleteAssignment) {
-        alertText = "Opdracht succesvol verwijderd!"
-    } 
+        alertText = "Inschrijving voor opdracht is succesvol aangevraagd!";
+    }
 
     if (url.includes("sortPlayground")) {
         sortPlaygroundValue = req.query.sortPlayground;

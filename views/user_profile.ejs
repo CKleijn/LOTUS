@@ -15,7 +15,7 @@
     <section class="section profile">
         <div class="row">
 
-            <% if(alertText !== "") { %>
+            <% if(typeof alertText != "undefined" && alertText !== "") { %>
 
                 <div class="d-flex justify-content-center">
                     <div class="col-md-8 col-lg-6">
@@ -47,7 +47,7 @@
                         <!-- Bordered Tabs -->
                         <ul class="nav nav-tabs nav-tabs-bordered">
                             <li class="nav-item">
-                                <% if(typeof type == "undefined") { %>
+                                <% if(typeof type == "undefined" || type === "") { %>
                                 <button class="nav-link active" data-bs-toggle="tab" data-bs-target="#profile-overview">Overzicht</button>
                                 <% } else {%>
                                 <button class="nav-link" data-bs-toggle="tab" data-bs-target="#profile-overview">Overzicht</button>
@@ -82,7 +82,7 @@
                             <% } %>
                         </ul>
                         <div class="tab-content pt-2"> 
-                            <% if(typeof type == "undefined") { %>
+                            <% if(typeof type == "undefined" || type === "") { %>
                             <div class="tab-pane fade profile-overview show active" id="profile-overview">
                             <% } else { %> 
                                 <div class="tab-pane fade profile-overview" id="profile-overview">
@@ -367,7 +367,7 @@
                                     <div class="row mb-3">
                                         <div class="col-md-12 col-lg-12">
                                             <h5 class="card-title">Verzoek in behandeling <i class="bi bi-hourglass-split" style="float: right; font-size: 30px; color: #435df1;"></i></h5>
-                                            <p>Je hebt een verzoek gedaan om een opdrachtgever te worden!</p>
+                                            <p>Je hebt aangevraagd om een opdrachtgever te worden!</p>
                                             <form action="/user/profile/roles/cancel" method="POST">
                                                 <button type="submit" class="btn btn-danger">Verzoek annuleren</button>
                                             </form>
@@ -375,6 +375,7 @@
                                     </div>
                                 <% } %> 
                             <% } %> 
+
                             <!-- End Request Role Form Form -->
                             </div>
                         </div>

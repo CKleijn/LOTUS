@@ -23,7 +23,7 @@
 
                 <div class="row">
 
-                    <% if(alertText !== "") { %>
+                    <% if(typeof alertText != "undefined" && alertText !== "") { %>
 
                         <div class="d-flex justify-content-center">
                             <div class="col-md-8 col-lg-6">
@@ -183,7 +183,7 @@
                                         </div>
                                         <div class="modal-body">
             
-                                             <h6>Persoonlijke gegevens</h6>
+                                             <h6>Opdrachtgever</h6>
             
                                                 <% const a = assignment;%> 
             
@@ -484,7 +484,7 @@
                                         </div>
                                         <div class="modal-body">
             
-                                             <h6>Persoonlijke gegevens</h6>
+                                             <h6>Opdrachtgever</h6>
             
                                                 <% const a = assignment;%> 
             
@@ -708,7 +708,7 @@
                                     </div>
                                     <div class="modal-body">
         
-                                        <h6>Persoonlijke gegevens</h6>
+                                        <h6>Opdrachtgever</h6>
         
                                             <% const a = assignment %> 
         

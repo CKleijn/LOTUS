@@ -14,7 +14,7 @@
     <section class="section">
         <div class="row">
 
-            <% if(alertText !== "") { %>
+            <% if(typeof alertText != "undefined" && alertText !== "") { %>
 
                 <div class="d-flex justify-content-center">
                     <div class="col-md-8 col-lg-6">
@@ -102,7 +102,7 @@
                                 <%= request.user.emailAddress %>
                                 <br />
                                 <b>Rol:</b>
-                                LOTUSlachtoffer
+                                LOTUSslachtoffer
                                 <br />
                                 <br />
                                 <b>Type:</b>
@@ -125,7 +125,7 @@
                                 <%= request.user.emailAddress %>
                                 <br />
                                 <b>Rol:</b>
-                                LOTUSlachtoffer
+                                LOTUSslachtoffer
                                 <br />
                                 <br />
                                 <b>Type:</b>
@@ -194,7 +194,7 @@
                                     <%= request.user.emailAddress %>
                                     <br />
                                     <b>Huidige rol:</b>
-                                    LOTUSlachtoffer
+                                    LOTUSslachtoffer
                                     <br />
                                     <b>Gewenste rol:</b>
                                     Opdrachtgever
@@ -211,7 +211,7 @@
                             <p>pas request_overview.ejs aan</p>
                             <% } %>
                         </div>
-                        <div class="card-footer">Klik om verzoek te beoordelen</div>
+                        <div class="card-footer">Klik om het verzoek te beoordelen</div>
                     </div>
                 </a>
             </div>
@@ -230,7 +230,7 @@
                             </div>
                             <div class="modal-body">
                                 <% if(request.type === "createAssignment" || request.type === "deleteAssignment" ) { %>
-                                <h6>Persoonlijke gegevens</h6>
+                                <h6>Opdrachtgever</h6>
 
                                 <% const a = request.assignment %>
 
@@ -242,6 +242,9 @@
                                 <br />
                                 <b>E-mailadres:</b>
                                 <%= a.emailAddress %>
+                                <br />
+                                <b>Telefoonnummer:</b>
+                                <%= a.phoneNumber %>
                                 <br />
                                 <b>Straat:</b>
                                 <%= a.street %>
@@ -327,7 +330,7 @@
                                 <br />
                                 <b>Opmerkingen:</b>
                                 <%= a.comments %> <% } %> <% } else if(request.type === "updateAssignment" ) { %>
-                                <h6>Persoonlijke gegevens</h6>
+                                <h6>Opdrachtgever</h6>
 
                                 <% const a = request.assignment %> <% const b = request.updatedAssignment %>
 
@@ -355,6 +358,15 @@
                                     <span class="oldRequestValue"><%= a.emailAddress %></span> <i class="bi bi-arrow-right"></i> <span class="newRequestValue"><%= b.emailAddress %></span>
                                     <% } else { %> 
                                     <%= a.emailAddress %> 
+                                <% } %> 
+
+                                <br />
+                                <b>Telefoonnummer:</b>
+
+                                <% if(a.phoneNumber != b.phoneNumber) { %> 
+                                    <span class="oldRequestValue"><%= a.phoneNumber %></span> <i class="bi bi-arrow-right"></i> <span class="newRequestValue"><%= b.phoneNumber %></span>
+                                    <% } else { %> 
+                                    <%= a.phoneNumber %> 
                                 <% } %> 
 
                                 <br />
@@ -559,7 +571,7 @@
                                 <% } %>
                                 
                                 <% } else if(request.type === "enrollment" || request.type === "cancelEnrollment") { %>
-                                <h6>Persoonlijke gegevens</h6>
+                                <h6>LOTUSslachtoffer</h6>
                                 <% const u = request.user %>
                                 <b>Voornaam:</b>
                                 <%= u.firstName %>
@@ -600,7 +612,7 @@
                                 <b>Aantal LOTUSslachtoffers ingeschreven:</b>
                                 <%=a.participatingLotusVictims.length + "/" + a.amountOfLotusVictims %> 
                                 <% } else if(request.type === "addClientRole") { %>
-                                <h6>Persoonlijke gegevens</h6>
+                                <h6>LOTUSslachtoffer</h6>
                                 <% const u = request.user %>
                                 <b>Voornaam:</b>
                                 <%= u.firstName %>
@@ -620,7 +632,7 @@
                                 Opdrachtgever
                                 <br />
                                 <b>Resultaat rollen:</b>
-                                LOTUSlachtoffer, Opdrachtgever
+                                LOTUSslachtoffer, Opdrachtgever
                                 <br />
                                 <% } %>
                             </div>
