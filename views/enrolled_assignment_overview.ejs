@@ -11,30 +11,39 @@
         </nav>
 
         <div class="row">
-            <div class="col lg-6 filter_col">
-                <label class="form-label sort_label"><i class="bi bi-arrow-down-up"></i> Sorteren op:</label>
-                <form action="/member/assignment" method="GET">
-                    <% if (sortPlaygroundValue != undefined) { %>
-                        <% if (sortPlaygroundValue == "true") { %>
+
+            <!-- filter -->
+            <div class="col-12">                
+                <div class="col-sm-12 col-md-4 filterSortBtn">
+                    <label class="form-label sort_label"><i class="bi bi-arrow-down-up"></i> Sorteren op:</label>
+                </div>
+            </div>
+            <div class="col-sm-12 col-md-6  col-lg-3">
+
+                <div class="col-sm-12  filterSortBtn">
+                    <form action="/member/assignment" method="GET">
+                        <% if (sortPlaygroundValue != undefined) { %>
+                            <% if (sortPlaygroundValue == "true") { %>
+                                <input type="hidden" name="sortPlayground" value="false">
+                            <% } else if (sortPlaygroundValue == "false") { %>
+                                <input type="hidden" name="sortPlayground" value="true">
+                            <% } %>
+                        <% } else { %>
                             <input type="hidden" name="sortPlayground" value="false">
-                        <% } else if (sortPlaygroundValue == "false") { %>
-                            <input type="hidden" name="sortPlayground" value="true">
                         <% } %>
-                    <% } else { %>
-                        <input type="hidden" name="sortPlayground" value="false">
-                    <% } %>
-                    
-                    <div class="sort_class">
-                        <% if (sortPlaygroundValue == "true") { %>
-                            <button type="submit" class="btn btn-primary sort_btn">Speelplaats<i class="bi bi-chevron-down sort_icon"></i></button>
-                        <% } else if (sortPlaygroundValue == "false") { %>
-                            <button type="submit" class="btn btn-primary sort_btn">Speelplaats<i class="bi bi-chevron-up sort_icon"></i></button>
-                        <% } else if (sortPlaygroundValue == undefined) { %>
-                            <button type="submit" class="btn btn-primary sort_btn">Speelplaats<i class="bi bi-dash-lg sort_icon"></i></button>
-                        <% } %>
-                    </div>
-                </form>
+                        
+                            <% if (sortPlaygroundValue == "true") { %>
+                                <button type="submit" class="btn btn-primary sort_btn">Speelplaats<i class="bi bi-chevron-down sort_icon"></i></button>
+                            <% } else if (sortPlaygroundValue == "false") { %>
+                                <button type="submit" class="btn btn-primary sort_btn">Speelplaats<i class="bi bi-chevron-up sort_icon"></i></button>
+                            <% } else if (sortPlaygroundValue == undefined) { %>
+                                <button type="submit" class="btn btn-primary sort_btn">Speelplaats<i class="bi bi-dash-lg sort_icon"></i></button>
+                            <% } %>
+                    </form>
+                </div>
                 
+                <div class="col-sm-12  filterSortBtn">
+
                 <form action="/member/assignment" method="GET">
                     <% if (sortDateValue != undefined) { %>
                         <% if (sortDateValue == "true") { %>
@@ -46,7 +55,6 @@
                         <input type="hidden" name="sortDate" value="false">
                     <% } %>
                     
-                    <div class="sort_class">
                         <% if (sortDateValue == "true") { %>
                             <button type="submit" class="btn btn-primary sort_btn">Datum<i class="bi bi-chevron-down sort_icon"></i></button>
                         <% } else if (sortDateValue == "false") { %>
@@ -54,23 +62,33 @@
                         <% } else if (sortDateValue == undefined) { %>
                             <button type="submit" class="btn btn-primary sort_btn">Datum<i class="bi bi-dash-lg sort_icon"></i></button>
                         <% } %>
-                    </div>
                 </form>
-
-                <div class="remove_sort_class">
-                    <form action="/member/assignment" method="GET">
-                        <button type="submit" class="btn btn-secondary sort_btn">Verwijder filters<i class="bi bi-x-lg sort_icon"></i></button>
-                    </form>
                 </div>
             </div>
-            <div class="col-lg-6 filter_col">
-                <form class="search-form d-flex align-items-center" action="/member/assignment" method="GET">
-                    <input type="text" name="keyword" class="search-input" placeholder="Zoek op speelplaats...">
-                    <button type="submit" title="Zoeken"><i class="bi bi-search"></i></button>
-                </form>
+
+            <div class="col-sm-12 col-md-6 col-lg-3">
+                <div class="col-sm-12  filterSortBtn">
+
+                    <div class="remove_sort_class">
+                        <form action="/member/assignment" method="GET">
+                            <button type="submit" class="btn btn-secondary sort_btn">Verwijder filters<i class="bi bi-x-lg sort_icon"></i></button>
+                        </form>
+                    </div>
+                </div>
+
+                <div class="col-sm-12 filterSortSearch">
+                    <form class="search-form d-flex align-items-center" action="/member/assignment" method="GET">
+                        <input type="text" name="keyword" class="search-input" placeholder="Zoek op speelplaats...">
+                        <button type="submit" title="Zoeken"><i class="bi bi-search"></i></button>
+                    </form>
+                </div>
+
             </div>
+
         </div>
     </div>
+
+    <!-- end of filter -->
 
     <section class="section">
         <div class="row">
