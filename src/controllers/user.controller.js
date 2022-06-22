@@ -228,9 +228,7 @@ exports.getUserProfile = async (req, res) => {
         alertText = "Gegevens zijn succesvol gewijzigd!";
     } else if (req.query.requestRole) {
         alertText = "Nieuwe rol aangevraagd!";
-    } else if (req.query.deleteMember) {
-        alertText = "Lid is succesvol verwijderd!"
-    }
+    } 
 
     
     if (req.query.rolesUpdate) {
