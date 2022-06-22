@@ -76,10 +76,13 @@ exports.getUserOverview = (req, res) => {
     (async () => {
         let alertText = "";
 
+
         if (req.query.invitedMember) {
             alertText = "Lid is succesvol uitgenodigd!";
         } else if (req.query.remindedMember) {
             alertText = "Herinnering verstuurd!";
+        } else if (req.query.deleteMember) {
+            alertText = "Lid is succesvol verwijderd!"
         }
 
         const allMembers = await getAllValidMembers();
