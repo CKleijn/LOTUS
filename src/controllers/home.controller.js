@@ -36,27 +36,32 @@ exports.getHomepage = (req, res) => {
             } else if (req.session.user.activeRole == "member") {
                 let my_assignments_amount = 0;
                 for await (let assignment of assignments) {
-                    assignment.participatingLotusVictims.forEach((victim) => {
+                    for await (let victim of assignment.participatingLotusVictims) {
                         if (victim.emailAddress == req.session.user.emailAddress) {
                             my_assignments_amount++;
-                            console.log(my_assignments_amount);
                         }
-                    });
+                    }
                 }
 
                 let open_assignments_amount = 0;
+                let denied_assignment_amount = 0;
                 for await (let assignment of assignments) {
                     if (assignment.participatingLotusVictims.length != assignment.amountOfLotusVictims) {
                         const deniedEnrollments = await Request.find({ userId: req.session.user.userId, assignmentId: assignment._id, status: "Afgewezen", type: "enrollment" });
                         if (deniedEnrollments.length == 0) {
                             open_assignments_amount++;
-                            console.log("" + open_assignments_amount);
+                        } else {
+                            denied_assignment_amount++;
                         }
                     }
                 }
 
-                console.log(open_assignments_amount, my_assignments_amount);
                 open_assignments_amount -= my_assignments_amount;
+                open_assignments_amount -= denied_assignment_amount;
+
+                if (open_assignments_amount < 0) {
+                    open_assignments_amount = 0;
+                }
 
                 res.render("dashboard", { pageName: "Dashboard", session: req.session, open_assignments_amount: open_assignments_amount, my_assignments_amount: my_assignments_amount });
             }
