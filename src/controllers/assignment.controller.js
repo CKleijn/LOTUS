@@ -206,7 +206,7 @@ exports.createAssignment = (req, res) => {
             (async () => {
                 // Redirect to the overview
                 if (session.user.roles === "coordinator") {
-                    res.redirect("/assignment?assignmentCreate=true");
+                    res.redirect("/assignment");
                 } else {
                     res.redirect("/assignment?assignmentRequest=true");
                 }
