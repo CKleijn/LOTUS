@@ -35,20 +35,27 @@ exports.getHomepage = (req, res) => {
                 });
             } else if (req.session.user.activeRole == "member") {
                 let my_assignments_amount = 0;
-                await assignments.forEach((assignment) => {
+                for await (let assignment of assignments) {
                     assignment.participatingLotusVictims.forEach((victim) => {
                         if (victim.emailAddress == req.session.user.emailAddress) {
                             my_assignments_amount++;
+                            console.log(my_assignments_amount);
                         }
                     });
-                });
+                }
 
                 let open_assignments_amount = 0;
-                await assignments.forEach((assignment) => {
-                    if(assignment.participatingLotusVictims.length != assignment.amountOfLotusVictims) {
-                        open_assignments_amount++;
+                for await (let assignment of assignments) {
+                    if (assignment.participatingLotusVictims.length != assignment.amountOfLotusVictims) {
+                        const deniedEnrollments = await Request.find({ userId: req.session.user.userId, assignmentId: assignment._id, status: "Afgewezen", type: "enrollment" });
+                        if (deniedEnrollments.length == 0) {
+                            open_assignments_amount++;
+                            console.log("" + open_assignments_amount);
+                        }
                     }
-                });
+                }
+
+                console.log(open_assignments_amount, my_assignments_amount);
                 open_assignments_amount -= my_assignments_amount;
 
                 res.render("dashboard", { pageName: "Dashboard", session: req.session, open_assignments_amount: open_assignments_amount, my_assignments_amount: my_assignments_amount });
@@ -76,13 +83,12 @@ exports.getUserOverview = (req, res) => {
     (async () => {
         let alertText = "";
 
-
         if (req.query.invitedMember) {
             alertText = "Lid is succesvol uitgenodigd!";
         } else if (req.query.remindedMember) {
             alertText = "Herinnering verstuurd!";
         } else if (req.query.deleteMember) {
-            alertText = "Lid is succesvol verwijderd!"
+            alertText = "Lid is succesvol verwijderd!";
         }
 
         const allMembers = await getAllValidMembers();

@@ -205,13 +205,10 @@ exports.createAssignment = (req, res) => {
         } else {
             (async () => {
                 // Redirect to the overview
-                if (session.user.roles === "coordinator") {
-                    res.redirect("/assignment");
-                } else {
-                    res.redirect("/assignment?assignmentRequest=true");
-                }
 
                 if (session.user.activeRole === "client") {
+                    res.redirect("/assignment?assignmentRequest=true");
+
                     const objectId = savedAssignment._id;
                     // Create a request
                     const request = await createRequest(req, res, objectId, "createAssignment");
@@ -225,6 +222,25 @@ exports.createAssignment = (req, res) => {
                     } else {
                         console.log("Mail not send");
                     }
+                } else {
+                    const objectId = savedAssignment._id;
+
+                    // Get session
+                    const session = req.session;
+                    // Create request
+                    const request = await new Request({
+                        userId: session.user.userId,
+                        assignmentId: objectId.toString(),
+                        type: "createAssignment",
+                        status: "Openstaand",
+                    });
+                    // Save request
+                    await request.save();
+
+                    // Update assignment
+                    await Assignment.findOneAndUpdate({ _id: request.assignmentId }, { $set: { requestId: request._id } });
+
+                    res.redirect("/assignment");
                 }
             })();
         }
